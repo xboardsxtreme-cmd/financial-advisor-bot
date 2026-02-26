@@ -1,4 +1,236 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+
+// ─── GLOBAL STYLES ─────────────────────────────────────────────────────────────
+const GLOBAL_STYLE = `
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .fa-header { font-family: 'Playfair Display', serif; }
+  .fa-body   { font-family: 'DM Sans', sans-serif; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.6; }
+  }
+  @keyframes barGrow {
+    from { width: 0%; }
+    to   { width: var(--bar-w); }
+  }
+
+  .anim-fadeup   { animation: fadeUp   0.5s ease both; }
+  .anim-fadein   { animation: fadeIn   0.4s ease both; }
+  .anim-scalein  { animation: scaleIn  0.4s ease both; }
+
+  .delay-1 { animation-delay: 0.05s; }
+  .delay-2 { animation-delay: 0.10s; }
+  .delay-3 { animation-delay: 0.15s; }
+  .delay-4 { animation-delay: 0.20s; }
+  .delay-5 { animation-delay: 0.25s; }
+
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(200,160,80,0.22);
+  }
+
+  .gold-shimmer {
+    background: linear-gradient(90deg, #c8a050, #f0d888, #c8a050);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+  }
+
+  .option-btn {
+    width: 100%;
+    text-align: left;
+    padding: 13px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(200,160,80,0.18);
+    border-radius: 10px;
+    color: #c8d8e8;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .option-btn:hover {
+    background: rgba(200,160,80,0.09);
+    border-color: rgba(200,160,80,0.45);
+    color: #e8dcc8;
+    transform: translateX(3px);
+  }
+  .option-btn.selected {
+    background: rgba(200,160,80,0.14);
+    border-color: rgba(200,160,80,0.7);
+    color: #e8c878;
+    font-weight: 500;
+  }
+  .option-btn.selected::before {
+    content: '✓';
+    color: #c8a050;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  select.fa-select {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(10,20,40,0.8);
+    border: 1px solid rgba(200,160,80,0.3);
+    border-radius: 10px;
+    color: #e8dcc8;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c8a050' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    transition: border-color 0.2s ease;
+  }
+  select.fa-select:focus {
+    border-color: rgba(200,160,80,0.7);
+    box-shadow: 0 0 0 3px rgba(200,160,80,0.1);
+  }
+  select.fa-select option {
+    background: #0d1b2a;
+    color: #e8dcc8;
+  }
+
+  input.fa-input {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(10,20,40,0.8);
+    border: 1px solid rgba(200,160,80,0.3);
+    border-radius: 10px;
+    color: #e8dcc8;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  input.fa-input:focus {
+    border-color: rgba(200,160,80,0.7);
+    box-shadow: 0 0 0 3px rgba(200,160,80,0.1);
+  }
+  input.fa-input::placeholder { color: #445566; }
+
+  .module-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+  .module-dot.done     { background: #4caf82; }
+  .module-dot.current  { background: #c8a050; width: 24px; border-radius: 4px; }
+  .module-dot.upcoming { background: rgba(255,255,255,0.12); }
+
+  .card-glass {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+  }
+
+  .btn-primary {
+    padding: 14px 36px;
+    background: linear-gradient(135deg, #c8a050, #e8c878);
+    border: none;
+    border-radius: 12px;
+    color: #050a12;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 20px rgba(200,160,80,0.35);
+    transition: all 0.2s ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(200,160,80,0.5);
+  }
+  .btn-primary:disabled {
+    background: rgba(255,255,255,0.06);
+    color: #445566;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-ghost {
+    padding: 12px 24px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    color: #667788;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .btn-ghost:hover {
+    border-color: rgba(200,160,80,0.3);
+    color: #c8a050;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    animation: barGrow 1.2s ease both;
+    animation-delay: 0.3s;
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(200,160,80,0.3); border-radius: 2px; }
+`;
+
+function GlobalStyles() {
+  useEffect(() => {
+    const id = 'fa-global-styles';
+    if (!document.getElementById(id)) {
+      const style = document.createElement('style');
+      style.id = id;
+      style.textContent = GLOBAL_STYLE;
+      document.head.appendChild(style);
+    }
+    return () => {};
+  }, []);
+  return null;
+}
 
 // ─── TRANSLATIONS ──────────────────────────────────────────────────────────────
 const T = {
@@ -94,9 +326,25 @@ const T = {
         { id: "knows_medicare", label: "Do you know what Medicare is and how it works?", type: "select", options: ["Yes – I understand it well", "Somewhat – I've heard of it", "No – I don't know what it is", "I'm already on Medicare"] },
         { id: "medicare_parts", label: "Do you know the difference between Medicare Part A, B, C, and D?", type: "select", options: ["Yes – I know all parts", "I know Parts A & B only", "No – I don't know the parts", "Not applicable yet"] },
         { id: "medicare_supplement", label: "Do you have a Medicare Supplement (Medigap) or Medicare Advantage plan?", type: "select", options: ["Yes – Medigap/Supplement", "Yes – Medicare Advantage", "No – only Original Medicare", "Not on Medicare yet", "Not sure"] },
+        { id: "medicare_monthly_payment", label: "Approximately how much do you pay per month for health/Medicare coverage?", type: "select", options: ["$0 – covered by employer or Medicaid", "Under $100/mo", "$100–$250/mo", "$250–$500/mo", "$500+/mo", "Not sure"] },
+        { id: "medicare_medications", label: "Do you take regular prescription medications?", type: "select", options: ["No", "Yes – 1 or 2", "Yes – 3 or more", "Yes – specialty/high-cost medications"] },
+        { id: "medicare_specialists", label: "Do you see any specialists regularly (cardiologist, eye doctor, etc.)?", type: "select", options: ["No", "Yes – 1 specialist", "Yes – 2 or more specialists"] },
         { id: "knows_ss", label: "Do you know what Social Security benefits you've earned so far?", type: "select", options: ["Yes – I check it regularly", "I've seen it once but don't track it", "No – I've never checked", "I don't know how to access it"] },
         { id: "ss_account", label: "Do you have an account at SSA.gov (Social Security Administration)?", type: "select", options: ["Yes – I have an account", "No – I don't have one", "I didn't know that was possible"] },
         { id: "ss_claiming_age", label: "Do you know the best age to claim Social Security to maximize your benefit?", type: "select", options: ["Yes – I have a strategy", "I know it depends on age but unsure of best timing", "No – I don't know how that works"] },
+      ]},
+      { id: "I", title: "Tax Prep 2025", icon: "📋", questions: [
+        { id: "tax_filing_status", label: "What is your filing status for 2025?", type: "select", options: ["Single", "Married Filing Jointly", "Married Filing Separately", "Head of Household", "Not sure"] },
+        { id: "tax_income_type_2025", label: "What type(s) of income did you have in 2025?", type: "select", options: ["W-2 only", "1099 / Self-employed only", "W-2 + 1099", "W-2 + business income", "Retirement / pension income", "Multiple types"] },
+        { id: "tax_overtime", label: "Did you work overtime in 2025?", type: "select", options: ["No", "Yes – occasionally", "Yes – regularly (significant amount)"] },
+        { id: "tax_tips", label: "Did you receive tips or gratuities in 2025?", type: "select", options: ["No", "Yes – reported on my W-2", "Yes – but not sure if reported", "Yes – cash tips not reported"] },
+        { id: "tax_children_born", label: "Were any children born or adopted in your household in 2025?", type: "select", options: ["No", "Yes – 1 child", "Yes – 2 or more children"] },
+        { id: "tax_auto_loan_interest", label: "Did you pay auto loan interest in 2025?", type: "select", options: ["No", "Yes – I have the statement", "Yes – but I don't have the statement handy"] },
+        { id: "tax_crypto", label: "Did you buy, sell, or receive cryptocurrency in 2025?", type: "select", options: ["No", "Yes – I received a 1099 from the broker", "Yes – but I didn't receive a 1099", "I'm not sure"] },
+        { id: "tax_housing", label: "What is your current housing situation?", type: "select", options: ["Renting", "Own my home – with mortgage", "Own my home – paid off", "Living with family / no payment", "Other"] },
+        { id: "tax_mortgage_interest", label: "Did you pay mortgage interest in 2025?", type: "select", options: ["No – I rent or paid off", "Yes – I have my 1098 form", "Yes – but I need to locate the form", "Not applicable"] },
+        { id: "tax_beautiful_bill", label: "Are you aware of the 'Beautiful Bill' (2025 tax law changes) and how they may affect your return?", type: "select", options: ["Yes – I've read about it", "I've heard of it but don't know the details", "No – first time I'm hearing this", "I'd like my advisor to explain it"] },
+        { id: "tax_notes", label: "Any other income, life changes, or tax situations we should know about for 2025?", type: "text", placeholder: "e.g. sold a home, inherited money, started a business, got married..." },
       ]},
     ],
     scoreLabels: { "Life & Family Protection": "Life & Family Protection", "Final Expense Coverage": "Final Expense Coverage", "Health & LTC": "Health & LTC", "Income Protection": "Income Protection", "Retirement Planning": "Retirement Planning", "Emergency Fund": "Emergency Fund", "Savings Optimization": "Savings Optimization", "Estate Planning": "Estate Planning", "Medicare & Social Security": "Medicare & Social Security", "Tax Strategy": "Tax Strategy" },
@@ -185,6 +433,9 @@ const T = {
         { id: "knows_medicare", label: "¿Sabes qué es Medicare y cómo funciona?", type: "select", options: ["Sí – lo entiendo bien", "Un poco – he escuchado de ello", "No – no sé qué es", "Ya estoy en Medicare"] },
         { id: "medicare_parts", label: "¿Conoces la diferencia entre Medicare Parte A, B, C y D?", type: "select", options: ["Sí – conozco todas las partes", "Solo conozco las Partes A y B", "No – no conozco las partes", "Aún no aplica para mí"] },
         { id: "medicare_supplement", label: "¿Tienes un Medicare Supplement (Medigap) o Medicare Advantage?", type: "select", options: ["Sí – Medigap/Suplemento", "Sí – Medicare Advantage", "No – solo Medicare Original", "Aún no estoy en Medicare", "No estoy seguro/a"] },
+        { id: "medicare_monthly_payment", label: "¿Aproximadamente cuánto pagas al mes por tu cobertura de salud/Medicare?", type: "select", options: ["$0 – cubierto por empleador o Medicaid", "Menos de $100/mes", "$100–$250/mes", "$250–$500/mes", "$500+/mes", "No sé"] },
+        { id: "medicare_medications", label: "¿Tomas medicamentos recetados regularmente?", type: "select", options: ["No", "Sí – 1 o 2", "Sí – 3 o más", "Sí – medicamentos especializados/costosos"] },
+        { id: "medicare_specialists", label: "¿Ves especialistas regularmente (cardiólogo, oculista, etc.)?", type: "select", options: ["No", "Sí – 1 especialista", "Sí – 2 o más especialistas"] },
         { id: "knows_ss", label: "¿Sabes cuánto has acumulado en beneficios del Seguro Social?", type: "select", options: ["Sí – lo reviso regularmente", "Lo vi una vez pero no lo sigo", "No – nunca lo he revisado", "No sé cómo acceder a esa información"] },
         { id: "ss_account", label: "¿Tienes una cuenta en SSA.gov (Administración del Seguro Social)?", type: "select", options: ["Sí – tengo una cuenta", "No – no tengo cuenta", "No sabía que eso era posible"] },
         { id: "ss_claiming_age", label: "¿Sabes a qué edad conviene reclamar el Seguro Social para maximizar tu beneficio?", type: "select", options: ["Sí – tengo una estrategia", "Sé que depende de la edad pero no sé el mejor momento", "No – no sé cómo funciona eso"] },
@@ -197,6 +448,19 @@ const T = {
         { id: "tax_deferred_accounts", label: "¿Estás usando cuentas con ventajas fiscales para reducir tu carga impositiva?", type: "select", options: ["Sí – maximizando 401k / IRA", "Sí – contribuyo pero no al máximo", "No – no tengo ninguna", "No estoy seguro/a si lo que tengo aplica"] },
         { id: "knows_iul_tax", label: "¿Sabías que una póliza de vida bien estructurada (IUL) puede generar ingresos de retiro LIBRES de impuestos?", type: "select", options: ["Sí – lo uso o planeo usarlo", "He escuchado de ello pero no lo entiendo bien", "No – es la primera vez que escucho esto", "Soy escéptico/a"] },
         { id: "tax_refund_habit", label: "Si recibes un reembolso de impuestos cada año, ¿qué haces con él?", type: "select", options: ["Lo gasto", "Lo guardo en el banco", "Lo uso para pagar deudas", "Lo invierto", "Generalmente debo impuestos, no me regresan"] },
+      ]},
+      { id: "I", title: "Preparación de Taxes 2025", icon: "📋", questions: [
+        { id: "tax_filing_status", label: "¿Cuál es tu estatus de declaración para 2025?", type: "select", options: ["Soltero/a (Single)", "Casado/a declarando juntos (MFJ)", "Casado/a declarando por separado (MFS)", "Jefe/a de familia (Head of Household)", "No estoy seguro/a"] },
+        { id: "tax_income_type_2025", label: "¿Qué tipo(s) de ingreso tuviste en 2025?", type: "select", options: ["Solo W-2", "Solo 1099 / Trabajo independiente", "W-2 + 1099", "W-2 + ingresos de negocio", "Ingreso de retiro / pensión", "Varios tipos"] },
+        { id: "tax_overtime", label: "¿Trabajaste overtime (horas extra) en 2025?", type: "select", options: ["No", "Sí – ocasionalmente", "Sí – regularmente (cantidad significativa)"] },
+        { id: "tax_tips", label: "¿Recibiste propinas (tips) en 2025?", type: "select", options: ["No", "Sí – reportadas en mi W-2", "Sí – pero no sé si fueron reportadas", "Sí – propinas en efectivo no reportadas"] },
+        { id: "tax_children_born", label: "¿Nació o fue adoptado algún hijo en tu hogar en 2025?", type: "select", options: ["No", "Sí – 1 hijo/a", "Sí – 2 o más"] },
+        { id: "tax_auto_loan_interest", label: "¿Pagaste intereses de préstamo de auto en 2025?", type: "select", options: ["No", "Sí – tengo el estado de cuenta", "Sí – pero no tengo el estado de cuenta a la mano"] },
+        { id: "tax_crypto", label: "¿Compraste, vendiste o recibiste criptomonedas en 2025?", type: "select", options: ["No", "Sí – recibí un 1099 del broker", "Sí – pero no recibí 1099", "No estoy seguro/a"] },
+        { id: "tax_housing", label: "¿Cuál es tu situación de vivienda actual?", type: "select", options: ["Rento", "Tengo casa – con hipoteca", "Tengo casa – pagada", "Vivo con familia / sin pago", "Otra"] },
+        { id: "tax_mortgage_interest", label: "¿Pagaste intereses de hipoteca en 2025?", type: "select", options: ["No – rento o casa pagada", "Sí – tengo mi forma 1098", "Sí – pero necesito localizar la forma", "No aplica"] },
+        { id: "tax_beautiful_bill", label: "¿Estás al tanto del 'Beautiful Bill' (cambios en las leyes de taxes 2025)?", type: "select", options: ["Sí – lo he leído", "He escuchado de ello pero no conozco los detalles", "No – es la primera vez que lo escucho", "Me gustaría que mi asesor me lo explique"] },
+        { id: "tax_notes", label: "¿Algún otro ingreso, cambio de vida o situación fiscal que debamos saber para 2025?", type: "text", placeholder: "ej. vendí una casa, herencia, empecé un negocio, me casé..." },
       ]},
     ],
     scoreLabels: { "Life & Family Protection": "Protección de Vida y Familia", "Final Expense Coverage": "Cobertura de Gastos Finales", "Health & LTC": "Salud y Cuidado a Largo Plazo", "Income Protection": "Protección de Ingresos", "Retirement Planning": "Planificación de Retiro", "Emergency Fund": "Fondo de Emergencia", "Savings Optimization": "Optimización de Ahorros", "Estate Planning": "Planificación Patrimonial", "Medicare & Social Security": "Medicare y Seguro Social", "Tax Strategy": "Estrategia Fiscal" },
@@ -476,20 +740,99 @@ function generatePlan(answers, lang) {
     return true;
   });
 
-  return { scores, gaps, plan: filteredPlan, budget, insights, medicareEducation, showMedicareEdu: isNear65 || !hasSsAccount };
+  // LTC education content
+  const ltcEducation = lang === "en" ? {
+    adls: {
+      title: "🏃 What Triggers Long-Term Care Benefits?",
+      subtitle: "Benefits activate when you can no longer perform 2 out of 6 Activities of Daily Living (ADLs):",
+      items: [
+        { icon: "🛁", label: "Bathing" }, { icon: "👗", label: "Dressing" }, { icon: "🍽️", label: "Eating" },
+        { icon: "🚽", label: "Toileting" }, { icon: "🚶", label: "Transferring" }, { icon: "🔄", label: "Continence" },
+      ],
+    },
+    causes: {
+      title: "⚠️ Common Causes for Long-Term Care",
+      items: ["Stroke", "Parkinson's Disease", "Alzheimer's / Dementia", "Cognitive Impairment", "Traumatic Brain Injury", "Multiple Sclerosis", "Advanced Diabetes", "Late-Stage Cancer", "COPD", "Heart Failure", "Physical Accidents"],
+    },
+    costs: {
+      title: "💰 Real Cost of Care",
+      items: [
+        { label: "Family Care", cost: "Loss of Income", note: "Burden on family — time & money", color: "#e05050" },
+        { label: "In-Home Health Aide", cost: "$7,436/mo", note: "Professional at-home care", color: "#e8a050" },
+        { label: "Nursing Home (Semi-Priv.)", cost: "$11,695/mo", note: "Semi-private room", color: "#e8a050" },
+        { label: "Nursing Home (Private)", cost: "$15,178/mo", note: "Private room", color: "#e05050" },
+      ],
+    },
+    myths: {
+      title: "❌ Health Insurance Myths — What Does NOT Cover LTC:",
+      items: [
+        { label: "Employer Health Insurance", reason: "Does not cover long-term care — it's for medical treatment, not daily living assistance." },
+        { label: "Medicare", reason: "Only covers up to 100 days of skilled care after a hospital stay. Then — nothing." },
+        { label: "Medicaid", reason: "Only available if you spend down to very low income/asset levels. Not a plan, a last resort." },
+      ],
+    },
+    types: {
+      title: "✅ Types of Long-Term Care Coverage",
+      items: [
+        { name: "Stand-Alone LTC", pros: ["Lower premiums", "LTC-focused"], cons: ["Use it or lose it", "Not guaranteed"], color: "#e8a050" },
+        { name: "Linked Benefits LTC", pros: ["Guaranteed premiums", "Return of premium", "LTC + Life combined"], cons: [], color: "#4caf82" },
+        { name: "LTC Rider on Life Policy", pros: ["Life insurance + LTC access", "Various products available"], cons: [], color: "#4a90d9" },
+      ],
+    },
+  } : {
+    adls: {
+      title: "🏃 ¿Qué Activa los Beneficios de Cuidado a Largo Plazo?",
+      subtitle: "Los beneficios se activan cuando ya no puedes realizar 2 de las 6 Actividades de la Vida Diaria (ADLs):",
+      items: [
+        { icon: "🛁", label: "Bañarse" }, { icon: "👗", label: "Vestirse" }, { icon: "🍽️", label: "Comer" },
+        { icon: "🚽", label: "Ir al baño" }, { icon: "🚶", label: "Moverse / Trasladarse" }, { icon: "🔄", label: "Continencia" },
+      ],
+    },
+    causes: {
+      title: "⚠️ Causas Comunes que Requieren Cuidado a Largo Plazo",
+      items: ["Derrame cerebral", "Enfermedad de Parkinson", "Alzheimer / Demencia", "Deterioro cognitivo", "Lesión cerebral traumática", "Esclerosis múltiple", "Diabetes avanzada", "Cáncer en etapa avanzada", "EPOC", "Insuficiencia cardíaca", "Accidentes físicos"],
+    },
+    costs: {
+      title: "💰 Costo Real del Cuidado",
+      items: [
+        { label: "Cuidado Familiar", cost: "Pérdida de Ingresos", note: "Carga para la familia — tiempo y dinero", color: "#e05050" },
+        { label: "Enfermero/a en Casa", cost: "$7,436/mes", note: "Cuidado profesional en el hogar", color: "#e8a050" },
+        { label: "Hogar de Ancianos (Semi-Priv.)", cost: "$11,695/mes", note: "Habitación semi-privada", color: "#e8a050" },
+        { label: "Hogar de Ancianos (Privado)", cost: "$15,178/mes", note: "Habitación privada", color: "#e05050" },
+      ],
+    },
+    myths: {
+      title: "❌ Mitos del Seguro de Salud — Lo que NO cubre el LTC:",
+      items: [
+        { label: "Seguro Médico del Empleador", reason: "No cubre cuidado a largo plazo — es para tratamiento médico, no para asistencia en la vida diaria." },
+        { label: "Medicare", reason: "Solo cubre hasta 100 días de cuidado especializado después de una hospitalización. Después — nada." },
+        { label: "Medicaid", reason: "Solo disponible si agotaste casi todos tus ingresos y activos. No es un plan, es el último recurso." },
+      ],
+    },
+    types: {
+      title: "✅ Tipos de Cobertura de Cuidado a Largo Plazo",
+      items: [
+        { name: "LTC Independiente", pros: ["Primas más bajas", "Enfocado en LTC"], cons: ["Use it or lose it", "No garantizado"], color: "#e8a050" },
+        { name: "Beneficios Vinculados (LTC + Vida)", pros: ["Primas garantizadas", "Devolución de prima", "LTC + Vida combinados"], cons: [], color: "#4caf82" },
+        { name: "Rider de LTC en Póliza de Vida", pros: ["Seguro de vida + acceso a LTC", "Varios productos disponibles"], cons: [], color: "#4a90d9" },
+      ],
+    },
+  };
+
+  return { scores, gaps, plan: filteredPlan, budget, insights, medicareEducation, showMedicareEdu: isNear65 || !hasSsAccount, ltcEducation, showLTCEdu: !hasLTC };
 }
 
 // ─── UI COMPONENTS ─────────────────────────────────────────────────────────────
-function ScoreBar({ label, score }) {
+function ScoreBar({ label, score, index = 0 }) {
   const color = score >= 7 ? "#4caf82" : score >= 4 ? "#e8c050" : "#e05050";
   return (
-    <div style={{ marginBottom: 14 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-        <span style={{ fontSize: 12, color: "#c8d8e8" }}>{label}</span>
-        <span style={{ fontSize: 12, color, fontWeight: "bold" }}>{score}/10</span>
+    <div className="anim-fadeup" style={{ marginBottom: 16, animationDelay: `${index * 0.06}s` }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
+        <span style={{ fontSize: 12, color: "#9ab", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>{label}</span>
+        <span style={{ fontSize: 13, color, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{score}<span style={{ fontSize: 10, color: "#445566" }}>/10</span></span>
       </div>
-      <div style={{ height: 5, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${score * 10}%`, background: `linear-gradient(90deg, ${color}88, ${color})`, borderRadius: 3, transition: "width 1.2s ease" }} />
+      <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
+        <div className="score-bar-fill" style={{ '--bar-w': `${score * 10}%`, width: `${score * 10}%`, background: `linear-gradient(90deg, ${color}66, ${color})` }} />
       </div>
     </div>
   );
@@ -600,9 +943,115 @@ function MedicareEduCard({ edu, lang }) {
   );
 }
 
-function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset }) {
+function LTCEduCard({ edu, lang }) {
+  const [openSection, setOpenSection] = useState(null);
+  const toggle = (s) => setOpenSection(prev => prev === s ? null : s);
+  const accentRed = "#e05050";
+  const accentGreen = "#4caf82";
+  const accentGold = "#c8a050";
+
+  const Section = ({ id, title, children }) => (
+    <div style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      <div onClick={() => toggle(id)} style={{ padding: "15px 20px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ fontWeight: "bold", color: "#e8c878", fontSize: 13 }}>{title}</div>
+        <div style={{ color: accentGold, fontSize: 14 }}>{openSection === id ? "▲" : "▼"}</div>
+      </div>
+      {openSection === id && <div style={{ padding: "4px 20px 18px" }}>{children}</div>}
+    </div>
+  );
+
+  return (
+    <div style={{ background: "rgba(232,80,80,0.05)", border: "1px solid rgba(232,80,80,0.25)", borderRadius: 14, marginBottom: 20, overflow: "hidden" }}>
+
+      {/* ADLs */}
+      <Section id="adls" title={edu.adls.title}>
+        <p style={{ fontSize: 12, color: "#aabbcc", lineHeight: 1.7, margin: "0 0 14px" }}>{edu.adls.subtitle}</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 10 }}>
+          {edu.adls.items.map((item, i) => (
+            <div key={i} style={{ background: "rgba(232,160,80,0.08)", border: "1px solid rgba(232,160,80,0.2)", borderRadius: 9, padding: "12px 8px", textAlign: "center" }}>
+              <div style={{ fontSize: 24, marginBottom: 4 }}>{item.icon}</div>
+              <div style={{ fontSize: 11, color: "#c8d8e8", fontWeight: "bold" }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ background: "rgba(232,80,80,0.1)", border: "1px solid rgba(232,80,80,0.25)", borderRadius: 8, padding: "10px 14px", fontSize: 12, color: "#e08080", lineHeight: 1.6 }}>
+          ⚡ {lang === "en" ? "Benefits activate when you cannot perform 2 of these 6 — regardless of age." : "Los beneficios se activan cuando no puedes realizar 2 de estas 6 — sin importar la edad."}
+        </div>
+      </Section>
+
+      {/* Causes */}
+      <Section id="causes" title={edu.causes.title}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+          {edu.causes.items.map((item, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", background: "rgba(255,255,255,0.03)", borderRadius: 7, fontSize: 12, color: "#aabbcc" }}>
+              <span style={{ color: accentRed, fontSize: 10 }}>●</span>{item}
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 12, background: "rgba(232,80,80,0.08)", border: "1px solid rgba(232,80,80,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 12, color: "#e08080", lineHeight: 1.6 }}>
+          {lang === "en" ? "🔴 Any of these conditions could require long-term care — and most happen unexpectedly." : "🔴 Cualquiera de estas condiciones puede requerir cuidado a largo plazo — y la mayoría ocurre de forma inesperada."}
+        </div>
+      </Section>
+
+      {/* Real Costs */}
+      <Section id="costs" title={edu.costs.title}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+          {edu.costs.items.map((item, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.03)", border: `1px solid ${item.color}33`, borderRadius: 9, padding: "12px 16px" }}>
+              <div>
+                <div style={{ fontWeight: "bold", color: "#e8dcc8", fontSize: 12, marginBottom: 2 }}>{item.label}</div>
+                <div style={{ fontSize: 10, color: "#667788" }}>{item.note}</div>
+              </div>
+              <div style={{ fontWeight: "bold", color: item.color, fontSize: 13, whiteSpace: "nowrap", marginLeft: 12 }}>{item.cost}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 12, background: "rgba(232,80,80,0.08)", border: "1px solid rgba(232,80,80,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 12, color: "#e08080" }}>
+          {lang === "en" ? "📊 More than 70% of people over 65 will need some form of LTC. Only 11% have coverage." : "📊 Más del 70% de personas mayores de 65 necesitarán algún tipo de LTC. Solo el 11% tiene cobertura."}
+        </div>
+      </Section>
+
+      {/* Myths */}
+      <Section id="myths" title={edu.myths.title}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {edu.myths.items.map((item, i) => (
+            <div key={i} style={{ background: "rgba(232,80,80,0.07)", border: "1px solid rgba(232,80,80,0.2)", borderRadius: 9, padding: "12px 14px" }}>
+              <div style={{ fontWeight: "bold", color: "#e08080", fontSize: 12, marginBottom: 4 }}>❌ {item.label}</div>
+              <div style={{ fontSize: 11, color: "#8899aa", lineHeight: 1.6 }}>{item.reason}</div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Types of Coverage */}
+      <Section id="types" title={edu.types.title}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {edu.types.items.map((item, i) => (
+            <div key={i} style={{ background: `rgba(255,255,255,0.03)`, border: `1px solid ${item.color}44`, borderRadius: 10, padding: "14px 16px" }}>
+              <div style={{ fontWeight: "bold", color: item.color, fontSize: 13, marginBottom: 8 }}>{item.name}</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {item.pros.map((p, j) => (
+                  <span key={j} style={{ background: `${accentGreen}18`, border: `1px solid ${accentGreen}33`, borderRadius: 5, padding: "3px 9px", fontSize: 10, color: accentGreen }}>✓ {p}</span>
+                ))}
+                {item.cons.map((c, j) => (
+                  <span key={j} style={{ background: `${accentRed}12`, border: `1px solid ${accentRed}25`, borderRadius: 5, padding: "3px 9px", fontSize: 10, color: "#e08080" }}>✗ {c}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 14, background: "rgba(76,175,130,0.08)", border: "1px solid rgba(76,175,130,0.25)", borderRadius: 8, padding: "10px 14px", fontSize: 12, color: "#6caf92", lineHeight: 1.6 }}>
+          💡 {lang === "en" ? "The best option for most people is a Linked Benefits policy — LTC + Life Insurance combined, guaranteed premiums, and return of premium if never used." : "La mejor opción para la mayoría es una póliza de Beneficios Vinculados — LTC + Vida combinados, primas garantizadas y devolución de prima si nunca se usa."}
+        </div>
+      </Section>
+
+    </div>
+  );
+}
+
+function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onFinish }) {
   const t = T[lang];
-  const { scores, gaps, plan: budgetPlan, budget, insights, medicareEducation, showMedicareEdu } = plan;
+  const { scores, gaps, plan: budgetPlan, budget, insights, medicareEducation, showMedicareEdu, ltcEducation, showLTCEdu } = plan;
   const avgScore = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / Object.values(scores).length);
   const overallColor = avgScore >= 7 ? "#4caf82" : avgScore >= 4 ? "#e8c050" : "#e05050";
   const overallLabel = avgScore >= 7 ? t.wellProtected : avgScore >= 4 ? t.partiallyProtected : t.significantGaps;
@@ -612,37 +1061,82 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset }) {
   const opportunities = gaps.filter(g => oTags.includes(g.tag));
 
   return (
-    <div>
-      <div style={{ textAlign: "center", marginBottom: 36 }}>
-        <div style={{ fontSize: 10, color: "#8899aa", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>{t.assessmentTitle}</div>
+    <div className="anim-fadeup">
+
+      {/* SCORE HERO */}
+      <div style={{ textAlign: "center", marginBottom: 32, padding: "32px 20px", background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 20 }}>
+        <div style={{ fontSize: 10, color: "#445566", letterSpacing: 3, textTransform: "uppercase", marginBottom: 14, fontWeight: 600 }}>{t.assessmentTitle}</div>
         {clientName && (
-          <div style={{ fontSize: 13, color: "#c8a050", marginBottom: 10 }}>
-            👤 <strong>{clientName}</strong>
+          <div style={{ fontSize: 12, color: "#c8a050", marginBottom: 16, fontWeight: 500 }}>
+            👤 <strong style={{ color: "#e8c878" }}>{clientName}</strong>
           </div>
         )}
-        <div style={{ width: 140, height: 140, borderRadius: "50%", margin: "0 auto 16px", background: `conic-gradient(${overallColor} ${avgScore * 36}deg, rgba(255,255,255,0.05) 0deg)`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 0 50px ${overallColor}44` }}>
-          <div style={{ width: 110, height: 110, borderRadius: "50%", background: "#0a1628", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ fontSize: 34, fontWeight: "bold", color: overallColor }}>{avgScore}</div>
-            <div style={{ fontSize: 10, color: "#8899aa" }}>/ 10</div>
+        <div style={{ position: "relative", width: 148, height: 148, margin: "0 auto 18px" }}>
+          <svg width="148" height="148" style={{ transform: "rotate(-90deg)" }}>
+            <circle cx="74" cy="74" r="62" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="10" />
+            <circle cx="74" cy="74" r="62" fill="none" stroke={overallColor} strokeWidth="10"
+              strokeDasharray={`${2 * Math.PI * 62 * avgScore / 10} ${2 * Math.PI * 62}`}
+              strokeLinecap="round"
+              style={{ filter: `drop-shadow(0 0 8px ${overallColor}88)` }} />
+          </svg>
+          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", textAlign: "center" }}>
+            <div style={{ fontSize: 36, fontWeight: 700, color: overallColor, lineHeight: 1, fontFamily: "'Playfair Display', serif" }}>{avgScore}</div>
+            <div style={{ fontSize: 10, color: "#445566", marginTop: 2 }}>/ 10</div>
           </div>
         </div>
-        <div style={{ fontSize: 18, color: overallColor, fontWeight: "bold" }}>{overallLabel}</div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 14, marginTop: 8, flexWrap: "wrap" }}>
-          {criticalGaps.length > 0 && <span style={{ fontSize: 11, color: "#e05050" }}>🔴 {criticalGaps.length} {t.critical}</span>}
-          {importantGaps.length > 0 && <span style={{ fontSize: 11, color: "#e8a050" }}>🟡 {importantGaps.length} {t.important}</span>}
-          {opportunities.length > 0 && <span style={{ fontSize: 11, color: "#4caf82" }}>💡 {opportunities.length} {t.opportunity}</span>}
+        <div style={{ fontSize: 18, color: overallColor, fontWeight: 600, marginBottom: 10, fontFamily: "'Playfair Display', serif" }}>{overallLabel}</div>
+        <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
+          {criticalGaps.length > 0 && <span style={{ fontSize: 11, color: "#e05050", background: "rgba(224,80,80,0.1)", border: "1px solid rgba(224,80,80,0.2)", borderRadius: 20, padding: "3px 12px" }}>🔴 {criticalGaps.length} {t.critical}</span>}
+          {importantGaps.length > 0 && <span style={{ fontSize: 11, color: "#e8a050", background: "rgba(232,160,80,0.1)", border: "1px solid rgba(232,160,80,0.2)", borderRadius: 20, padding: "3px 12px" }}>🟡 {importantGaps.length} {t.important}</span>}
+          {opportunities.length > 0 && <span style={{ fontSize: 11, color: "#4caf82", background: "rgba(76,175,130,0.1)", border: "1px solid rgba(76,175,130,0.2)", borderRadius: 20, padding: "3px 12px" }}>💡 {opportunities.length} {t.opportunity}</span>}
         </div>
       </div>
 
-      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 14, padding: "22px 24px", marginBottom: 18 }}>
-        <h3 style={{ color: "#e8c878", margin: "0 0 18px", fontSize: 13, letterSpacing: 1 }}>{t.scoresTitle}</h3>
-        {Object.entries(scores).map(([key, score]) => <ScoreBar key={key} label={t.scoreLabels[key] || key} score={score} />)}
+      {/* SCORE BARS */}
+      <div style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 18, padding: "24px 24px", marginBottom: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+          <div style={{ width: 3, height: 18, borderRadius: 2, background: "linear-gradient(180deg, #c8a050, #e8c878)" }} />
+          <h3 style={{ color: "#e8c878", margin: 0, fontSize: 14, fontWeight: 600, fontFamily: "'Playfair Display', serif" }}>{t.scoresTitle}</h3>
+        </div>
+        {Object.entries(scores).map(([key, score], i) => <ScoreBar key={key} label={t.scoreLabels[key] || key} score={score} index={i} />)}
       </div>
 
-      {criticalGaps.length > 0 && <div style={{ marginBottom: 16 }}><h3 style={{ color: "#e05050", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>{t.criticalTitle}</h3>{criticalGaps.map((g, i) => <GapCard key={i} gap={g} />)}</div>}
-      {importantGaps.length > 0 && <div style={{ marginBottom: 16 }}><h3 style={{ color: "#e8a050", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>{t.importantTitle}</h3>{importantGaps.map((g, i) => <GapCard key={i} gap={g} />)}</div>}
-      {opportunities.length > 0 && <div style={{ marginBottom: 16 }}><h3 style={{ color: "#4caf82", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>{t.opportunityTitle}</h3>{opportunities.map((g, i) => <GapCard key={i} gap={g} />)}</div>}
-      {insights.length > 0 && <div style={{ marginBottom: 16 }}><h3 style={{ color: "#64a0dc", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>{t.insightsTitle}</h3>{insights.map((ins, i) => <InsightCard key={i} insight={ins} />)}</div>}
+      {criticalGaps.length > 0 && (
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ width: 3, height: 16, borderRadius: 2, background: "#e05050" }} />
+            <h3 style={{ color: "#e05050", margin: 0, fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>{t.criticalTitle}</h3>
+          </div>
+          {criticalGaps.map((g, i) => <GapCard key={i} gap={g} />)}
+        </div>
+      )}
+      {importantGaps.length > 0 && (
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ width: 3, height: 16, borderRadius: 2, background: "#e8a050" }} />
+            <h3 style={{ color: "#e8a050", margin: 0, fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>{t.importantTitle}</h3>
+          </div>
+          {importantGaps.map((g, i) => <GapCard key={i} gap={g} />)}
+        </div>
+      )}
+      {opportunities.length > 0 && (
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ width: 3, height: 16, borderRadius: 2, background: "#4caf82" }} />
+            <h3 style={{ color: "#4caf82", margin: 0, fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>{t.opportunityTitle}</h3>
+          </div>
+          {opportunities.map((g, i) => <GapCard key={i} gap={g} />)}
+        </div>
+      )}
+      {insights.length > 0 && (
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ width: 3, height: 16, borderRadius: 2, background: "#4a90d9" }} />
+            <h3 style={{ color: "#4a90d9", margin: 0, fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>{t.insightsTitle}</h3>
+          </div>
+          {insights.map((ins, i) => <InsightCard key={i} insight={ins} />)}
+        </div>
+      )}
 
       {showMedicareEdu && medicareEducation && (
         <div style={{ marginBottom: 16 }}>
@@ -656,58 +1150,82 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset }) {
         </div>
       )}
 
-      <div style={{ background: "linear-gradient(135deg, rgba(200,160,80,0.08), rgba(200,160,80,0.03))", border: "1px solid rgba(200,160,80,0.3)", borderRadius: 14, padding: "22px 24px", marginBottom: 18 }}>
-        <h3 style={{ color: "#e8c878", margin: "0 0 4px", fontSize: 13, letterSpacing: 1 }}>{t.budgetTitle}</h3>
-        <p style={{ color: "#8899aa", fontSize: 11, margin: "0 0 16px" }}>{t.budgetSubtitle} <strong style={{ color: "#c8a050" }}>{budget}{t.perMonth}</strong></p>
+      {showLTCEdu && ltcEducation && (
+        <div style={{ marginBottom: 16 }}>
+          <h3 style={{ color: "#e05050", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>
+            🏥 {lang === "en" ? "Long-Term Care — Education Center" : "Cuidado a Largo Plazo — Centro Educativo"}
+          </h3>
+          <p style={{ fontSize: 11, color: "#8899aa", margin: "0 0 10px" }}>
+            {lang === "en"
+              ? "You don't have LTC coverage. Learn what it is, what it costs, and your options."
+              : "No tienes cobertura de LTC. Aprende qué es, cuánto cuesta y cuáles son tus opciones."}
+          </p>
+          <LTCEduCard edu={ltcEducation} lang={lang} />
+        </div>
+      )}
+
+      {/* ── BUDGET PLAN ── */}
+      <div style={{ background: "linear-gradient(135deg, rgba(200,160,80,0.07), rgba(200,160,80,0.02))", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 18, padding: "24px 24px", marginBottom: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+          <div style={{ width: 3, height: 18, borderRadius: 2, background: "linear-gradient(180deg, #c8a050, #e8c878)" }} />
+          <h3 className="fa-header" style={{ color: "#e8c878", margin: 0, fontSize: 14, fontWeight: 600 }}>{t.budgetTitle}</h3>
+        </div>
+        <p style={{ color: "#445566", fontSize: 11, margin: "0 0 18px", paddingLeft: 11 }}>{t.budgetSubtitle} <strong style={{ color: "#c8a050" }}>{budget}{t.perMonth}</strong></p>
         {budgetPlan.map((item, i) => (
-          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "10px 0", borderBottom: i < budgetPlan.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 12px", borderRadius: 10, background: i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent", marginBottom: 4 }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: "bold", color: "#e8dcc8", marginBottom: 2, fontSize: 12 }}>{item.item}</div>
-              <div style={{ fontSize: 10, color: "#8899aa" }}>{item.note}</div>
+              <div style={{ fontWeight: 500, color: "#d0c8b8", fontSize: 12, marginBottom: 1 }}>{item.item}</div>
+              <div style={{ fontSize: 10, color: "#445566" }}>{item.note}</div>
             </div>
-            <div style={{ color: "#c8a050", fontWeight: "bold", fontSize: 11, whiteSpace: "nowrap", marginLeft: 12 }}>{item.amount}</div>
+            <div style={{ color: "#c8a050", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap", marginLeft: 12, background: "rgba(200,160,80,0.08)", borderRadius: 8, padding: "3px 10px" }}>{item.amount}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "18px 24px", marginBottom: 28 }}>
-        <h3 style={{ color: "#c8d8e8", margin: "0 0 10px", fontSize: 11, letterSpacing: 1 }}>{t.factsTitle}</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
+      {/* ── KEY FACTS ── */}
+      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 18, padding: "20px 24px", marginBottom: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+          <div style={{ width: 3, height: 16, borderRadius: 2, background: "#4a90d9" }} />
+          <h3 style={{ color: "#4a90d9", margin: 0, fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>{t.factsTitle}</h3>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
           {t.facts.map(([stat, desc]) => (
-            <div key={stat} style={{ background: "rgba(200,160,80,0.06)", borderRadius: 8, padding: "9px 11px" }}>
-              <div style={{ fontSize: 15, color: "#c8a050", fontWeight: "bold" }}>{stat}</div>
-              <div style={{ fontSize: 9, color: "#8899aa", marginTop: 2 }}>{desc}</div>
+            <div key={stat} style={{ background: "rgba(200,160,80,0.05)", border: "1px solid rgba(200,160,80,0.1)", borderRadius: 12, padding: "12px 14px" }}>
+              <div className="fa-header" style={{ fontSize: 18, color: "#c8a050", fontWeight: 700, marginBottom: 4 }}>{stat}</div>
+              <div style={{ fontSize: 10, color: "#445566", lineHeight: 1.5 }}>{desc}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* CTA + Advisor Block */}
-      <div style={{ background: "linear-gradient(135deg, rgba(200,160,80,0.1), rgba(200,160,80,0.04))", border: "1px solid rgba(200,160,80,0.35)", borderRadius: 14, padding: "22px 24px", marginBottom: 16, textAlign: "center" }}>
-        <div style={{ fontSize: 22, marginBottom: 8 }}>📅</div>
-        <div style={{ fontSize: 15, fontWeight: "bold", color: "#e8c878", marginBottom: 8 }}>
-          {lang === "en" ? "Schedule a Free Appointment" : "Programa una Cita Gratuita"}
+      {/* ── CTA BLOCK ── */}
+      <div style={{ background: "linear-gradient(135deg, rgba(200,160,80,0.09), rgba(200,160,80,0.03))", border: "1px solid rgba(200,160,80,0.3)", borderRadius: 20, padding: "28px 24px", marginBottom: 16, textAlign: "center" }}>
+        <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(200,160,80,0.12)", border: "1px solid rgba(200,160,80,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, margin: "0 auto 14px" }}>📞</div>
+        <div className="fa-header" style={{ fontSize: 17, fontWeight: 700, color: "#f0e4c8", marginBottom: 10, letterSpacing: 0.3 }}>
+          {lang === "en" ? "We Will Reach Out to You" : "Nosotros Te Contactaremos"}
         </div>
-        <div style={{ fontSize: 12, color: "#8899aa", lineHeight: 1.8, marginBottom: 14 }}>
+        <div style={{ fontSize: 13, color: "#667788", lineHeight: 1.85, marginBottom: 20, maxWidth: 420, margin: "0 auto 20px", fontWeight: 300 }}>
           {lang === "en"
-            ? `${clientName ? `${clientName}, your` : "Your"} results are ready. A 30-minute strategy session with ${advisorName || "your advisor"} costs nothing — and could change everything.`
-            : `${clientName ? `${clientName}, tus` : "Tus"} resultados están listos. Una sesión de estrategia de 30 minutos con ${advisorName || "tu asesor"} no cuesta nada — y podría cambiarlo todo.`}
+            ? `${clientName ? `${clientName}, your` : "Your"} assessment is complete. ${advisorName || "Your advisor"} will review your results and reach out to guide you and present personalized options and strategies for your situation.`
+            : `${clientName ? `${clientName}, tu` : "Tu"} evaluación está completa. ${advisorName || "Tu asesor"} revisará tus resultados y se pondrá en contacto contigo para guiarte y presentarte opciones y estrategias personalizadas para tu situación.`}
         </div>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          <button onClick={onBack} style={{ padding: "9px 18px", background: "transparent", border: "1px solid rgba(200,160,80,0.4)", borderRadius: 8, color: "#c8a050", fontSize: 12, cursor: "pointer" }}>{t.reviewBtn}</button>
-          <button onClick={() => window.print()} style={{ padding: "9px 18px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 8, color: "#64a0dc", fontSize: 12, cursor: "pointer" }}>
-            🖨️ {lang === "en" ? "Print / Save PDF" : "Imprimir / Guardar PDF"}
+          <button onClick={onBack} className="btn-ghost" style={{ fontSize: 12 }}>{t.reviewBtn}</button>
+          <button onClick={() => window.print()} className="btn-ghost" style={{ fontSize: 12, color: "#4a90d9", borderColor: "rgba(74,144,217,0.3)" }}>
+            🖨️ {lang === "en" ? "Save PDF" : "Guardar PDF"}
           </button>
-          <button onClick={onReset} style={{ padding: "9px 18px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 8, color: "#0a1628", fontSize: 12, fontWeight: "bold", cursor: "pointer" }}>{t.restartBtn}</button>
+          <button onClick={onFinish} className="btn-primary" style={{ fontSize: 13, padding: "11px 28px" }}>
+            ✅ {lang === "en" ? "Done — Submit" : "Listo — Enviar"}
+          </button>
         </div>
       </div>
 
-      {/* Legal Disclaimer */}
-      <div style={{ textAlign: "center", padding: "12px 16px", background: "rgba(0,0,0,0.2)", borderRadius: 10, marginBottom: 20 }}>
-        <div style={{ fontSize: 10, color: "#334455", lineHeight: 1.7 }}>
+      {/* Legal */}
+      <div style={{ textAlign: "center", padding: "10px 16px", marginBottom: 20 }}>
+        <div style={{ fontSize: 9, color: "#1e2c3a", lineHeight: 1.7 }}>
           {lang === "en"
-            ? `For educational purposes only. Does not constitute legal, tax, or financial advice. ${advisorName ? `Presented by ${advisorName}.` : ""} Schedule an appointment to discuss your personalized options with a licensed financial professional.`
-            : `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. ${advisorName ? `Presentado por ${advisorName}.` : ""} Programa una cita para platicar de tus opciones con un asesor financiero licenciado.`}
+            ? `For educational purposes only. Does not constitute legal, tax, or financial advice. ${advisorName ? `Presented by ${advisorName}.` : ""} We will contact you to present personalized options and strategies for your situation.`
+            : `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. ${advisorName ? `Presentado por ${advisorName}.` : ""} Nos pondremos en contacto contigo para presentarte opciones y estrategias personalizadas para tu situación.`}
         </div>
       </div>
     </div>
@@ -718,6 +1236,28 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset }) {
 function ImpactScreen({ clientName, advisorName, onContinue }) {
   const [step, setStep] = useState(0);
   const [lang, setLang] = useState(null);
+  const [seenIntroMsg, setSeenIntroMsg] = useState(false);
+
+  const introContent = {
+    en: {
+      title: "Welcome — Thank You for Trusting Us",
+      body: [
+        `We are a team of licensed financial professionals dedicated to guiding you and helping you discover the strategies and options available to protect your income, your family, and your financial future — both in the short and long term.`,
+        `Beyond tax preparation, our mission is to make sure you understand where you stand today, what options are available to you, and how to build a plan that works for your specific situation.`,
+        `This questionnaire will help us get to know you better so we can present you with personalized options and strategies. Please answer as honestly as possible — everything is confidential.`,
+      ],
+      btn: "Continue →",
+    },
+    es: {
+      title: "Bienvenido — Gracias por Permitirnos Asistirte",
+      body: [
+        `Somos un equipo de profesionales financieros licenciados dedicados a guiarte y darte a conocer las estrategias y opciones disponibles para proteger tus ingresos, tu familia y tu futuro financiero — tanto a corto como a largo plazo.`,
+        `Más allá de la preparación de impuestos, nuestra misión es asegurarnos de que entiendas dónde estás hoy, qué opciones tienes disponibles y cómo construir un plan que funcione para tu situación específica.`,
+        `Este cuestionario nos ayudará a conocerte mejor para poder presentarte opciones y estrategias personalizadas. Por favor responde con la mayor honestidad posible — todo es confidencial.`,
+      ],
+      btn: "Continuar →",
+    },
+  };
 
   const stories = {
     en: [
@@ -738,26 +1278,79 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
     ],
   };
 
+  // Step 1: Language selection
   if (!lang) {
     return (
-      <div style={{ minHeight: "100vh", background: "#050a12", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Georgia', serif", padding: "20px" }}>
-        <div style={{ textAlign: "center", maxWidth: 460 }}>
-          <div style={{ fontSize: 58, marginBottom: 18, filter: "drop-shadow(0 0 24px rgba(200,160,80,0.6))" }}>⚖️</div>
-          <h1 style={{ fontSize: 22, color: "#e8c878", margin: "0 0 6px", letterSpacing: 1 }}>Financial Protection Advisor</h1>
-          <h2 style={{ fontSize: 17, color: "#c8b878", margin: "0 0 8px", fontWeight: "normal" }}>Asesor de Protección Financiera</h2>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 60%, #080e1a 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "20px", position: "relative", overflow: "hidden" }}>
+        <GlobalStyles />
+        {/* Ambient glow */}
+        <div style={{ position: "absolute", width: 700, height: 700, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,160,80,0.05) 0%, transparent 65%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)", pointerEvents: "none" }} />
+
+        <div className="anim-scalein" style={{ textAlign: "center", maxWidth: 480, position: "relative", zIndex: 1 }}>
+          {/* Logo mark */}
+          <div style={{ width: 72, height: 72, borderRadius: 20, background: "linear-gradient(135deg, rgba(200,160,80,0.15), rgba(200,160,80,0.05))", border: "1px solid rgba(200,160,80,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, margin: "0 auto 24px", boxShadow: "0 0 40px rgba(200,160,80,0.15)" }}>⚖️</div>
+
+          <h1 className="fa-header gold-shimmer" style={{ fontSize: 26, margin: "0 0 6px", lineHeight: 1.2 }}>Financial Protection Advisor</h1>
+          <p style={{ fontSize: 15, color: "#667788", margin: "0 0 6px", fontWeight: 300 }}>Asesor de Protección Financiera</p>
+
           {clientName && (
-            <div style={{ margin: "10px auto 6px", padding: "8px 20px", background: "rgba(200,160,80,0.1)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 20, display: "inline-block" }}>
-              <span style={{ fontSize: 13, color: "#c8a050" }}>👤 Preparado para: <strong>{clientName}</strong></span>
+            <div className="anim-fadeup delay-2" style={{ margin: "16px auto 0", padding: "9px 22px", background: "rgba(200,160,80,0.07)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 24, display: "inline-block" }}>
+              <span style={{ fontSize: 12, color: "#c8a050", fontWeight: 500 }}>Prepared for <strong style={{ color: "#e8c878" }}>{clientName}</strong></span>
             </div>
           )}
           {advisorName && (
-            <div style={{ fontSize: 11, color: "#445566", margin: "4px 0 0" }}>Presentado por: {advisorName}</div>
+            <div className="anim-fadeup delay-3" style={{ fontSize: 10, color: "#334455", margin: "8px 0 0", letterSpacing: 1 }}>Presented by {advisorName}</div>
           )}
-          <p style={{ color: "#667788", fontSize: 12, margin: "0 0 40px", letterSpacing: 1 }}>Select your language · Selecciona tu idioma</p>
-          <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
-            {[["en","🇺🇸 English"],["es","🇪🇸 Español"]].map(([code, label]) => (
-              <button key={code} onClick={() => setLang(code)} style={{ padding: "18px 36px", fontSize: 16, fontWeight: "bold", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 12, color: "#050a12", cursor: "pointer", boxShadow: "0 4px 20px rgba(200,160,80,0.3)", letterSpacing: 1, transition: "all 0.2s" }}>{label}</button>
+
+          <p style={{ color: "#334455", fontSize: 11, margin: "28px 0 20px", letterSpacing: 2, textTransform: "uppercase" }}>Select your language · Selecciona tu idioma</p>
+
+          <div style={{ display: "flex", gap: 14, justifyContent: "center" }}>
+            {[["en","🇺🇸","English"],["es","🇪🇸","Español"]].map(([code, flag, label]) => (
+              <button key={code} onClick={() => setLang(code)} className="hover-lift"
+                style={{ padding: "20px 40px", fontSize: 15, fontWeight: 600, background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 14, color: "#050a12", cursor: "pointer", boxShadow: "0 4px 24px rgba(200,160,80,0.3)", letterSpacing: 0.5, fontFamily: "'DM Sans', sans-serif" }}>
+                <div style={{ fontSize: 22, marginBottom: 4 }}>{flag}</div>
+                {label}
+              </button>
             ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 2: Welcome / intro message
+  if (!seenIntroMsg) {
+    const intro = introContent[lang];
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 60%, #080e1a 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "28px 20px", position: "relative", overflow: "hidden" }}>
+        <GlobalStyles />
+        <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,160,80,0.04) 0%, transparent 65%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)", pointerEvents: "none" }} />
+
+        <div className="anim-fadeup" style={{ maxWidth: 560, width: "100%", position: "relative", zIndex: 1 }}>
+          <div style={{ textAlign: "center", marginBottom: 30 }}>
+            <div style={{ width: 60, height: 60, borderRadius: 18, background: "linear-gradient(135deg, rgba(200,160,80,0.15), rgba(200,160,80,0.05))", border: "1px solid rgba(200,160,80,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, margin: "0 auto 18px", boxShadow: "0 0 30px rgba(200,160,80,0.12)" }}>🤝</div>
+            <h1 className="fa-header" style={{ fontSize: 21, color: "#f0e4c8", margin: "0 0 8px", lineHeight: 1.3, fontWeight: 700 }}>{intro.title}</h1>
+            {clientName && <div style={{ fontSize: 12, color: "#c8a050", fontWeight: 500 }}>👤 {clientName}</div>}
+          </div>
+
+          <div style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(200,160,80,0.14)", borderRadius: 18, padding: "26px 28px", marginBottom: 24, backdropFilter: "blur(8px)" }}>
+            {intro.body.map((para, i) => (
+              <p key={i} className={`anim-fadeup delay-${i+2}`} style={{ fontSize: 14, color: i === 0 ? "#c8d8e8" : "#667788", lineHeight: 1.9, margin: i < intro.body.length - 1 ? "0 0 16px" : "0", fontStyle: i === 2 ? "italic" : "normal", fontWeight: i === 0 ? 400 : 300 }}>
+                {para}
+              </p>
+            ))}
+          </div>
+
+          {advisorName && (
+            <div style={{ textAlign: "center", fontSize: 11, color: "#334455", marginBottom: 20, letterSpacing: 0.5 }}>
+              — {advisorName}
+            </div>
+          )}
+
+          <div style={{ textAlign: "center" }}>
+            <button onClick={() => setSeenIntroMsg(true)} className="btn-primary" style={{ padding: "15px 52px", fontSize: 15 }}>
+              {intro.btn}
+            </button>
           </div>
         </div>
       </div>
@@ -769,46 +1362,49 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
   const isLast = step === slides.length - 1;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#050a12", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "'Georgia', serif", padding: "20px", position: "relative", overflow: "hidden" }}>
-      {/* Background pulse */}
-      <div style={{ position: "absolute", width: 500, height: 500, borderRadius: "50%", background: `radial-gradient(circle, ${slide.color}11 0%, transparent 70%)`, top: "50%", left: "50%", transform: "translate(-50%,-50%)", transition: "background 0.6s ease", pointerEvents: "none" }} />
+    <div key={step} style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 60%, #080e1a 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "24px 20px", position: "relative", overflow: "hidden" }}>
+      <GlobalStyles />
+      {/* Ambient color glow that changes with slide */}
+      <div style={{ position: "absolute", width: 560, height: 560, borderRadius: "50%", background: `radial-gradient(circle, ${slide.color}0d 0%, transparent 65%)`, top: "50%", left: "50%", transform: "translate(-50%,-50%)", transition: "background 0.7s ease", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", width: 300, height: 300, borderRadius: "50%", background: `radial-gradient(circle, ${slide.color}07 0%, transparent 65%)`, top: "15%", right: "10%", transition: "background 0.7s ease", pointerEvents: "none" }} />
 
-      {/* Progress dots */}
-      <div style={{ display: "flex", gap: 6, marginBottom: 40, position: "relative", zIndex: 1 }}>
+      {/* Step pills */}
+      <div style={{ display: "flex", gap: 5, marginBottom: 44, position: "relative", zIndex: 1 }}>
         {slides.map((_, i) => (
-          <div key={i} style={{ width: i === step ? 20 : 7, height: 7, borderRadius: 4, background: i <= step ? slide.color : "rgba(255,255,255,0.1)", transition: "all 0.4s ease" }} />
+          <div key={i} style={{ height: 4, borderRadius: 3, width: i === step ? 28 : (i < step ? 14 : 7), background: i <= step ? slide.color : "rgba(255,255,255,0.08)", transition: "all 0.45s cubic-bezier(0.4,0,0.2,1)", boxShadow: i === step ? `0 0 8px ${slide.color}88` : "none" }} />
         ))}
       </div>
 
-      {/* Slide content */}
-      <div style={{ textAlign: "center", maxWidth: 500, position: "relative", zIndex: 1, padding: "0 10px" }}>
-        <div style={{ fontSize: 56, marginBottom: 16, filter: `drop-shadow(0 0 16px ${slide.color}66)` }}>{slide.icon}</div>
-        <div style={{ fontSize: slide.isFinal ? 28 : 52, fontWeight: "bold", color: slide.color, margin: "0 0 16px", lineHeight: 1.1, textShadow: `0 0 30px ${slide.color}44` }}>
-          {slide.stat}
+      {/* Card */}
+      <div className="anim-scalein" style={{ textAlign: "center", maxWidth: 520, width: "100%", position: "relative", zIndex: 1 }}>
+        <div style={{ background: `${slide.color}0a`, border: `1px solid ${slide.color}22`, borderRadius: 24, padding: "36px 32px 32px", backdropFilter: "blur(12px)", marginBottom: 28 }}>
+          <div style={{ fontSize: 52, marginBottom: 18, filter: `drop-shadow(0 0 20px ${slide.color}55)` }}>{slide.icon}</div>
+          <div className="fa-header" style={{ fontSize: slide.isFinal ? 30 : 56, fontWeight: 700, color: slide.color, margin: "0 0 18px", lineHeight: 1.05, textShadow: `0 0 40px ${slide.color}33`, letterSpacing: slide.isFinal ? 0.5 : -1 }}>
+            {slide.stat}
+          </div>
+          <p style={{ fontSize: slide.isFinal ? 15 : 16, color: slide.isFinal ? "#c0d0e0" : "#8899aa", lineHeight: 1.95, margin: 0, fontStyle: slide.isFinal ? "italic" : "normal", fontWeight: 300 }}>
+            {slide.text}
+          </p>
         </div>
-        <p style={{ fontSize: slide.isFinal ? 15 : 17, color: slide.isFinal ? "#c8d8e8" : "#aabbcc", lineHeight: 1.9, margin: "0 0 40px", fontStyle: slide.isFinal ? "italic" : "normal" }}>
-          {slide.text}
-        </p>
 
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", alignItems: "center" }}>
           {step > 0 && (
-            <button onClick={() => setStep(p => p - 1)} style={{ padding: "10px 22px", background: "transparent", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8, color: "#667788", fontSize: 13, cursor: "pointer" }}>
-              ←
-            </button>
+            <button onClick={() => setStep(p => p - 1)} className="btn-ghost" style={{ padding: "11px 20px" }}>←</button>
           )}
           {!isLast ? (
-            <button onClick={() => setStep(p => p + 1)} style={{ padding: "14px 36px", background: `linear-gradient(135deg, ${slide.color}cc, ${slide.color})`, border: "none", borderRadius: 10, color: "#050a12", fontSize: 14, fontWeight: "bold", cursor: "pointer", boxShadow: `0 4px 20px ${slide.color}44`, letterSpacing: 1 }}>
+            <button onClick={() => setStep(p => p + 1)} className="hover-lift"
+              style={{ padding: "14px 38px", background: `linear-gradient(135deg, ${slide.color}dd, ${slide.color})`, border: "none", borderRadius: 12, color: "#050a12", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: `0 4px 22px ${slide.color}44`, letterSpacing: 0.5, fontFamily: "'DM Sans', sans-serif" }}>
               {lang === "en" ? "Next →" : "Siguiente →"}
             </button>
           ) : (
-            <button onClick={() => onContinue(lang)} style={{ padding: "16px 40px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 12, color: "#050a12", fontSize: 15, fontWeight: "bold", cursor: "pointer", boxShadow: "0 6px 28px rgba(200,160,80,0.5)", letterSpacing: 1 }}>
+            <button onClick={() => onContinue(lang)} className="btn-primary" style={{ padding: "15px 44px", fontSize: 15 }}>
               {lang === "en" ? "Start My Assessment →" : "Iniciar Mi Evaluación →"}
             </button>
           )}
         </div>
 
         {!isLast && (
-          <button onClick={() => onContinue(lang)} style={{ marginTop: 16, background: "transparent", border: "none", color: "#445566", fontSize: 11, cursor: "pointer", textDecoration: "underline" }}>
+          <button onClick={() => onContinue(lang)} style={{ marginTop: 14, background: "transparent", border: "none", color: "#2a3a4a", fontSize: 11, cursor: "pointer", textDecoration: "underline", fontFamily: "'DM Sans', sans-serif" }}>
             {lang === "en" ? "Skip intro" : "Saltar intro"}
           </button>
         )}
@@ -837,6 +1433,218 @@ function LanguageScreen({ onSelect }) {
             </button>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── LTC EDUCATION SCREEN ──────────────────────────────────────────────────────
+function LTCEducationScreen({ lang, onContinue }) {
+  const [slide, setSlide] = useState(0);
+  const isEN = lang === "en";
+
+  const slides = [
+    // SLIDE 0 — The Shocking Truth
+    {
+      bg: "radial-gradient(ellipse at top, #1a0808 0%, #0a0e1a 100%)",
+      accent: "#e05050",
+      content: () => (
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: 64, marginBottom: 16, filter: "drop-shadow(0 0 30px rgba(224,80,80,0.6))", animation: "pulse 2s infinite" }}>⏳</div>
+          <h2 style={{ fontSize: 22, color: "#e05050", margin: "0 0 10px", letterSpacing: 1 }}>
+            {isEN ? "Something you should know before we continue..." : "Algo que debes saber antes de continuar..."}
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, margin: "24px 0" }}>
+            {[
+              { stat: "70%+", desc: isEN ? "of people over 65 will need long-term care" : "de personas mayores de 65 necesitarán cuidado a largo plazo" },
+              { stat: "11%", desc: isEN ? "only have any LTC coverage at all" : "solamente tiene algún tipo de cobertura LTC" },
+              { stat: "$11,695", desc: isEN ? "average monthly nursing home cost" : "costo mensual promedio de un hogar de ancianos" },
+              { stat: "90 days", desc: isEN ? "is all Medicare covers — then nothing" : "es todo lo que cubre Medicare — luego nada" },
+            ].map((item, i) => (
+              <div key={i} style={{ background: "rgba(224,80,80,0.1)", border: "1px solid rgba(224,80,80,0.3)", borderRadius: 12, padding: "16px 12px", textAlign: "center" }}>
+                <div style={{ fontSize: 26, fontWeight: "bold", color: "#e05050", marginBottom: 4 }}>{item.stat}</div>
+                <div style={{ fontSize: 11, color: "#8899aa", lineHeight: 1.5 }}>{item.desc}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: 13, color: "#8899aa", lineHeight: 1.8, fontStyle: "italic" }}>
+            {isEN
+              ? "Most people think their health insurance, employer, or Medicare will cover them. The truth may surprise you."
+              : "La mayoría cree que su seguro médico, empleador o Medicare los cubrirá. La verdad puede sorprenderte."}
+          </p>
+        </div>
+      ),
+    },
+
+    // SLIDE 1 — What Triggers LTC (ADLs visual)
+    {
+      bg: "radial-gradient(ellipse at top, #0a0e1a 0%, #0d1a2a 100%)",
+      accent: "#e8a050",
+      content: () => (
+        <div>
+          <div style={{ textAlign: "center", marginBottom: 20 }}>
+            <div style={{ fontSize: 44, marginBottom: 10 }}>🔑</div>
+            <h2 style={{ fontSize: 19, color: "#e8c878", margin: "0 0 8px" }}>
+              {isEN ? "When Do Benefits Activate?" : "¿Cuándo Se Activan los Beneficios?"}
+            </h2>
+            <p style={{ fontSize: 12, color: "#8899aa", lineHeight: 1.7, margin: 0 }}>
+              {isEN
+                ? "Long-term care benefits activate when you can no longer independently perform 2 of the 6 Activities of Daily Living."
+                : "Los beneficios de cuidado a largo plazo se activan cuando ya no puedes realizar de forma independiente 2 de las 6 Actividades de la Vida Diaria."}
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 16 }}>
+            {[
+              { icon: "🛁", en: "Bathing", es: "Bañarse", color: "#4a90d9" },
+              { icon: "👗", en: "Dressing", es: "Vestirse", color: "#9988cc" },
+              { icon: "🍽️", en: "Eating", es: "Comer", color: "#4caf82" },
+              { icon: "🚽", en: "Toileting", es: "Usar el baño", color: "#e8a050" },
+              { icon: "🔄", en: "Continence", es: "Continencia", color: "#e05050" },
+              { icon: "🚶", en: "Transferring", es: "Moverse", color: "#c8a050" },
+            ].map((adl, i) => (
+              <div key={i} style={{ background: `${adl.color}14`, border: `1px solid ${adl.color}44`, borderRadius: 11, padding: "14px 8px", textAlign: "center" }}>
+                <div style={{ fontSize: 28, marginBottom: 6 }}>{adl.icon}</div>
+                <div style={{ fontSize: 11, fontWeight: "bold", color: adl.color }}>{isEN ? adl.en : adl.es}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: "rgba(232,160,80,0.1)", border: "1px solid rgba(232,160,80,0.3)", borderRadius: 10, padding: "12px 16px", textAlign: "center" }}>
+            <div style={{ fontSize: 12, color: "#e8c050", fontWeight: "bold", marginBottom: 4 }}>
+              ⚡ {isEN ? "2 out of 6 = Benefits Activate" : "2 de 6 = Los beneficios se activan"}
+            </div>
+            <div style={{ fontSize: 11, color: "#8899aa" }}>
+              {isEN ? "This can happen at any age — not just when you're old." : "Esto puede ocurrir a cualquier edad — no solo cuando eres mayor."}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  const current = slides[slide];
+  const isLast = slide === slides.length - 1;
+
+  return (
+    <div style={{ minHeight: "100vh", background: current.bg, fontFamily: "'Georgia', serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 20px", transition: "background 0.5s ease" }}>
+      {/* Glow */}
+      <div style={{ position: "fixed", width: 400, height: 400, borderRadius: "50%", background: `radial-gradient(circle, ${current.accent}18 0%, transparent 70%)`, top: "30%", left: "50%", transform: "translateX(-50%)", pointerEvents: "none" }} />
+
+      <div style={{ width: "100%", maxWidth: 520, position: "relative", zIndex: 1 }}>
+
+        {/* Header badge */}
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <span style={{ background: `${current.accent}22`, border: `1px solid ${current.accent}55`, borderRadius: 20, padding: "5px 16px", fontSize: 11, color: current.accent, letterSpacing: 1, textTransform: "uppercase" }}>
+            🏥 {isEN ? "Long-Term Care — What You Need to Know" : "Cuidado a Largo Plazo — Lo Que Necesitas Saber"}
+          </span>
+        </div>
+
+        {/* Progress dots */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 24 }}>
+          {slides.map((_, i) => (
+            <div key={i} style={{ width: i === slide ? 22 : 7, height: 7, borderRadius: 4, background: i <= slide ? current.accent : "rgba(255,255,255,0.1)", transition: "all 0.4s ease", cursor: "pointer" }} onClick={() => setSlide(i)} />
+          ))}
+        </div>
+
+        {/* Card */}
+        <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${current.accent}33`, borderRadius: 16, padding: "24px 22px", marginBottom: 20 }}>
+          {current.content()}
+        </div>
+
+        {/* Navigation */}
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          {slide > 0 && (
+            <button onClick={() => setSlide(p => p - 1)} style={{ padding: "10px 22px", background: "transparent", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#667788", fontSize: 13, cursor: "pointer" }}>
+              ←
+            </button>
+          )}
+          {!isLast ? (
+            <button onClick={() => setSlide(p => p + 1)} style={{ padding: "13px 36px", background: `linear-gradient(135deg, ${current.accent}bb, ${current.accent})`, border: "none", borderRadius: 10, color: "#050a12", fontSize: 14, fontWeight: "bold", cursor: "pointer", boxShadow: `0 4px 20px ${current.accent}44`, letterSpacing: 1 }}>
+              {isEN ? "Next →" : "Siguiente →"}
+            </button>
+          ) : (
+            <button onClick={onContinue} style={{ padding: "14px 40px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 12, color: "#050a12", fontSize: 15, fontWeight: "bold", cursor: "pointer", boxShadow: "0 6px 28px rgba(200,160,80,0.5)", letterSpacing: 1 }}>
+              {isEN ? "Continue to Survey →" : "Continuar al Cuestionario →"}
+            </button>
+          )}
+          {!isLast && (
+            <button onClick={onContinue} style={{ background: "transparent", border: "none", color: "#445566", fontSize: 11, cursor: "pointer", textDecoration: "underline", padding: "10px 8px" }}>
+              {isEN ? "Skip" : "Saltar"}
+            </button>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ─── THANKS SCREEN ─────────────────────────────────────────────────────────────
+function ThanksScreen({ lang, clientName, advisorName, onReset }) {
+  const isEN = lang === "en";
+  return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", fontFamily: "'Georgia', serif", padding: "32px 20px" }}>
+      <div style={{ width: "100%", maxWidth: 540, margin: "0 auto" }}>
+
+        {/* THANK YOU HEADER */}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ fontSize: 60, marginBottom: 14, filter: "drop-shadow(0 0 24px rgba(200,160,80,0.5))" }}>🙏</div>
+          <h1 style={{ fontSize: 26, color: "#e8c878", margin: "0 0 10px", letterSpacing: 1 }}>
+            {isEN ? "Thank You!" : "¡Gracias!"}
+          </h1>
+          {clientName && (
+            <div style={{ fontSize: 16, color: "#c8a050", marginBottom: 10 }}>
+              {isEN ? `${clientName}, we received your information.` : `${clientName}, recibimos tu información.`}
+            </div>
+          )}
+        </div>
+
+        {/* CONFIRMATION */}
+        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 14, padding: "22px 26px", marginBottom: 16, lineHeight: 1.8 }}>
+          <p style={{ fontSize: 14, color: "#c8d8e8", margin: "0 0 12px" }}>
+            {isEN
+              ? "Your responses have been recorded. We will carefully review your information and reach out to guide you and present personalized options and strategies for your situation."
+              : "Tus respuestas han sido registradas. Revisaremos tu información con cuidado y nos pondremos en contacto contigo para guiarte y presentarte opciones y estrategias personalizadas para tu situación."}
+          </p>
+          <p style={{ fontSize: 12, color: "#8899aa", margin: 0 }}>
+            {isEN ? "There is nothing more you need to do right now — we will take it from here."
+              : "No necesitas hacer nada más por ahora — nosotros nos encargamos a partir de aquí."}
+          </p>
+        </div>
+
+        {advisorName && (
+          <div style={{ textAlign: "center", fontSize: 14, color: "#c8a050", fontStyle: "italic", marginBottom: 28 }}>
+            — {advisorName}
+          </div>
+        )}
+
+        {/* SIMPLE OPPORTUNITY MENTION */}
+        <div style={{ background: "rgba(200,160,80,0.05)", border: "1px solid rgba(200,160,80,0.18)", borderRadius: 12, padding: "18px 22px", marginBottom: 20, textAlign: "center" }}>
+          <div style={{ fontSize: 22, marginBottom: 10 }}>🤝</div>
+          <p style={{ fontSize: 13, color: "#aabbcc", lineHeight: 1.9, margin: 0 }}>
+            {isEN
+              ? "If at any point you're curious about opportunities to generate extra income and be part of our team, feel free to ask us — we'd love to tell you more."
+              : "Si en algún momento tienes curiosidad sobre oportunidades para generar ingresos extras y ser parte de nuestro equipo, no dudes en preguntarnos — con gusto te contamos más."}
+          </p>
+        </div>
+
+        {/* BUTTONS */}
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
+          <button onClick={() => window.print()} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
+            🖨️ {isEN ? "Print / Save PDF" : "Imprimir / Guardar PDF"}
+          </button>
+          <button onClick={onReset} style={{ padding: "11px 22px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#8899aa", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
+            {isEN ? "Start New Assessment" : "Nueva Evaluación"}
+          </button>
+        </div>
+
+        <div style={{ textAlign: "center", fontSize: 10, color: "#2a3a4a", lineHeight: 1.7 }}>
+          {isEN
+            ? `For educational purposes only. Does not constitute legal, tax, or financial advice.${advisorName ? ` Presented by ${advisorName}.` : ""}`
+            : `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero.${advisorName ? ` Presentado por ${advisorName}.` : ""}`}
+        </div>
+
       </div>
     </div>
   );
@@ -968,6 +1776,8 @@ export default function FinancialBot() {
   const [currentModule, setCurrentModule] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showPlan, setShowPlan] = useState(false);
+  const [showThanks, setShowThanks] = useState(false);
+  const [showLTCScreen, setShowLTCScreen] = useState(false);
   const [plan, setPlan] = useState(null);
   const [animating, setAnimating] = useState(false);
   const topRef = useRef(null);
@@ -975,6 +1785,16 @@ export default function FinancialBot() {
   // Show impact screen first — it also handles language selection
   if (!seenIntro) {
     return <ImpactScreen clientName={clientName} advisorName={advisorName} onContinue={(selectedLang) => { setLang(selectedLang); setSeenIntro(true); }} />;
+  }
+
+  // Show thanks screen after submitting
+  if (showThanks) {
+    return <ThanksScreen lang={lang} clientName={clientName} advisorName={advisorName} onReset={() => { setAnswers({}); setCurrentModule(0); setShowPlan(false); setShowThanks(false); setShowLTCScreen(false); setPlan(null); setLang(null); setSeenIntro(false); }} />;
+  }
+
+  // Show LTC education screen before module E (index 4)
+  if (showLTCScreen) {
+    return <LTCEducationScreen lang={lang} onContinue={() => { setShowLTCScreen(false); setCurrentModule(4); topRef.current?.scrollIntoView({ behavior: "smooth" }); }} />;
   }
 
   const t = T[lang];
@@ -985,6 +1805,12 @@ export default function FinancialBot() {
   const isModuleComplete = () => module.questions.every(q => answers[q.id] && String(answers[q.id]).trim() !== "");
 
   const next = () => {
+    // Before moving to Module E (index 4 = Protection), show LTC education screen
+    if (currentModule === 3) {
+      setShowLTCScreen(true);
+      topRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
     if (currentModule < MODULES.length - 1) {
       setAnimating(true);
       setTimeout(() => { setCurrentModule(p => p + 1); setAnimating(false); topRef.current?.scrollIntoView({ behavior: "smooth" }); }, 260);
@@ -998,91 +1824,130 @@ export default function FinancialBot() {
     if (showPlan) { setShowPlan(false); return; }
     if (currentModule > 0) { setCurrentModule(p => p - 1); topRef.current?.scrollIntoView({ behavior: "smooth" }); }
   };
-  const reset = () => { setAnswers({}); setCurrentModule(0); setShowPlan(false); setPlan(null); setLang(null); setSeenIntro(false); };
+  const reset = () => { setAnswers({}); setCurrentModule(0); setShowPlan(false); setShowThanks(false); setShowLTCScreen(false); setPlan(null); setLang(null); setSeenIntro(false); };
   const progress = showPlan ? 100 : (currentModule / MODULES.length) * 100;
 
   const disclaimerText = lang === "en"
-    ? `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. ${advisorName ? `Presentado por ${advisorName}.` : ""} Schedule a free appointment to discuss your options.`
-    : `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. ${advisorName ? `Presentado por ${advisorName}.` : ""} Programa una cita gratuita para platicar de tus opciones.`;
+    ? `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. ${advisorName ? `Presentado por ${advisorName}.` : ""} We will contact you to present personalized options and strategies.`
+    : `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. ${advisorName ? `Presentado por ${advisorName}.` : ""} Nos pondremos en contacto para presentarte opciones y estrategias personalizadas.`;
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 50%, #0a1628 100%)", fontFamily: "'Georgia', serif", color: "#e8dcc8" }}>
-      <div ref={topRef} style={{ background: "linear-gradient(90deg, #0a1628, #112240)", borderBottom: "1px solid rgba(200,160,80,0.3)", padding: "14px 22px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg, #c8a050, #e8c878)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, boxShadow: "0 0 14px rgba(200,160,80,0.4)" }}>⚖️</div>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: "bold", color: "#e8c878", letterSpacing: 1 }}>{t.appTitle}</div>
-            {clientName && <div style={{ fontSize: 10, color: "#c8a050" }}>👤 {clientName}</div>}
-            {!clientName && <div style={{ fontSize: 9, color: "#8899aa", letterSpacing: 2, textTransform: "uppercase" }}>{t.appSubtitle}</div>}
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 50%, #080e1a 100%)", fontFamily: "'DM Sans', sans-serif", color: "#e8dcc8", position: "relative", overflow: "hidden" }}>
+      <GlobalStyles />
+
+      {/* Ambient background orbs */}
+      <div style={{ position: "fixed", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,160,80,0.04) 0%, transparent 70%)", top: "-100px", right: "-150px", pointerEvents: "none", zIndex: 0 }} />
+      <div style={{ position: "fixed", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(74,144,217,0.04) 0%, transparent 70%)", bottom: "10%", left: "-100px", pointerEvents: "none", zIndex: 0 }} />
+
+      {/* ── HEADER ── */}
+      <div ref={topRef} style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(7,9,15,0.85)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(200,160,80,0.15)", padding: "0 20px" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", height: 58, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, #c8a050, #e8c878)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, boxShadow: "0 0 16px rgba(200,160,80,0.35)", flexShrink: 0 }}>⚖️</div>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#e8c878", fontFamily: "'Playfair Display', serif", letterSpacing: 0.5 }}>{t.appTitle}</div>
+              {clientName
+                ? <div style={{ fontSize: 10, color: "#c8a05099", fontWeight: 500 }}>👤 {clientName}</div>
+                : <div style={{ fontSize: 9, color: "#445566", letterSpacing: 2, textTransform: "uppercase" }}>{t.appSubtitle}</div>}
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {!showPlan && (
+              <div style={{ fontSize: 11, color: "#445566" }}>
+                <span style={{ color: "#c8a050", fontWeight: 600, fontFamily: "'Playfair Display', serif", fontSize: 13 }}>{currentModule + 1}</span>
+                <span style={{ color: "#334455", margin: "0 3px" }}>/</span>
+                <span>{MODULES.length}</span>
+              </div>
+            )}
+            <button onClick={reset} className="btn-ghost" style={{ padding: "5px 12px", fontSize: 10, letterSpacing: 0.5 }}>{t.switchLang}</button>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          {!showPlan && <div style={{ fontSize: 11, color: "#8899aa" }}>{t.moduleLabel} <span style={{ color: "#c8a050", fontWeight: "bold" }}>{currentModule + 1}</span> {t.ofLabel} {MODULES.length}</div>}
-          <button onClick={reset} style={{ fontSize: 10, color: "#8899aa", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "4px 10px", cursor: "pointer" }}>{t.switchLang}</button>
+        {/* Progress bar */}
+        <div style={{ height: 2, background: "rgba(255,255,255,0.04)", position: "relative" }}>
+          <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${progress}%`, background: "linear-gradient(90deg, #c8a050, #e8c878, #c8a050)", backgroundSize: "200% 100%", transition: "width 0.7s cubic-bezier(0.4,0,0.2,1)", boxShadow: "0 0 8px rgba(200,160,80,0.6)", animation: "shimmer 2s linear infinite" }} />
         </div>
       </div>
 
-      <div style={{ height: 3, background: "rgba(255,255,255,0.05)" }}>
-        <div style={{ height: "100%", width: `${progress}%`, background: "linear-gradient(90deg, #c8a050, #e8c878)", transition: "width 0.6s ease", boxShadow: "0 0 10px rgba(200,160,80,0.5)" }} />
-      </div>
-
-      <div style={{ maxWidth: 700, margin: "0 auto", padding: "28px 16px" }}>
+      {/* ── MAIN CONTENT ── */}
+      <div style={{ maxWidth: 680, margin: "0 auto", padding: "32px 18px 60px", position: "relative", zIndex: 1 }}>
         {!showPlan ? (
-          <div style={{ opacity: animating ? 0 : 1, transition: "opacity 0.26s ease" }}>
-            <div style={{ marginBottom: 24, textAlign: "center" }}>
-              <div style={{ fontSize: 40, marginBottom: 7 }}>{module.icon}</div>
-              <h2 style={{ fontSize: 20, fontWeight: "bold", color: "#e8c878", margin: "0 0 4px", letterSpacing: 1 }}>{t.moduleLabel} {module.id}: {module.title}</h2>
-              <p style={{ color: "#8899aa", fontSize: 11, margin: 0 }}>{t.answerHonestly}</p>
+          <div key={currentModule} className="anim-fadeup" style={{ opacity: animating ? 0 : 1, transition: "opacity 0.22s ease" }}>
+
+            {/* Module header */}
+            <div style={{ textAlign: "center", marginBottom: 30 }}>
+              {/* Step dots */}
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 4, marginBottom: 20 }}>
+                {MODULES.map((m, i) => (
+                  <div key={m.id} style={{
+                    height: 4, borderRadius: 3,
+                    width: i === currentModule ? 28 : (i < currentModule ? 14 : 8),
+                    background: i < currentModule ? "rgba(200,160,80,0.6)" : i === currentModule ? "#e8c878" : "rgba(255,255,255,0.08)",
+                    transition: "all 0.4s cubic-bezier(0.4,0,0.2,1)",
+                    boxShadow: i === currentModule ? "0 0 8px rgba(232,200,120,0.7)" : "none"
+                  }} />
+                ))}
+              </div>
+
+              <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, rgba(200,160,80,0.15), rgba(200,160,80,0.06))", border: "1px solid rgba(200,160,80,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, margin: "0 auto 14px", boxShadow: "0 4px 20px rgba(200,160,80,0.12)" }}>{module.icon}</div>
+
+              <div style={{ fontSize: 10, color: "#c8a050", letterSpacing: 3, textTransform: "uppercase", fontWeight: 600, marginBottom: 6 }}>{t.moduleLabel} {module.id}</div>
+              <h2 className="fa-header" style={{ fontSize: 22, fontWeight: 700, color: "#f0e4c8", margin: "0 0 8px", letterSpacing: 0.3, lineHeight: 1.2 }}>{module.title}</h2>
+              <p style={{ color: "#445566", fontSize: 11, margin: 0, fontStyle: "italic" }}>{t.answerHonestly}</p>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "center", gap: 5, marginBottom: 20 }}>
-              {MODULES.map((m, i) => (
-                <div key={m.id} style={{ width: 24, height: 4, borderRadius: 2, background: i < currentModule ? "#c8a050" : i === currentModule ? "#e8c878" : "rgba(255,255,255,0.1)", transition: "all 0.4s ease", boxShadow: i === currentModule ? "0 0 7px rgba(200,160,80,0.6)" : "none" }} />
-              ))}
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {/* Questions */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {module.questions.map((q, qi) => (
-                <div key={q.id} style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${answers[q.id] ? "rgba(200,160,80,0.45)" : "rgba(200,160,80,0.12)"}`, borderRadius: 10, padding: "13px 16px", transition: "border-color 0.3s" }}>
-                  <label style={{ display: "block", fontSize: 12, color: "#c8d8e8", marginBottom: 8, fontWeight: "500" }}>
-                    <span style={{ color: "#c8a050", marginRight: 6, fontSize: 10 }}>Q{qi + 1}</span>{q.label}
+                <div key={q.id} className="anim-fadeup" style={{
+                  animationDelay: `${qi * 0.07}s`,
+                  background: answers[q.id] ? "rgba(200,160,80,0.05)" : "rgba(255,255,255,0.025)",
+                  border: `1px solid ${answers[q.id] ? "rgba(200,160,80,0.4)" : "rgba(255,255,255,0.07)"}`,
+                  borderRadius: 14, padding: "16px 18px",
+                  transition: "border-color 0.25s, background 0.25s",
+                  boxShadow: answers[q.id] ? "0 2px 16px rgba(200,160,80,0.07)" : "none"
+                }}>
+                  <label style={{ display: "block", fontSize: 12, color: "#9ab0c4", marginBottom: 10, fontWeight: 500, lineHeight: 1.5 }}>
+                    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: "50%", background: "rgba(200,160,80,0.12)", border: "1px solid rgba(200,160,80,0.25)", color: "#c8a050", fontSize: 9, fontWeight: 700, marginRight: 8, flexShrink: 0, verticalAlign: "middle" }}>{qi + 1}</span>
+                    {q.label}
                   </label>
                   {q.type === "select" ? (
-                    <select value={answers[q.id] || ""} onChange={e => handleAnswer(q.id, e.target.value)} style={{ width: "100%", padding: "8px 10px", background: "rgba(10,20,40,0.8)", border: "1px solid rgba(200,160,80,0.3)", borderRadius: 6, color: "#e8dcc8", fontSize: 12, outline: "none", cursor: "pointer" }}>
+                    <select value={answers[q.id] || ""} onChange={e => handleAnswer(q.id, e.target.value)} className="fa-select">
                       <option value="">{t.selectPlaceholder}</option>
                       {q.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                     </select>
                   ) : (
-                    <input type={q.type} placeholder={q.placeholder} value={answers[q.id] || ""} onChange={e => handleAnswer(q.id, e.target.value)} style={{ width: "100%", padding: "8px 10px", background: "rgba(10,20,40,0.8)", border: "1px solid rgba(200,160,80,0.3)", borderRadius: 6, color: "#e8dcc8", fontSize: 12, outline: "none", boxSizing: "border-box" }} />
+                    <input type={q.type} placeholder={q.placeholder} value={answers[q.id] || ""} onChange={e => handleAnswer(q.id, e.target.value)} className="fa-input" />
                   )}
                 </div>
               ))}
             </div>
 
-            <div style={{ display: "flex", gap: 10, marginTop: 20, justifyContent: "space-between" }}>
-              {currentModule > 0 && (
-                <button onClick={back} style={{ padding: "10px 18px", background: "transparent", border: "1px solid rgba(200,160,80,0.4)", borderRadius: 8, color: "#c8a050", fontSize: 12, cursor: "pointer" }}>{t.backBtn}</button>
-              )}
-              <button onClick={next} disabled={!isModuleComplete()} style={{
-                marginLeft: "auto", padding: "11px 28px",
-                background: isModuleComplete() ? "linear-gradient(135deg, #c8a050, #e8c878)" : "rgba(255,255,255,0.05)",
-                border: "none", borderRadius: 8, color: isModuleComplete() ? "#0a1628" : "#445566",
-                fontSize: 13, fontWeight: "bold", cursor: isModuleComplete() ? "pointer" : "not-allowed",
-                letterSpacing: 1, transition: "all 0.3s", boxShadow: isModuleComplete() ? "0 4px 18px rgba(200,160,80,0.35)" : "none"
-              }}>
+            {/* Navigation */}
+            <div style={{ display: "flex", gap: 10, marginTop: 24, justifyContent: "space-between", alignItems: "center" }}>
+              {currentModule > 0
+                ? <button onClick={back} className="btn-ghost">{t.backBtn}</button>
+                : <div />}
+              <button onClick={next} disabled={!isModuleComplete()} className="btn-primary" style={{ opacity: isModuleComplete() ? 1 : 0.35 }}>
                 {currentModule === MODULES.length - 1 ? t.generateBtn : t.nextBtn}
               </button>
             </div>
+
+            {/* Completion hint */}
+            {!isModuleComplete() && (
+              <p style={{ textAlign: "center", marginTop: 12, fontSize: 10, color: "#334455", fontStyle: "italic" }}>
+                {lang === "en" ? "Answer all questions above to continue" : "Responde todas las preguntas para continuar"}
+              </p>
+            )}
           </div>
         ) : (
-          <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} />
+          <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => setShowThanks(true)} />
         )}
       </div>
 
-      {/* Footer Disclaimer */}
-      <div style={{ textAlign: "center", padding: "18px 20px 14px", borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: 10 }}>
-        <div style={{ fontSize: 10, color: "#445566", marginBottom: 8 }}>{disclaimerText}</div>
-        <a href="?mode=advisor" style={{ fontSize: 10, color: "#334455", textDecoration: "none" }}>Advisor Portal</a>
+      {/* Footer */}
+      <div style={{ borderTop: "1px solid rgba(255,255,255,0.04)", padding: "14px 20px", textAlign: "center" }}>
+        <div style={{ fontSize: 9, color: "#2a3340", lineHeight: 1.7, maxWidth: 600, margin: "0 auto 6px" }}>{disclaimerText}</div>
+        <a href="?mode=advisor" style={{ fontSize: 9, color: "#2a3340", textDecoration: "none", letterSpacing: 1, textTransform: "uppercase" }}>Advisor Portal</a>
       </div>
     </div>
   );
