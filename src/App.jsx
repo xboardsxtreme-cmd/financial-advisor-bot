@@ -388,7 +388,7 @@ const T = {
         { id: "medical_condition", label: "¿Algún miembro del hogar tiene una condición médica relevante?", type: "select", options: ["No", "Sí – yo mismo/a", "Sí – esposo/a o pareja", "Sí – un dependiente"] },
       ]},
       { id: "B", title: "Ingresos y Estabilidad", icon: "💼", questions: [
-        { id: "income_type", label: "¿Cuál es tu tipo de ingreso?", type: "select", options: ["Empleado W-2", "Trabajador Independiente", "Dueño de Negocio", "Mixto"] },
+        { id: "income_type", label: "¿Cuál es tu tipo de ingreso?", type: "select", options: ["Sin empleo / Sin trabajo", "Empleado W-2", "Trabajador Independiente", "Dueño de Negocio", "Mixto"] },
         { id: "gross_monthly", label: "¿Ingreso mensual bruto?", type: "number", placeholder: "ej. 6000" },
         { id: "net_monthly", label: "¿Ingreso mensual neto (lo que recibes)?", type: "number", placeholder: "ej. 4500" },
         { id: "income_dependent_on_health", label: "¿Tu ingreso depende de tu salud o de trabajar activamente?", type: "select", options: ["Sí – completamente", "En su mayoría sí", "Parcialmente", "No – tengo ingresos pasivos"] },
@@ -442,7 +442,7 @@ const T = {
       ]},
       { id: "H", title: "Estrategia Fiscal", icon: "💡", questions: [
         { id: "tax_situation", label: "¿Cómo te sientes con tu situación fiscal actual?", type: "select", options: ["Pago demasiado en impuestos cada año", "Quedo en cero — no debo ni me regresan", "Me regresan dinero — pero no sé si eso es bueno o malo", "Tengo una estrategia fiscal establecida", "Nunca lo he pensado"] },
-        { id: "income_sources", label: "¿Cuántas fuentes de ingreso tienes actualmente?", type: "select", options: ["Solo una — empleo W-2", "Dos — trabajo + ingreso adicional", "Múltiples — negocio, inversiones, etc.", "Retirado / ingreso fijo"] },
+        { id: "income_sources", label: "¿Cuántas fuentes de ingreso tienes actualmente?", type: "select", options: ["Sin empleo / Sin trabajo", "Solo una — empleo W-2", "Dos — trabajo + ingreso adicional", "Múltiples — negocio, inversiones, etc.", "Retirado / ingreso fijo"] },
         { id: "has_business", label: "¿Tienes un negocio o ingresos como trabajador independiente?", type: "select", options: ["No", "Sí – propietario único / 1099", "Sí – LLC o S-Corp", "Estoy pensando en empezar uno"] },
         { id: "knows_business_deductions", label: "¿Conoces las ventajas fiscales de tener un negocio?", type: "select", options: ["Sí – las uso activamente", "He escuchado de ellas pero no las uso", "No – no sabía que eso existía", "No aplica"] },
         { id: "tax_deferred_accounts", label: "¿Estás usando cuentas con ventajas fiscales para reducir tu carga impositiva?", type: "select", options: ["Sí – maximizando 401k / IRA", "Sí – contribuyo pero no al máximo", "No – no tengo ninguna", "No estoy seguro/a si lo que tengo aplica"] },
@@ -741,6 +741,81 @@ function generatePlan(answers, lang) {
   });
 
   // LTC education content
+  // Beautiful Bill awareness
+  const doesNotKnowBB = answers.tax_beautiful_bill && (
+    answers.tax_beautiful_bill.includes("No –") ||
+    answers.tax_beautiful_bill.includes("No – es la primera") ||
+    answers.tax_beautiful_bill.includes("heard of it but") ||
+    answers.tax_beautiful_bill.includes("heard") ||
+    answers.tax_beautiful_bill.includes("escuchado de ello") ||
+    answers.tax_beautiful_bill.includes("advisor to explain") ||
+    answers.tax_beautiful_bill.includes("asesor me lo explique")
+  );
+
+  const bbEducation = lang === "en" ? {
+    title: "📜 What Is the 'Beautiful Bill'?",
+    subtitle: "The One Big Beautiful Bill Act — 2025 Tax Law Changes",
+    summary: "The 'One Big Beautiful Bill' is a major tax reform package passed in 2025 that extends and expands many provisions from the 2017 Tax Cuts and Jobs Act. It introduces significant changes that could affect how much you owe — or get back — on your taxes.",
+    sections: [
+      {
+        icon: "💰",
+        title: "Higher Standard Deduction",
+        body: "The standard deduction is temporarily increased — $16,000 for single filers and $32,000 for married filing jointly. This means fewer people need to itemize, and most families will owe less."
+      },
+      {
+        icon: "👶",
+        title: "Expanded Child Tax Credit",
+        body: "The Child Tax Credit increases to $2,500 per child (up from $2,000). Families with children could see a meaningful boost in their refund."
+      },
+      {
+        icon: "🏠",
+        title: "No Tax on Tips & Overtime",
+        body: "A key provision eliminates federal income tax on tips and overtime pay for eligible workers. If you earn tips or work overtime, this could significantly reduce your tax bill."
+      },
+      {
+        icon: "🏢",
+        title: "Small Business Deduction Extended",
+        body: "The 20% pass-through deduction for self-employed individuals and small business owners (Section 199A) is made permanent. If you own a business, this is major."
+      },
+      {
+        icon: "⚠️",
+        title: "What You Should Do",
+        body: "These changes may affect your withholding, estimated tax payments, and overall strategy. We recommend reviewing your situation with a financial professional to make sure you're taking full advantage."
+      }
+    ]
+  } : {
+    title: "📜 ¿Qué es el 'Beautiful Bill'?",
+    subtitle: "The One Big Beautiful Bill Act — Cambios en las Leyes de Taxes 2025",
+    summary: "El 'One Big Beautiful Bill' es un paquete de reforma fiscal importante aprobado en 2025 que extiende y amplía muchas disposiciones de la Ley de Recortes de Impuestos de 2017. Introduce cambios significativos que podrían afectar cuánto debes — o recibes — en tus impuestos.",
+    sections: [
+      {
+        icon: "💰",
+        title: "Deducción Estándar Más Alta",
+        body: "La deducción estándar aumenta temporalmente — $16,000 para solteros y $32,000 para casados que declaran en conjunto. Esto significa que menos personas necesitan detallar deducciones y la mayoría de las familias pagarán menos."
+      },
+      {
+        icon: "👶",
+        title: "Crédito Tributario por Hijos Expandido",
+        body: "El crédito tributario por hijo aumenta a $2,500 por niño (antes era $2,000). Las familias con hijos podrían ver un aumento significativo en su reembolso."
+      },
+      {
+        icon: "🏠",
+        title: "Sin Impuesto en Propinas y Horas Extra",
+        body: "Una disposición clave elimina el impuesto federal sobre propinas y horas extra para trabajadores elegibles. Si recibes propinas o trabajas tiempo extra, esto podría reducir significativamente tu factura de impuestos."
+      },
+      {
+        icon: "🏢",
+        title: "Deducción para Pequeños Negocios Extendida",
+        body: "La deducción del 20% para trabajadores independientes y dueños de pequeños negocios (Sección 199A) se hace permanente. Si tienes un negocio, esto es muy importante."
+      },
+      {
+        icon: "⚠️",
+        title: "¿Qué Debes Hacer?",
+        body: "Estos cambios pueden afectar tus retenciones, pagos estimados y estrategia general. Recomendamos revisar tu situación con un profesional financiero para asegurarte de aprovechar todos los beneficios."
+      }
+    ]
+  };
+
   const ltcEducation = lang === "en" ? {
     adls: {
       title: "🏃 What Triggers Long-Term Care Benefits?",
@@ -819,7 +894,7 @@ function generatePlan(answers, lang) {
     },
   };
 
-  return { scores, gaps, plan: filteredPlan, budget, insights, medicareEducation, showMedicareEdu: isNear65 || !hasSsAccount, ltcEducation, showLTCEdu: !hasLTC };
+  return { scores, gaps, plan: filteredPlan, budget, insights, medicareEducation, showMedicareEdu: isNear65 || !hasSsAccount, ltcEducation, showLTCEdu: !hasLTC, bbEducation, showBBEdu: doesNotKnowBB };
 }
 
 // ─── UI COMPONENTS ─────────────────────────────────────────────────────────────
@@ -943,6 +1018,39 @@ function MedicareEduCard({ edu, lang }) {
   );
 }
 
+
+function BBEduCard({ edu, lang }) {
+  const [openIdx, setOpenIdx] = useState(null);
+  const toggle = (i) => setOpenIdx(prev => prev === i ? null : i);
+  return (
+    <div style={{ background: "rgba(200,160,80,0.05)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 14, overflow: "hidden", marginBottom: 20 }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, rgba(200,160,80,0.15), rgba(200,160,80,0.05))", padding: "18px 20px", borderBottom: "1px solid rgba(200,160,80,0.15)" }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: "#e8c878", marginBottom: 4, fontFamily: "'Playfair Display', serif" }}>{edu.title}</div>
+        <div style={{ fontSize: 11, color: "#c8a050", marginBottom: 10, letterSpacing: 0.5 }}>{edu.subtitle}</div>
+        <p style={{ fontSize: 13, color: "#8899aa", lineHeight: 1.75, margin: 0 }}>{edu.summary}</p>
+      </div>
+      {/* Sections */}
+      {edu.sections.map((sec, i) => (
+        <div key={i} style={{ borderBottom: i < edu.sections.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+          <div onClick={() => toggle(i)} style={{ padding: "14px 20px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "background 0.2s" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 18 }}>{sec.icon}</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#c8d8e8" }}>{sec.title}</span>
+            </div>
+            <span style={{ color: "#c8a050", fontSize: 12 }}>{openIdx === i ? "▲" : "▼"}</span>
+          </div>
+          {openIdx === i && (
+            <div style={{ padding: "4px 20px 16px 52px" }}>
+              <p style={{ fontSize: 13, color: "#8899aa", lineHeight: 1.8, margin: 0 }}>{sec.body}</p>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function LTCEduCard({ edu, lang }) {
   const [openSection, setOpenSection] = useState(null);
   const toggle = (s) => setOpenSection(prev => prev === s ? null : s);
@@ -1051,7 +1159,7 @@ function LTCEduCard({ edu, lang }) {
 
 function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onFinish }) {
   const t = T[lang];
-  const { scores, gaps, plan: budgetPlan, budget, insights, medicareEducation, showMedicareEdu, ltcEducation, showLTCEdu } = plan;
+  const { scores, gaps, plan: budgetPlan, budget, insights, medicareEducation, showMedicareEdu, ltcEducation, showLTCEdu, bbEducation, showBBEdu } = plan;
   const avgScore = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / Object.values(scores).length);
   const overallColor = avgScore >= 7 ? "#4caf82" : avgScore >= 4 ? "#e8c050" : "#e05050";
   const overallLabel = avgScore >= 7 ? t.wellProtected : avgScore >= 4 ? t.partiallyProtected : t.significantGaps;
@@ -1150,6 +1258,21 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
         </div>
       )}
 
+      {showBBEdu && bbEducation && (
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ width: 3, height: 16, borderRadius: 2, background: "#c8a050" }} />
+            <h3 style={{ color: "#c8a050", margin: 0, fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>
+              {lang === "en" ? "📜 Tax Law Update — Beautiful Bill" : "📜 Actualización Fiscal — Beautiful Bill"}
+            </h3>
+          </div>
+          <p style={{ fontSize: 11, color: "#667788", margin: "0 0 10px", fontStyle: "italic" }}>
+            {lang === "en" ? "Based on your answers, here's what you should know about the 2025 tax changes." : "Basado en tus respuestas, esto es lo que debes saber sobre los cambios fiscales de 2025."}
+          </p>
+          <BBEduCard edu={bbEducation} lang={lang} />
+        </div>
+      )}
+
       {showLTCEdu && ltcEducation && (
         <div style={{ marginBottom: 16 }}>
           <h3 style={{ color: "#e05050", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>
@@ -1211,7 +1334,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
         </div>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <button onClick={onBack} className="btn-ghost" style={{ fontSize: 12 }}>{t.reviewBtn}</button>
-          <button onClick={() => window.print()} className="btn-ghost" style={{ fontSize: 12, color: "#4a90d9", borderColor: "rgba(74,144,217,0.3)" }}>
+          <button onClick={() => printReport({ answers: window._fa_answers, plan, clientName, advisorName, lang })} className="btn-ghost" style={{ fontSize: 12, color: "#4a90d9", borderColor: "rgba(74,144,217,0.3)" }}>
             🖨️ {lang === "en" ? "Save PDF" : "Guardar PDF"}
           </button>
           <button onClick={onFinish} className="btn-primary" style={{ fontSize: 13, padding: "11px 28px" }}>
@@ -1251,7 +1374,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
     es: {
       title: "Bienvenido — Gracias por Permitirnos Asistirte",
       body: [
-        `Somos un equipo de profesionales financieros licenciados dedicados a guiarte y darte a conocer las estrategias y opciones disponibles para proteger tus ingresos, tu familia y tu futuro financiero — tanto a corto como a largo plazo.`,
+        `Somos un equipo de profesionales financieros dedicados a guiarte y darte a conocer las estrategias y opciones disponibles para proteger tus ingresos, tu familia y tu futuro financiero — tanto a corto como a largo plazo.`,
         `Más allá de la preparación de impuestos, nuestra misión es asegurarnos de que entiendas dónde estás hoy, qué opciones tienes disponibles y cómo construir un plan que funcione para tu situación específica.`,
         `Este cuestionario nos ayudará a conocerte mejor para poder presentarte opciones y estrategias personalizadas. Por favor responde con la mayor honestidad posible — todo es confidencial.`,
       ],
@@ -1281,36 +1404,96 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
   // Step 1: Language selection
   if (!lang) {
     return (
-      <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 60%, #080e1a 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "20px", position: "relative", overflow: "hidden" }}>
+      <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "20px" }}>
         <GlobalStyles />
-        {/* Ambient glow */}
-        <div style={{ position: "absolute", width: 700, height: 700, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,160,80,0.05) 0%, transparent 65%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)", pointerEvents: "none" }} />
 
-        <div className="anim-scalein" style={{ textAlign: "center", maxWidth: 480, position: "relative", zIndex: 1 }}>
-          {/* Logo mark */}
-          <div style={{ width: 72, height: 72, borderRadius: 20, background: "linear-gradient(135deg, rgba(200,160,80,0.15), rgba(200,160,80,0.05))", border: "1px solid rgba(200,160,80,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, margin: "0 auto 24px", boxShadow: "0 0 40px rgba(200,160,80,0.15)" }}>⚖️</div>
+        {/* 1. BACKGROUND IMAGE — happy family / financial freedom */}
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 0,
+          backgroundImage: "url('https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=1600&q=80&auto=format&fit=crop')",
+          backgroundSize: "cover", backgroundPosition: "center top",
+          filter: "brightness(0.22) saturate(0.8)"
+        }} />
 
-          <h1 className="fa-header gold-shimmer" style={{ fontSize: 26, margin: "0 0 6px", lineHeight: 1.2 }}>Financial Protection Advisor</h1>
-          <p style={{ fontSize: 15, color: "#667788", margin: "0 0 6px", fontWeight: 300 }}>Asesor de Protección Financiera</p>
+        {/* Dark overlay gradient for readability */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(160deg, rgba(5,10,18,0.7) 0%, rgba(8,14,26,0.85) 50%, rgba(5,10,18,0.95) 100%)" }} />
 
+        {/* Gold ambient glow center */}
+        <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,160,80,0.08) 0%, transparent 65%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 1, pointerEvents: "none" }} />
+
+        {/* CONTENT */}
+        <div className="anim-scalein" style={{ textAlign: "center", maxWidth: 520, position: "relative", zIndex: 2 }}>
+
+          {/* 2. BIGGER LOGO — with glow ring */}
+          <div style={{
+            width: 100, height: 100, borderRadius: 28,
+            background: "linear-gradient(135deg, rgba(200,160,80,0.18), rgba(200,160,80,0.06))",
+            border: "1px solid rgba(200,160,80,0.4)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 48, margin: "0 auto 28px",
+            boxShadow: "0 0 60px rgba(200,160,80,0.25), 0 0 120px rgba(200,160,80,0.1)"
+          }}>⚖️</div>
+
+          {/* Title */}
+          <h1 className="fa-header gold-shimmer" style={{ fontSize: 30, margin: "0 0 8px", lineHeight: 1.15, letterSpacing: 0.3 }}>
+            Financial Protection Advisor
+          </h1>
+          <p style={{ fontSize: 14, color: "#667788", margin: "0 0 18px", fontWeight: 300, letterSpacing: 0.3 }}>
+            Asesor de Protección Financiera
+          </p>
+
+          {/* 4. TAGLINE — powerful, emotional */}
+          <div className="anim-fadeup delay-1" style={{ marginBottom: 28 }}>
+            <p style={{ fontSize: 17, color: "#c8d8e8", fontWeight: 300, lineHeight: 1.75, margin: "0 auto", maxWidth: 400, fontStyle: "italic" }}>
+              "Helping families protect what matters most —<br/>
+              <span style={{ color: "#e8c878", fontWeight: 500, fontStyle: "normal" }}>your income, your future, your legacy.</span>"
+            </p>
+          </div>
+
+          {/* Client/advisor badge */}
           {clientName && (
-            <div className="anim-fadeup delay-2" style={{ margin: "16px auto 0", padding: "9px 22px", background: "rgba(200,160,80,0.07)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 24, display: "inline-block" }}>
-              <span style={{ fontSize: 12, color: "#c8a050", fontWeight: 500 }}>Prepared for <strong style={{ color: "#e8c878" }}>{clientName}</strong></span>
+            <div className="anim-fadeup delay-2" style={{ margin: "0 auto 20px", padding: "9px 24px", background: "rgba(200,160,80,0.08)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 24, display: "inline-block" }}>
+              <span style={{ fontSize: 12, color: "#c8a050", fontWeight: 500 }}>
+                Prepared for <strong style={{ color: "#e8c878" }}>{clientName}</strong>
+              </span>
             </div>
           )}
           {advisorName && (
-            <div className="anim-fadeup delay-3" style={{ fontSize: 10, color: "#334455", margin: "8px 0 0", letterSpacing: 1 }}>Presented by {advisorName}</div>
+            <div className="anim-fadeup delay-3" style={{ fontSize: 10, color: "#445566", marginBottom: 28, letterSpacing: 1 }}>
+              Presented by <span style={{ color: "#667788" }}>{advisorName}</span>
+            </div>
           )}
 
-          <p style={{ color: "#334455", fontSize: 11, margin: "28px 0 20px", letterSpacing: 2, textTransform: "uppercase" }}>Select your language · Selecciona tu idioma</p>
+          {/* Language label */}
+          <p style={{ color: "#334455", fontSize: 10, margin: "0 0 16px", letterSpacing: 2.5, textTransform: "uppercase" }}>
+            Select your language · Selecciona tu idioma
+          </p>
 
-          <div style={{ display: "flex", gap: 14, justifyContent: "center" }}>
-            {[["en","🇺🇸","English"],["es","🇪🇸","Español"]].map(([code, flag, label]) => (
-              <button key={code} onClick={() => setLang(code)} className="hover-lift"
-                style={{ padding: "20px 40px", fontSize: 15, fontWeight: 600, background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 14, color: "#050a12", cursor: "pointer", boxShadow: "0 4px 24px rgba(200,160,80,0.3)", letterSpacing: 0.5, fontFamily: "'DM Sans', sans-serif" }}>
-                <div style={{ fontSize: 22, marginBottom: 4 }}>{flag}</div>
-                {label}
+          {/* 3. BIGGER, MORE IMPRESSIVE LANGUAGE BUTTONS */}
+          <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+            {[["en","🇺🇸","English","Continue in English"],["es","🇪🇸","Español","Continuar en Español"]].map(([code, flag, label, sub]) => (
+              <button key={code} onClick={() => setLang(code)}
+                style={{
+                  padding: "22px 36px", cursor: "pointer", border: "none", borderRadius: 18,
+                  background: "linear-gradient(135deg, #c8a050 0%, #e8c878 50%, #d4a84b 100%)",
+                  boxShadow: "0 6px 32px rgba(200,160,80,0.4), 0 2px 8px rgba(0,0,0,0.4)",
+                  transition: "all 0.22s ease", fontFamily: "'DM Sans', sans-serif",
+                  minWidth: 160
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(200,160,80,0.6), 0 4px 12px rgba(0,0,0,0.4)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 6px 32px rgba(200,160,80,0.4), 0 2px 8px rgba(0,0,0,0.4)"; }}
+              >
+                <div style={{ fontSize: 28, marginBottom: 6 }}>{flag}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#050a12", letterSpacing: 0.3 }}>{label}</div>
+                <div style={{ fontSize: 10, color: "rgba(5,10,18,0.55)", marginTop: 3, letterSpacing: 0.5 }}>{sub}</div>
               </button>
+            ))}
+          </div>
+
+          {/* Trust badges */}
+          <div className="anim-fadeup delay-4" style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 32, flexWrap: "wrap" }}>
+            {["🔒 100% Confidential", "📋 Takes ~5 minutes", "🆓 Completely Free"].map(badge => (
+              <span key={badge} style={{ fontSize: 10, color: "#445566", letterSpacing: 0.5 }}>{badge}</span>
             ))}
           </div>
         </div>
@@ -1758,6 +1941,150 @@ function AdvisorScreen() {
   );
 }
 
+
+// ─── PRINT FULL REPORT ──────────────────────────────────────────────────────────
+function printReport({ answers, plan, clientName, advisorName, lang }) {
+  if (!plan) { window.print(); return; }
+  const isEN = lang === "en";
+  const { scores, gaps, budget, plan: budgetPlan } = plan;
+  const avgScore = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/Object.values(scores).length);
+  const overallColor = avgScore >= 7 ? "#2d8a5e" : avgScore >= 4 ? "#b8860b" : "#c0392b";
+  const overallLabel = avgScore >= 7 ? (isEN ? "Well Protected" : "Bien Protegido") : avgScore >= 4 ? (isEN ? "Partially Protected" : "Parcialmente Protegido") : (isEN ? "Significant Gaps" : "Brechas Significativas");
+
+  const scoreRows = Object.entries(scores).map(([k, v]) => {
+    const c = v >= 7 ? "#2d8a5e" : v >= 4 ? "#b8860b" : "#c0392b";
+    const labels = { income: isEN?"Income Protection":"Protección de Ingresos", retirement: isEN?"Retirement":"Retiro", protection: isEN?"Protection":"Protección", tax: isEN?"Tax Strategy":"Estrategia Fiscal", debt: isEN?"Debt":"Deudas", estate: isEN?"Estate":"Patrimonio", medicare: isEN?"Medicare/SS":"Medicare/SS" };
+    return `<tr><td style="padding:8px 12px;border-bottom:1px solid #eee;font-size:13px">${labels[k]||k}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right"><span style="color:${c};font-weight:600">${v}/10</span><div style="height:4px;background:#eee;border-radius:2px;margin-top:4px;width:120px;margin-left:auto"><div style="height:100%;width:${v*10}%;background:${c};border-radius:2px"></div></div></td></tr>`;
+  }).join('');
+
+  const gapRows = gaps.map(g => {
+    const tagColor = g.tag.includes("CRIT") ? "#c0392b" : g.tag.includes("IMP") ? "#b8860b" : "#2d8a5e";
+    return `<div style="border-left:3px solid ${tagColor};padding:10px 14px;margin-bottom:10px;background:#fafafa;border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:3px">${g.icon||''} ${g.title}</div><div style="font-size:12px;color:#555">${g.body}</div><span style="font-size:10px;color:${tagColor};font-weight:700;letter-spacing:1px">${g.tag}</span></div>`;
+  }).join('');
+
+  const budgetRows = budgetPlan.map(item => `<tr><td style="padding:7px 12px;border-bottom:1px solid #eee;font-size:12px">${item.item}</td><td style="padding:7px 12px;border-bottom:1px solid #eee;font-size:11px;color:#888">${item.note}</td><td style="padding:7px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600;color:#c8a050;font-size:12px">${item.amount}</td></tr>`).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
+  <title>Financial Assessment — ${clientName||'Client'}</title>
+  <style>
+    body{font-family:'Segoe UI',sans-serif;margin:0;padding:0;color:#1a1a1a;background:#fff}
+    .header{background:linear-gradient(135deg,#0a1628,#112240);color:#e8c878;padding:30px 40px;display:flex;justify-content:space-between;align-items:center}
+    .header h1{margin:0;font-size:22px;font-weight:700}
+    .header .meta{font-size:12px;color:#c8a050;text-align:right;line-height:1.8}
+    .score-hero{background:#f8f9fa;padding:30px 40px;text-align:center;border-bottom:1px solid #e8e8e8}
+    .score-circle{display:inline-block;width:90px;height:90px;border-radius:50%;border:6px solid ${overallColor};line-height:78px;font-size:32px;font-weight:700;color:${overallColor};margin-bottom:10px}
+    .section{padding:24px 40px;border-bottom:1px solid #f0f0f0}
+    .section h2{font-size:14px;font-weight:700;color:#1a1a1a;margin:0 0 16px;text-transform:uppercase;letter-spacing:1px;padding-bottom:6px;border-bottom:2px solid ${overallColor}}
+    table{width:100%;border-collapse:collapse}
+    .footer{background:#f8f9fa;padding:16px 40px;font-size:10px;color:#888;text-align:center;border-top:1px solid #e8e8e8}
+    @media print{@page{margin:0.5in}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  </style></head><body>
+  <div class="header">
+    <div><h1>⚖️ Financial Protection Assessment</h1><div style="font-size:12px;color:#8899aa;margin-top:4px">Asesor de Protección Financiera</div></div>
+    <div class="meta">
+      ${clientName ? `<div><strong>${clientName}</strong></div>` : ''}
+      ${advisorName ? `<div>Advisor: ${advisorName}</div>` : ''}
+      <div>${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</div>
+    </div>
+  </div>
+  <div class="score-hero">
+    <div class="score-circle">${avgScore}</div>
+    <div style="font-size:18px;font-weight:700;color:${overallColor}">${overallLabel}</div>
+    <div style="font-size:12px;color:#888;margin-top:6px">${isEN?'Overall Financial Health Score':'Puntuación General de Salud Financiera'} — ${isEN?'Based on':'Basado en'} ${Object.keys(scores).length} ${isEN?'categories':'categorías'}</div>
+  </div>
+  <div class="section">
+    <h2>${isEN?'Score by Category':'Puntuación por Categoría'}</h2>
+    <table>${scoreRows}</table>
+  </div>
+  <div class="section">
+    <h2>${isEN?'Key Findings & Recommendations':'Hallazgos Clave y Recomendaciones'}</h2>
+    ${gapRows}
+  </div>
+  <div class="section">
+    <h2>${isEN?'Suggested Monthly Budget':'Presupuesto Mensual Sugerido'} — ${budget}/mo</h2>
+    <table><thead><tr><th style="text-align:left;padding:8px 12px;background:#f5f5f5;font-size:12px">${isEN?'Item':'Elemento'}</th><th style="text-align:left;padding:8px 12px;background:#f5f5f5;font-size:12px">${isEN?'Note':'Nota'}</th><th style="text-align:right;padding:8px 12px;background:#f5f5f5;font-size:12px">${isEN?'Amount':'Monto'}</th></tr></thead><tbody>${budgetRows}</tbody></table>
+  </div>
+  <div class="footer">
+    ${isEN?'For educational purposes only. Does not constitute legal, tax, or financial advice.':'Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero.'}
+    ${advisorName?` Presented by ${advisorName}.`:''}
+  </div>
+  </body></html>`;
+
+  const win = window.open('', '_blank', 'width=800,height=900');
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => { win.focus(); win.print(); }, 600);
+}
+
+// ─── SEND REPORT VIA EMAILJS ────────────────────────────────────────────────────
+async function sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang }) {
+  const { scores, gaps, budget } = plan;
+  const avgScore = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/Object.values(scores).length);
+
+  // Build a clean summary of findings
+  const findingsSummary = gaps.map(g => `[${g.tag}] ${g.title}: ${g.body}`).join(" | ");
+
+  // All scores as individual fields (shows nicely in Formspree dashboard)
+  const scoreFields = {};
+  Object.entries(scores).forEach(([k, v]) => { scoreFields[`score_${k}`] = `${v}/10`; });
+
+  const payload = {
+    // ── Client info ──
+    _subject: `📋 New Survey — ${clientName || "Anonymous"} | ${new Date().toLocaleDateString()}`,
+    client_name:    clientName  || "N/A",
+    client_email:   clientEmail || "N/A",
+    client_phone:   clientPhone || "N/A",
+    advisor_name:   advisorName || "N/A",
+    language:       lang === "en" ? "English" : "Español",
+    submitted_at:   new Date().toLocaleString(),
+
+    // ── Overall result ──
+    overall_score:  `${avgScore}/10`,
+    budget_needed:  budget,
+    key_findings:   findingsSummary,
+
+    // ── Individual scores ──
+    ...scoreFields,
+
+    // ── Survey answers ──
+    age:                  answers.age || "N/A",
+    dependents:           answers.dependents || "N/A",
+    young_children:       answers.young_children || "N/A",
+    life_insurance:       answers.life_insurance || "N/A",
+    final_expense:        answers.final_expense_coverage || "N/A",
+    ltc_coverage:         answers.ltc || "N/A",
+    disability:           answers.disability || "N/A",
+    retirement_accounts:  answers.retirement_accounts || "N/A",
+    emergency_fund:       answers.emergency_fund || "N/A",
+    has_will:             answers.will || "N/A",
+    credit_card_debt:     answers.credit_cards || "N/A",
+    monthly_budget:       answers.monthly_budget || "N/A",
+    tax_situation:        answers.tax_situation || "N/A",
+    income_sources:       answers.income_sources || "N/A",
+    bank_savings:         answers.bank_cd_savings || "N/A",
+    knows_medicare:       answers.knows_medicare || "N/A",
+    knows_ss:             answers.knows_ss || "N/A",
+    has_business:         answers.has_business || "N/A",
+    college_savings:      answers.college_savings || "N/A",
+  };
+
+  try {
+    const res = await fetch("https://formspree.io/f/meeldjqa", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      console.log("✅ Survey sent to iprotections@yahoo.com via Formspree");
+    } else {
+      console.warn("Formspree error:", res.status);
+    }
+  } catch (err) {
+    console.warn("Survey submission failed:", err);
+    // Don't block the UI
+  }
+}
+
 // ─── MAIN APP ──────────────────────────────────────────────────────────────────
 export default function FinancialBot() {
   // Read URL params — set by advisor
@@ -1815,6 +2142,7 @@ export default function FinancialBot() {
       setAnimating(true);
       setTimeout(() => { setCurrentModule(p => p + 1); setAnimating(false); topRef.current?.scrollIntoView({ behavior: "smooth" }); }, 260);
     } else {
+      window._fa_answers = answers;
       setPlan(generatePlan(answers, lang));
       setShowPlan(true);
       topRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -1940,7 +2268,11 @@ export default function FinancialBot() {
             )}
           </div>
         ) : (
-          <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => setShowThanks(true)} />
+          <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => {
+            // Send email via EmailJS
+            sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang });
+            setShowThanks(true);
+          }} />
         )}
       </div>
 
