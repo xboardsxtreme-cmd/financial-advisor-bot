@@ -1334,7 +1334,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
         </div>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <button onClick={onBack} className="btn-ghost" style={{ fontSize: 12 }}>{t.reviewBtn}</button>
-          <button onClick={() => printReport({ answers: window._fa_answers, plan: plan || window._fa_plan, clientName, advisorName, lang })} className="btn-ghost" style={{ fontSize: 12, color: "#4a90d9", borderColor: "rgba(74,144,217,0.3)" }}>
+          <button onClick={() => printReport({ answers: window._fa_answers, plan: window._fa_plan, clientName, advisorName, lang })} className="btn-ghost" style={{ fontSize: 12, color: "#4a90d9", borderColor: "rgba(74,144,217,0.3)" }}>
             🖨️ {lang === "en" ? "Save PDF" : "Guardar PDF"}
           </button>
           <button onClick={onFinish} className="btn-primary" style={{ fontSize: 13, padding: "11px 28px" }}>
@@ -1814,7 +1814,7 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
 
         {/* BUTTONS */}
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
-          <button onClick={() => printReport({ answers: window._fa_answers, plan: plan || window._fa_plan, clientName, advisorName, lang })} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+          <button onClick={() => printReport({ answers: window._fa_answers, plan: window._fa_plan, clientName, advisorName, lang })} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
             🖨️ {isEN ? "Print / Save PDF" : "Imprimir / Guardar PDF"}
           </button>
           <button onClick={onReset} style={{ padding: "11px 22px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#8899aa", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
@@ -1931,7 +1931,42 @@ function AdvisorScreen() {
           </div>
         )}
 
-        <div style={{ textAlign: "center", marginTop: 20 }}>
+        {/* TEST MODE */}
+        <div style={{ marginTop: 16, background: "rgba(100,160,220,0.06)", border: "1px solid rgba(100,160,220,0.2)", borderRadius: 12, padding: "16px 20px" }}>
+          <div style={{ fontSize: 11, color: "#4a90d9", fontWeight: "bold", letterSpacing: 1, marginBottom: 8 }}>🧪 TEST MODE — Skip Survey</div>
+          <p style={{ fontSize: 11, color: "#667788", margin: "0 0 12px", lineHeight: 1.6 }}>
+            Jump straight to the final report & PDF without answering all questions.
+          </p>
+          <button
+            onClick={() => {
+              const testAnswers = {
+                age: "38", dependents: "Yes – children", young_children: "Yes",
+                life_insurance: "No", final_expense_coverage: "No", ltc: "No",
+                disability: "No", income_dependent_on_health: "Yes – my income depends entirely on my health",
+                retirement_accounts: "No", emergency_fund: "No", will: "No – I don\'t have one",
+                credit_cards: "Yes – and it\'s a burden", monthly_budget: "$250–$500",
+                bank_cd_savings: "Yes", cd_rate_awareness: "Under 2%",
+                college_savings: "No – not saving yet", tax_situation: "I pay too much in taxes",
+                income_sources: "Just one — W-2 job", has_business: "No",
+                knows_iul_tax: "No", tax_refund_habit: "Spend it",
+                tax_beautiful_bill: "No – first time I\'m hearing this",
+                knows_medicare: "No – I don\'t understand it", medicare_parts: "No – I don\'t know them",
+                medicare_supplement: "No – not yet", knows_ss: "No",
+                ss_account: "No", ss_claiming_age: "I don\'t know", age_near_65: "No – under 60",
+              };
+              window._fa_answers = testAnswers;
+              const generated = generatePlan(testAnswers, "en");
+              window._fa_plan = generated;
+              const base = window.location.origin + window.location.pathname;
+              const adv = encodeURIComponent(advisorName || "Advisor");
+              window.location.href = base + "?mode=test&name=Test+Client&advisor=" + adv;
+            }}
+            style={{ width: "100%", padding: "11px", background: "rgba(100,160,220,0.15)", border: "1px solid rgba(100,160,220,0.35)", borderRadius: 8, color: "#4a90d9", fontSize: 13, fontWeight: "bold", cursor: "pointer" }}>
+            🚀 Open Test Report
+          </button>
+        </div>
+
+        <div style={{ textAlign: "center", marginTop: 16 }}>
           <a href={window.location.pathname} style={{ fontSize: 10, color: "#445566", textDecoration: "underline", cursor: "pointer" }}>
             ← Go to survey (as client preview)
           </a>
@@ -1944,8 +1979,9 @@ function AdvisorScreen() {
 
 // ─── PRINT FULL REPORT ──────────────────────────────────────────────────────────
 function printReport({ answers, plan, clientName, advisorName, lang }) {
-  const p = plan || window._fa_plan;
-  if (!p) { alert("No report data found. Please complete the survey first."); return; }
+  const p = window._fa_plan || plan;
+  if (!p || !p.gaps) { alert("Report data not found. Please complete the survey first."); return; }
+  console.log("📄 Printing report. Gaps:", p.gaps.length, "| First gap:", JSON.stringify(p.gaps[0]));
   const isEN = lang === "en";
   const { scores, gaps, budget, plan: budgetPlan, insights, bbEducation, showBBEdu, ltcEducation, showLTCEdu } = p;
   const avgScore = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/Object.values(scores).length);
@@ -2243,18 +2279,49 @@ async function sendReport({ answers, plan, clientName, clientEmail, clientPhone,
   };
 
   // Use Web3Forms — free, no account blocking
+  // Build clean readable message
+  const msgLines = [
+    "=== CLIENT INFO ===",
+    `Name: ${payload.client_name}`,
+    `Phone: ${payload.client_phone}`,
+    `Advisor: ${payload.advisor_name}`,
+    `Language: ${payload.language}`,
+    `Date: ${payload.submitted_at}`,
+    "",
+    "=== RESULTS ===",
+    `Overall Score: ${payload.overall_score}`,
+    `Budget Needed: ${payload.budget_needed}/mo`,
+    "",
+    "=== INDIVIDUAL SCORES ===",
+    ...Object.entries(payload).filter(([k]) => k.startsWith("score_")).map(([k,v]) => `${k.replace("score_","")}: ${v}`),
+    "",
+    "=== KEY FINDINGS ===",
+    payload.key_findings || "",
+    "",
+    "=== SURVEY ANSWERS ===",
+    `Age: ${payload.age}`,
+    `Dependents: ${payload.dependents}`,
+    `Life Insurance: ${payload.life_insurance}`,
+    `LTC: ${payload.ltc_coverage}`,
+    `Disability: ${payload.disability}`,
+    `Retirement: ${payload.retirement_accounts}`,
+    `Emergency Fund: ${payload.emergency_fund}`,
+    `Monthly Budget: ${payload.monthly_budget}`,
+    `Has Will: ${payload.has_will}`,
+    `Tax Situation: ${payload.tax_situation}`,
+    `Income Sources: ${payload.income_sources}`,
+    `Has Business: ${payload.has_business}`,
+  ].join("\n");
+
   const web3payload = {
-    access_key: "87cf4c89-8fa4-446e-8874-dd7be227c1ff", // REPLACE with your key from web3forms.com
+    access_key: "87cf4c89-8fa4-446e-8874-dd7be227c1ff",
     subject: payload._subject,
     from_name: "Financial Advisor Bot",
-    message: Object.entries(payload)
-      .filter(([k]) => !k.startsWith("_"))
-      .map(([k, v]) => `${k}: ${v}`)
-      .join("\n"),
-    ...payload,
+    replyto: "iprotections@yahoo.com",
+    message: msgLines,
   };
 
-  console.log("📤 Sending survey to iprotections@yahoo.com...");
+  console.log("📤 Sending survey...", { name: payload.client_name, score: payload.overall_score });
   try {
     const res = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
@@ -2263,9 +2330,9 @@ async function sendReport({ answers, plan, clientName, clientEmail, clientPhone,
     });
     const json = await res.json();
     if (json.success) {
-      console.log("✅ Survey sent successfully to iprotections@yahoo.com!");
+      console.log("✅ Email sent to iprotections@yahoo.com!");
     } else {
-      console.warn("❌ Web3Forms error:", json);
+      console.warn("❌ Web3Forms error:", JSON.stringify(json));
     }
   } catch (err) {
     console.warn("Survey submission failed:", err);
@@ -2285,14 +2352,16 @@ export default function FinancialBot() {
   // If ?mode=advisor → show advisor portal
   if (urlMode === "advisor") return <AdvisorScreen />;
 
-  const [lang, setLang] = useState(null);
-  const [seenIntro, setSeenIntro] = useState(false);
+  // Test mode: pre-load plan from window globals
+  const isTestMode = urlMode === "test";
+  const [lang, setLang] = useState(isTestMode ? "en" : null);
+  const [seenIntro, setSeenIntro] = useState(isTestMode);
   const [currentModule, setCurrentModule] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [showPlan, setShowPlan] = useState(false);
+  const [answers, setAnswers] = useState(isTestMode ? (window._fa_answers || {}) : {});
+  const [showPlan, setShowPlan] = useState(isTestMode && !!window._fa_plan);
   const [showThanks, setShowThanks] = useState(false);
   const [showLTCScreen, setShowLTCScreen] = useState(false);
-  const [plan, setPlan] = useState(null);
+  const [plan, setPlan] = useState(isTestMode && window._fa_plan ? window._fa_plan : null);
   const [animating, setAnimating] = useState(false);
   const topRef = useRef(null);
 
