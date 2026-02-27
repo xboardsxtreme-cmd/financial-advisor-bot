@@ -1833,6 +1833,36 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
   );
 }
 
+// ─── EXPIRED LINK SCREEN ──────────────────────────────────────────────────────
+function ExpiredScreen({ reason }) {
+  return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "20px" }}>
+      <GlobalStyles />
+      <div style={{ textAlign: "center", maxWidth: 440 }}>
+        <div style={{ fontSize: 64, marginBottom: 20, filter: "drop-shadow(0 0 20px rgba(224,80,80,0.4))" }}>
+          {reason === "used" ? "🔒" : "⏰"}
+        </div>
+        <h1 style={{ fontSize: 22, color: "#e05050", margin: "0 0 12px", fontFamily: "'Playfair Display', serif" }}>
+          {reason === "used" ? "Link Already Used" : "Link Expired"}
+        </h1>
+        <p style={{ fontSize: 14, color: "#667788", lineHeight: 1.8, margin: "0 0 8px" }}>
+          {reason === "used"
+            ? "This survey link has already been completed and can only be used once."
+            : "This survey link has expired. Links are valid for 48 hours."}
+        </p>
+        <p style={{ fontSize: 13, color: "#445566", lineHeight: 1.7, margin: "0 0 28px" }}>
+          Please contact your advisor to receive a new personalized link.
+        </p>
+        <div style={{ background: "rgba(224,80,80,0.06)", border: "1px solid rgba(224,80,80,0.2)", borderRadius: 12, padding: "16px 20px", fontSize: 12, color: "#8899aa", lineHeight: 1.7 }}>
+          {reason === "used"
+            ? "¿Español? Este enlace ya fue utilizado. Contacta a tu asesor para recibir uno nuevo."
+            : "¿Español? Este enlace ha expirado. Contacta a tu asesor para recibir uno nuevo."}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── ADVISOR PORTAL SCREEN ─────────────────────────────────────────────────────
 function AdvisorScreen() {
   const [clientName, setClientName] = useState("");
@@ -1842,14 +1872,30 @@ function AdvisorScreen() {
   const [generatedLink, setGeneratedLink] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const generateLink = () => {
+  const generateLink = async () => {
     const base = window.location.origin + window.location.pathname;
     const params = new URLSearchParams();
     if (clientName) params.set("name", clientName);
     if (clientEmail) params.set("email", clientEmail);
     if (clientPhone) params.set("phone", clientPhone);
     if (advisorName) params.set("advisor", advisorName);
-    setGeneratedLink(`${base}?${params.toString()}`);
+    // Generate unique token + 48hr expiry
+    const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    const expires = Date.now() + 48 * 60 * 60 * 1000;
+    params.set("token", token);
+    params.set("exp", expires.toString());
+    const link = `${base}?${params.toString()}`;
+    setGeneratedLink(link);
+    // Register token in Google Sheets
+    if (GOOGLE_SHEET_URL && !GOOGLE_SHEET_URL.includes("PASTE_YOUR")) {
+      try {
+        await fetch(GOOGLE_SHEET_URL, {
+          method: "POST", mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "registerToken", token, expires, clientName, clientEmail, clientPhone, advisorName }),
+        });
+      } catch(e) {}
+    }
   };
 
   const copyLink = () => {
@@ -1968,9 +2014,12 @@ function AdvisorScreen() {
           </button>
         </div>
 
-        <div style={{ textAlign: "center", marginTop: 16 }}>
+        <div style={{ textAlign: "center", marginTop: 16, display: "flex", gap: 20, justifyContent: "center" }}>
           <a href={window.location.pathname} style={{ fontSize: 10, color: "#445566", textDecoration: "underline", cursor: "pointer" }}>
-            ← Go to survey (as client preview)
+            ← Survey preview
+          </a>
+          <a href="?mode=dashboard" style={{ fontSize: 10, color: "#4caf82", textDecoration: "underline", cursor: "pointer" }}>
+            📊 Client Dashboard →
           </a>
         </div>
       </div>
@@ -2151,119 +2200,291 @@ function printReport({ answers, plan, clientName, advisorName, lang }) {
   win.document.close();
   setTimeout(() => { win.focus(); win.print(); }, 800);
 }
-// ─── SEND REPORT VIA EMAILJS ────────────────────────────────────────────────────
+// ─── GOOGLE SHEETS ENDPOINT — paste your deployed Apps Script URL here ────────
+const GOOGLE_SHEET_URL = https://script.google.com/macros/s/AKfycbz3MP4JgFfCM1MQ6CGyFns0FIcMyydQ_2yuujM0SgsubhLoo18I2nIprYeGysSd0YdRgQ/exec;
+
+
+// ─── SEND DATA TO GOOGLE SHEETS ────────────────────────────────────────────────
 async function sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang }) {
-  const { scores, gaps, budget } = plan;
+  const { scores, gaps, budget, plan: budgetPlan } = plan;
   const avgScore = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/Object.values(scores).length);
 
-  // Build a clean summary of findings
-  const findingsSummary = gaps.map(g => `[${g.tag}] ${g.area||g.title||""}: ${g.reason||g.body||""}`).join(" | ");
-
-  // All scores as individual fields (shows nicely in Formspree dashboard)
-  const scoreFields = {};
-  Object.entries(scores).forEach(([k, v]) => { scoreFields[`score_${k}`] = `${v}/10`; });
-
   const payload = {
-    // ── Client info ──
-    _subject: `📋 New Survey — ${clientName || "Anonymous"} | ${new Date().toLocaleDateString()}`,
-    _replyto: "iprotections@yahoo.com",
-    email: "iprotections@yahoo.com",
-    client_name:    clientName  || "N/A",
-    client_email:   clientEmail || "N/A",
-    client_phone:   clientPhone || "N/A",
-    advisor_name:   advisorName || "N/A",
-    language:       lang === "en" ? "English" : "Español",
-    submitted_at:   new Date().toLocaleString(),
-
-    // ── Overall result ──
-    overall_score:  `${avgScore}/10`,
-    budget_needed:  budget,
-    key_findings:   findingsSummary,
-
-    // ── Individual scores ──
-    ...scoreFields,
-
-    // ── Survey answers ──
-    age:                  answers.age || "N/A",
-    dependents:           answers.dependents || "N/A",
-    young_children:       answers.young_children || "N/A",
-    life_insurance:       answers.life_insurance || "N/A",
-    final_expense:        answers.final_expense_coverage || "N/A",
-    ltc_coverage:         answers.ltc || "N/A",
-    disability:           answers.disability || "N/A",
-    retirement_accounts:  answers.retirement_accounts || "N/A",
-    emergency_fund:       answers.emergency_fund || "N/A",
-    has_will:             answers.will || "N/A",
-    credit_card_debt:     answers.credit_cards || "N/A",
-    monthly_budget:       answers.monthly_budget || "N/A",
-    tax_situation:        answers.tax_situation || "N/A",
-    income_sources:       answers.income_sources || "N/A",
-    bank_savings:         answers.bank_cd_savings || "N/A",
-    knows_medicare:       answers.knows_medicare || "N/A",
-    knows_ss:             answers.knows_ss || "N/A",
-    has_business:         answers.has_business || "N/A",
-    college_savings:      answers.college_savings || "N/A",
+    clientName:  clientName  || "Anonymous",
+    clientEmail: clientEmail || "",
+    clientPhone: clientPhone || "",
+    advisorName: advisorName || "",
+    lang,
+    avgScore,
+    budget,
+    scores,
+    gaps,
+    budgetPlan: budgetPlan || [],
+    answers: answers || {},
   };
 
-  // Use Web3Forms — free, no account blocking
-  // Build clean readable message
-  const msgLines = [
-    "=== CLIENT INFO ===",
-    `Name: ${payload.client_name}`,
-    `Phone: ${payload.client_phone}`,
-    `Advisor: ${payload.advisor_name}`,
-    `Language: ${payload.language}`,
-    `Date: ${payload.submitted_at}`,
-    "",
-    "=== RESULTS ===",
-    `Overall Score: ${payload.overall_score}`,
-    `Budget Needed: ${payload.budget_needed}/mo`,
-    "",
-    "=== INDIVIDUAL SCORES ===",
-    ...Object.entries(payload).filter(([k]) => k.startsWith("score_")).map(([k,v]) => `${k.replace("score_","")}: ${v}`),
-    "",
-    "=== KEY FINDINGS ===",
-    payload.key_findings || "",
-    "",
-    "=== SURVEY ANSWERS ===",
-    `Age: ${payload.age}`,
-    `Dependents: ${payload.dependents}`,
-    `Life Insurance: ${payload.life_insurance}`,
-    `LTC: ${payload.ltc_coverage}`,
-    `Disability: ${payload.disability}`,
-    `Retirement: ${payload.retirement_accounts}`,
-    `Emergency Fund: ${payload.emergency_fund}`,
-    `Monthly Budget: ${payload.monthly_budget}`,
-    `Has Will: ${payload.has_will}`,
-    `Tax Situation: ${payload.tax_situation}`,
-    `Income Sources: ${payload.income_sources}`,
-    `Has Business: ${payload.has_business}`,
-  ].join("\n");
+  console.log("📤 Sending to Google Sheets...", { name: payload.clientName, score: avgScore });
 
-  const web3payload = {
-    access_key: "87cf4c89-8fa4-446e-8874-dd7be227c1ff",
-    subject: payload._subject,
-    from_name: "Financial Advisor Bot",
-    replyto: "iprotections@yahoo.com",
-    message: msgLines,
-  };
-
-  console.log("📤 Sending survey...", { name: payload.client_name, score: payload.overall_score });
-  try {
-    const res = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(web3payload),
-    });
-    const json = await res.json();
-    if (json.success) {
-      console.log("✅ Email sent to iprotections@yahoo.com!");
-    } else {
-      console.warn("❌ Web3Forms error:", JSON.stringify(json));
-    }
-  } catch (err) {
-    console.warn("Survey submission failed:", err);
+  if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes("PASTE_YOUR")) {
+    console.warn("⚠️ Google Sheet URL not configured yet. Set GOOGLE_SHEET_URL in the code.");
+    return;
   }
+
+  try {
+    await fetch(GOOGLE_SHEET_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    console.log("✅ Data sent to Google Sheets!");
+  } catch (err) {
+    console.warn("Sheet submission failed:", err);
+  }
+}
+
+// ─── DASHBOARD SCREEN ──────────────────────────────────────────────────────────
+function DashboardScreen() {
+  const [sheetUrl, setSheetUrl] = useState(
+    typeof GOOGLE_SHEET_URL === "string" && !GOOGLE_SHEET_URL.includes("PASTE_YOUR")
+      ? GOOGLE_SHEET_URL : ""
+  );
+  const [clients, setClients] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [filterScore, setFilterScore] = useState("all");
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [urlInput, setUrlInput] = useState("");
+
+  const loadClients = async (url) => {
+    setLoading(true);
+    setError("");
+    try {
+      // Fetch as CSV from published Google Sheet
+      const res = await fetch(url);
+      const text = await res.text();
+      const rows = text.trim().split("\n").map(r => r.split("\t"));
+      if (rows.length < 2) { setError("No clients yet."); setLoading(false); return; }
+      const headers = rows[0];
+      const data = rows.slice(1).map(row => {
+        const obj = {};
+        headers.forEach((h, i) => { obj[h.trim()] = (row[i] || "").trim(); });
+        return obj;
+      }).reverse(); // newest first
+      setClients(data);
+    } catch(e) {
+      setError("Could not load data. Make sure the sheet is published and the URL is correct.");
+    }
+    setLoading(false);
+  };
+
+  const filtered = clients.filter(c => {
+    const matchSearch = !search ||
+      (c["Client Name"] || "").toLowerCase().includes(search.toLowerCase()) ||
+      (c["Client Email"] || "").toLowerCase().includes(search.toLowerCase()) ||
+      (c["Advisor"] || "").toLowerCase().includes(search.toLowerCase());
+    const score = parseInt(c["Overall Score"]) || 0;
+    const matchScore = filterScore === "all" ||
+      (filterScore === "critical" && score < 4) ||
+      (filterScore === "partial" && score >= 4 && score < 7) ||
+      (filterScore === "good" && score >= 7);
+    return matchSearch && matchScore;
+  });
+
+  const scoreColor = (s) => {
+    const n = parseInt(s) || 0;
+    return n >= 7 ? "#4caf82" : n >= 4 ? "#e8c050" : "#e05050";
+  };
+
+  const inputStyle = {
+    padding: "10px 14px", background: "rgba(10,20,40,0.8)",
+    border: "1px solid rgba(200,160,80,0.3)", borderRadius: 8,
+    color: "#e8dcc8", fontSize: 13, outline: "none", fontFamily: "'DM Sans', sans-serif",
+  };
+
+  // If no URL configured — show setup screen
+  if (!sheetUrl) {
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", fontFamily: "'DM Sans', sans-serif" }}>
+        <div style={{ maxWidth: 520, width: "100%" }}>
+          <div style={{ textAlign: "center", marginBottom: 28 }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>📊</div>
+            <h1 style={{ fontSize: 22, color: "#e8c878", margin: "0 0 8px", fontFamily: "'Playfair Display', serif" }}>Client Dashboard</h1>
+            <p style={{ color: "#667788", fontSize: 13, margin: 0 }}>Connect your Google Sheet to see all clients</p>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 14, padding: "24px" }}>
+            <div style={{ fontSize: 12, color: "#c8a050", fontWeight: "bold", letterSpacing: 1, marginBottom: 16 }}>GOOGLE SHEET PUBLISHED URL</div>
+            <input
+              style={{ ...inputStyle, width: "100%", boxSizing: "border-box", marginBottom: 12 }}
+              placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=tsv"
+              value={urlInput}
+              onChange={e => setUrlInput(e.target.value)}
+            />
+            <button
+              onClick={() => { if (urlInput.trim()) { setSheetUrl(urlInput.trim()); loadClients(urlInput.trim()); }}}
+              style={{ width: "100%", padding: "12px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 8, color: "#0a1628", fontSize: 14, fontWeight: "bold", cursor: "pointer" }}>
+              Connect Sheet →
+            </button>
+            <div style={{ marginTop: 20, padding: "14px", background: "rgba(74,144,217,0.08)", border: "1px solid rgba(74,144,217,0.2)", borderRadius: 8 }}>
+              <div style={{ fontSize: 11, color: "#4a90d9", fontWeight: "bold", marginBottom: 8 }}>📋 How to get the URL:</div>
+              {["1. Open your Google Sheet", "2. File → Share → Publish to web", "3. Select 'Clients' sheet → 'Tab-separated values (.tsv)'", "4. Click Publish → Copy the URL", "5. Paste it above"].map((s,i) => (
+                <div key={i} style={{ fontSize: 11, color: "#8899aa", marginBottom: 4 }}>→ {s}</div>
+              ))}
+            </div>
+          </div>
+          <div style={{ textAlign: "center", marginTop: 16 }}>
+            <a href="?mode=advisor" style={{ fontSize: 11, color: "#445566", textDecoration: "underline" }}>← Back to Advisor Portal</a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Client detail view
+  if (selectedClient) {
+    let scores = {}, gaps = [], budgetPlan = [], answers = {};
+    try { scores = JSON.parse(selectedClient["Scores JSON"] || "{}"); } catch(e) {}
+    try { gaps = JSON.parse(selectedClient["Gaps JSON"] || "[]"); } catch(e) {}
+    try { budgetPlan = JSON.parse(selectedClient["Plan JSON"] || "[]"); } catch(e) {}
+    try { answers = JSON.parse(selectedClient["All Answers JSON"] || "{}"); } catch(e) {}
+    const lang = selectedClient["Language"] === "Español" ? "es" : "en";
+    const clientPlan = { scores, gaps, plan: budgetPlan, budget: selectedClient["Budget"] || "", insights: [], medicareEducation: null, showMedicareEdu: false, ltcEducation: null, showLTCEdu: false, bbEducation: null, showBBEdu: false };
+
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 50%, #080e1a 100%)", fontFamily: "'DM Sans', sans-serif", color: "#e8dcc8" }}>
+        <GlobalStyles />
+        <div style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(7,9,15,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(200,160,80,0.15)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14 }}>
+          <button onClick={() => setSelectedClient(null)} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, color: "#c8a050", padding: "7px 16px", cursor: "pointer", fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>← Back</button>
+          <div style={{ fontSize: 14, color: "#e8c878", fontWeight: 600 }}>{selectedClient["Client Name"]}</div>
+          <div style={{ fontSize: 11, color: "#445566" }}>{selectedClient["Timestamp"]}</div>
+          <button
+            onClick={() => printReport({ answers, plan: clientPlan, clientName: selectedClient["Client Name"], advisorName: selectedClient["Advisor"], lang })}
+            style={{ marginLeft: "auto", padding: "8px 18px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 8, color: "#0a1628", fontSize: 12, fontWeight: "bold", cursor: "pointer" }}>
+            🖨️ Print PDF
+          </button>
+        </div>
+        <div style={{ maxWidth: 680, margin: "0 auto", padding: "24px 18px" }}>
+          <PlanDisplay plan={clientPlan} lang={lang} clientName={selectedClient["Client Name"]} advisorName={selectedClient["Advisor"]} onBack={() => setSelectedClient(null)} onReset={() => setSelectedClient(null)} onFinish={() => setSelectedClient(null)} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", fontFamily: "'DM Sans', sans-serif", color: "#e8dcc8" }}>
+      <GlobalStyles />
+
+      {/* Header */}
+      <div style={{ background: "rgba(7,9,15,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(200,160,80,0.15)", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ fontSize: 24 }}>📊</div>
+          <div>
+            <div style={{ fontSize: 16, color: "#e8c878", fontWeight: 700, fontFamily: "'Playfair Display', serif" }}>Client Dashboard</div>
+            <div style={{ fontSize: 10, color: "#445566" }}>{clients.length} clients total</div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={() => loadClients(sheetUrl)} style={{ padding: "8px 16px", background: "rgba(76,175,130,0.15)", border: "1px solid rgba(76,175,130,0.3)", borderRadius: 8, color: "#4caf82", fontSize: 12, cursor: "pointer" }}>🔄 Refresh</button>
+          <a href="?mode=advisor" style={{ padding: "8px 16px", background: "rgba(200,160,80,0.1)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 8, color: "#c8a050", fontSize: 12, textDecoration: "none", display: "flex", alignItems: "center" }}>⚙️ Portal</a>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 18px" }}>
+
+        {/* Stats row */}
+        {clients.length > 0 && (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
+            {[
+              { label: "Total Clients", value: clients.length, color: "#4a90d9" },
+              { label: "Critical Gaps", value: clients.filter(c => parseInt(c["Critical Gaps"]) > 0).length, color: "#e05050" },
+              { label: "Avg Score", value: (clients.reduce((s,c) => s + (parseInt(c["Overall Score"])||0), 0) / clients.length).toFixed(1) + "/10", color: "#c8a050" },
+              { label: "This Month", value: clients.filter(c => { try { return new Date(c["Timestamp"]).getMonth() === new Date().getMonth(); } catch(e){ return false; }}).length, color: "#4caf82" },
+            ].map((stat, i) => (
+              <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "16px 20px" }}>
+                <div style={{ fontSize: 22, fontWeight: 700, color: stat.color, fontFamily: "'Playfair Display', serif" }}>{stat.value}</div>
+                <div style={{ fontSize: 11, color: "#445566", marginTop: 3 }}>{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Search + Filter */}
+        <div style={{ display: "flex", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
+          <input
+            style={{ flex: 1, minWidth: 200, padding: "10px 14px", background: "rgba(10,20,40,0.8)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 8, color: "#e8dcc8", fontSize: 13, outline: "none" }}
+            placeholder="🔍 Search by name, email, advisor..."
+            value={search} onChange={e => setSearch(e.target.value)}
+          />
+          <select
+            value={filterScore} onChange={e => setFilterScore(e.target.value)}
+            style={{ padding: "10px 14px", background: "rgba(10,20,40,0.8)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 8, color: "#e8dcc8", fontSize: 13, outline: "none", cursor: "pointer" }}>
+            <option value="all">All Scores</option>
+            <option value="critical">🔴 Critical (&lt;4)</option>
+            <option value="partial">🟡 Partial (4–6)</option>
+            <option value="good">🟢 Good (7+)</option>
+          </select>
+        </div>
+
+        {/* Load button if not loaded */}
+        {clients.length === 0 && !loading && !error && (
+          <div style={{ textAlign: "center", padding: "40px" }}>
+            <button onClick={() => loadClients(sheetUrl)} style={{ padding: "14px 36px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 10, color: "#0a1628", fontSize: 14, fontWeight: "bold", cursor: "pointer" }}>
+              📊 Load Clients
+            </button>
+          </div>
+        )}
+
+        {loading && <div style={{ textAlign: "center", padding: "40px", color: "#445566", fontSize: 14 }}>Loading clients...</div>}
+        {error && <div style={{ textAlign: "center", padding: "24px", color: "#e05050", fontSize: 13 }}>{error}</div>}
+
+        {/* Client cards */}
+        {filtered.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {filtered.map((client, i) => {
+              const score = parseInt(client["Overall Score"]) || 0;
+              const sColor = scoreColor(score);
+              const critGaps = parseInt(client["Critical Gaps"]) || 0;
+              return (
+                <div key={i}
+                  onClick={() => setSelectedClient(client)}
+                  style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "16px 20px", cursor: "pointer", display: "flex", alignItems: "center", gap: 16, transition: "all 0.2s ease" }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,160,80,0.06)"; e.currentTarget.style.borderColor = "rgba(200,160,80,0.3)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.025)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
+                >
+                  {/* Score circle */}
+                  <div style={{ width: 48, height: 48, borderRadius: "50%", border: `3px solid ${sColor}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <span style={{ fontSize: 16, fontWeight: 700, color: sColor }}>{score}</span>
+                  </div>
+                  {/* Info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: "#e8dcc8", marginBottom: 3 }}>{client["Client Name"] || "Anonymous"}</div>
+                    <div style={{ fontSize: 11, color: "#445566", display: "flex", gap: 12, flexWrap: "wrap" }}>
+                      {client["Client Phone"] && <span>📞 {client["Client Phone"]}</span>}
+                      {client["Client Email"] && <span>✉️ {client["Client Email"]}</span>}
+                      {client["Advisor"] && <span>👤 {client["Advisor"]}</span>}
+                      <span>🕐 {client["Timestamp"]}</span>
+                    </div>
+                  </div>
+                  {/* Badges */}
+                  <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                    {critGaps > 0 && <span style={{ fontSize: 10, color: "#e05050", background: "rgba(224,80,80,0.12)", border: "1px solid rgba(224,80,80,0.25)", borderRadius: 6, padding: "3px 8px" }}>🔴 {critGaps} Critical</span>}
+                    {client["Budget"] && <span style={{ fontSize: 10, color: "#c8a050", background: "rgba(200,160,80,0.1)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 6, padding: "3px 8px" }}>{client["Budget"]}/mo</span>}
+                    {client["Language"] && <span style={{ fontSize: 10, color: "#667788", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>{client["Language"] === "Español" ? "🇪🇸" : "🇺🇸"}</span>}
+                    <span style={{ fontSize: 10, color: "#4a90d9", padding: "3px 8px" }}>View →</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {filtered.length === 0 && clients.length > 0 && (
+          <div style={{ textAlign: "center", padding: "40px", color: "#445566" }}>No clients match your search.</div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ─── MAIN APP ──────────────────────────────────────────────────────────────────
@@ -2278,6 +2499,25 @@ export default function FinancialBot() {
 
   // If ?mode=advisor → show advisor portal
   if (urlMode === "advisor") return <AdvisorScreen />;
+  // If ?mode=dashboard → show client dashboard
+  if (urlMode === "dashboard") return <DashboardScreen />;
+
+  // ── TOKEN VALIDATION ──
+  const urlToken = params.get("token");
+  const urlExp = parseInt(params.get("exp") || "0");
+
+  // Check 1: Expired by time (48 hours)
+  if (urlToken && urlExp && Date.now() > urlExp) {
+    return <ExpiredScreen reason="expired" />;
+  }
+
+  // Check 2: Already used (stored in localStorage)
+  if (urlToken) {
+    const usedTokens = JSON.parse(localStorage.getItem("_fa_used_tokens") || "[]");
+    if (usedTokens.includes(urlToken)) {
+      return <ExpiredScreen reason="used" />;
+    }
+  }
 
   // Test mode: pre-load plan from window globals
   const isTestMode = urlMode === "test";
@@ -2465,7 +2705,15 @@ export default function FinancialBot() {
           </div>
         ) : (
           <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => {
-            // Send email via EmailJS
+            // Mark token as used (one-time link)
+            const token = new URLSearchParams(window.location.search).get("token");
+            if (token) {
+              try {
+                const used = JSON.parse(localStorage.getItem("_fa_used_tokens") || "[]");
+                used.push(token);
+                localStorage.setItem("_fa_used_tokens", JSON.stringify(used.slice(-100))); // keep last 100
+              } catch(e) {}
+            }
             sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang });
             setShowThanks(true);
           }} />
