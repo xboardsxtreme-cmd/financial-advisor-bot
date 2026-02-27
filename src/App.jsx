@@ -1764,7 +1764,7 @@ function LTCEducationScreen({ lang, onContinue }) {
 }
 
 // ─── THANKS SCREEN ─────────────────────────────────────────────────────────────
-function ThanksScreen({ lang, clientName, advisorName, onReset }) {
+function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
   const isEN = lang === "en";
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", fontFamily: "'Georgia', serif", padding: "32px 20px" }}>
@@ -1814,7 +1814,7 @@ function ThanksScreen({ lang, clientName, advisorName, onReset }) {
 
         {/* BUTTONS */}
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
-          <button onClick={() => window.print()} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
+          <button onClick={() => printReport({ answers: window._fa_answers, plan, clientName, advisorName, lang })} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
             🖨️ {isEN ? "Print / Save PDF" : "Imprimir / Guardar PDF"}
           </button>
           <button onClick={onReset} style={{ padding: "11px 22px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#8899aa", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
@@ -2069,7 +2069,7 @@ async function sendReport({ answers, plan, clientName, clientEmail, clientPhone,
   };
 
   try {
-    const res = await fetch("https://formspree.io/f/meeldjqa", {
+    const res = await fetch("https://formspree.io/f/xnjbraol", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(payload),
@@ -2116,7 +2116,7 @@ export default function FinancialBot() {
 
   // Show thanks screen after submitting
   if (showThanks) {
-    return <ThanksScreen lang={lang} clientName={clientName} advisorName={advisorName} onReset={() => { setAnswers({}); setCurrentModule(0); setShowPlan(false); setShowThanks(false); setShowLTCScreen(false); setPlan(null); setLang(null); setSeenIntro(false); }} />;
+    return <ThanksScreen lang={lang} clientName={clientName} advisorName={advisorName} plan={plan} onReset={() => { setAnswers({}); setCurrentModule(0); setShowPlan(false); setShowThanks(false); setShowLTCScreen(false); setPlan(null); setLang(null); setSeenIntro(false); }} />;
   }
 
   // Show LTC education screen before module E (index 4)
