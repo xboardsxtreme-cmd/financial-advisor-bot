@@ -1957,6 +1957,8 @@ function AdvisorScreen() {
               window._fa_answers = testAnswers;
               const generated = generatePlan(testAnswers, "en");
               window._fa_plan = generated;
+              sessionStorage.setItem("_fa_test_plan", JSON.stringify(generated));
+              sessionStorage.setItem("_fa_test_answers", JSON.stringify(testAnswers));
               const base = window.location.origin + window.location.pathname;
               const adv = encodeURIComponent(advisorName || "Advisor");
               window.location.href = base + "?mode=test&name=Test+Client&advisor=" + adv;
@@ -2279,6 +2281,17 @@ export default function FinancialBot() {
 
   // Test mode: pre-load plan from window globals
   const isTestMode = urlMode === "test";
+
+  // Restore test data from sessionStorage (survives page redirect)
+  if (isTestMode && !window._fa_plan) {
+    try {
+      const storedPlan = sessionStorage.getItem("_fa_test_plan");
+      const storedAnswers = sessionStorage.getItem("_fa_test_answers");
+      if (storedPlan) window._fa_plan = JSON.parse(storedPlan);
+      if (storedAnswers) window._fa_answers = JSON.parse(storedAnswers);
+    } catch(e) {}
+  }
+
   const [lang, setLang] = useState(isTestMode ? "en" : null);
   const [seenIntro, setSeenIntro] = useState(isTestMode);
   const [currentModule, setCurrentModule] = useState(0);
