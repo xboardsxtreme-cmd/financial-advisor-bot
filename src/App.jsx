@@ -1944,6 +1944,175 @@ function AdvisorScreen() {
 
 // ─── PRINT FULL REPORT ──────────────────────────────────────────────────────────
 function printReport({ answers, plan, clientName, advisorName, lang }) {
+  const p = plan || window._fa_plan;
+  if (!p) { alert("No report data found. Please complete the survey first."); return; }
+  const isEN = lang === "en";
+  const { scores, gaps, budget, plan: budgetPlan, insights, bbEducation, showBBEdu, ltcEducation, showLTCEdu } = p;
+  const avgScore = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/Object.values(scores).length);
+  const overallColor = avgScore >= 7 ? "#2d8a5e" : avgScore >= 4 ? "#b8860b" : "#c0392b";
+  const overallLabel = avgScore >= 7 ? (isEN ? "Well Protected" : "Bien Protegido") : avgScore >= 4 ? (isEN ? "Partially Protected" : "Parcialmente Protegido") : (isEN ? "Significant Gaps" : "Brechas Significativas");
+
+  // Score labels matching the app
+  const scoreLabelsEN = { "Life & Family Protection":"Life & Family Protection","Final Expense Coverage":"Final Expense Coverage","Health & LTC":"Health & LTC","Income Protection":"Income Protection","Retirement Planning":"Retirement Planning","Emergency Fund":"Emergency Fund","Savings Optimization":"Savings Optimization","Estate Planning":"Estate Planning","Medicare & Social Security":"Medicare & Social Security","Tax Strategy":"Tax Strategy" };
+  const scoreLabelsES = { "Life & Family Protection":"Protección de Vida y Familia","Final Expense Coverage":"Cobertura de Gastos Finales","Health & LTC":"Salud y Cuidado a Largo Plazo","Income Protection":"Protección de Ingresos","Retirement Planning":"Planificación de Retiro","Emergency Fund":"Fondo de Emergencia","Savings Optimization":"Optimización de Ahorros","Estate Planning":"Planificación Patrimonial","Medicare & Social Security":"Medicare y Seguro Social","Tax Strategy":"Estrategia Fiscal" };
+  const scoreLabels = isEN ? scoreLabelsEN : scoreLabelsES;
+
+  // Score rows with visual bars
+  const scoreRows = Object.entries(scores).map(([k, v]) => {
+    const c = v >= 7 ? "#2d8a5e" : v >= 4 ? "#b8860b" : "#c0392b";
+    const label = scoreLabels[k] || k;
+    return `<tr>
+      <td style="padding:10px 16px;border-bottom:1px solid #f0f0f0;font-size:13px;color:#1a1a1a">${label}</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #f0f0f0;width:200px">
+        <div style="height:6px;background:#eee;border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${v*10}%;background:${c};border-radius:3px"></div>
+        </div>
+      </td>
+      <td style="padding:10px 16px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700;color:${c};font-size:14px">${v}/10</td>
+    </tr>`;
+  }).join('');
+
+  // Gap cards grouped by priority
+  const cTags = ["CRITICAL","CRÍTICO"], iTags = ["IMPORTANT","IMPORTANTE"], oTags = ["OPPORTUNITY","OPORTUNIDAD","TIP","CONSEJO"];
+  const renderGaps = (gapList) => gapList.map(g => {
+    const tagColor = cTags.includes(g.tag) ? "#c0392b" : iTags.includes(g.tag) ? "#b8860b" : "#2d8a5e";
+    const title = g.area || g.title || "";
+    const body = g.reason || g.body || "";
+    return `<div style="border-left:4px solid ${tagColor};padding:12px 16px;margin-bottom:10px;background:#fafafa;border-radius:0 8px 8px 0;page-break-inside:avoid">
+      <div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:5px">${g.icon||""} ${title}</div>
+      <div style="font-size:12px;color:#555;line-height:1.65">${body}</div>
+      <span style="display:inline-block;margin-top:6px;font-size:10px;color:${tagColor};font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:3px;background:${tagColor}18">${g.tag||""}</span>
+    </div>`;
+  }).join('');
+
+  const critGaps = gaps.filter(g => cTags.includes(g.tag));
+  const impGaps = gaps.filter(g => iTags.includes(g.tag));
+  const oppGaps = gaps.filter(g => oTags.includes(g.tag));
+
+  const gapSection = `
+    ${critGaps.length > 0 ? `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:#c0392b;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #c0392b20">🔴 ${isEN?"CRITICAL":"CRÍTICO"}</div>${renderGaps(critGaps)}</div>` : ""}
+    ${impGaps.length > 0 ? `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:#b8860b;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #b8860b20">🟡 ${isEN?"IMPORTANT":"IMPORTANTE"}</div>${renderGaps(impGaps)}</div>` : ""}
+    ${oppGaps.length > 0 ? `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:#2d8a5e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #2d8a5e20">💡 ${isEN?"OPPORTUNITIES":"OPORTUNIDADES"}</div>${renderGaps(oppGaps)}</div>` : ""}
+    ${insights && insights.length > 0 ? `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:#2c6fad;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #2c6fad20">📊 ${isEN?"KEY INSIGHTS":"IDEAS CLAVE"}</div>${insights.map(ins=>`<div style="border-left:4px solid #2c6fad;padding:10px 14px;margin-bottom:8px;background:#f5f8ff;border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:4px">${ins.icon||""} ${ins.title||""}</div><div style="font-size:12px;color:#555;line-height:1.6">${ins.body||""}</div></div>`).join("")}</div>` : ""}
+  `;
+
+  // Budget rows
+  const budgetRows = (budgetPlan||[]).map((item,i) => `
+    <tr style="background:${i%2===0?"#fafafa":"#fff"}">
+      <td style="padding:9px 14px;font-size:12px;color:#1a1a1a;font-weight:500">${item.item}</td>
+      <td style="padding:9px 14px;font-size:11px;color:#888">${item.note}</td>
+      <td style="padding:9px 14px;text-align:right;font-weight:700;color:#b8860b;font-size:13px">${item.amount}</td>
+    </tr>`).join('');
+
+  // Beautiful Bill section if applicable
+  const bbSection = showBBEdu && bbEducation ? `
+    <div style="padding:24px 40px;border-bottom:1px solid #f0f0f0;page-break-inside:avoid">
+      <h2 style="font-size:14px;font-weight:700;color:#1a1a1a;margin:0 0 6px;text-transform:uppercase;letter-spacing:1px;padding-bottom:6px;border-bottom:2px solid #c8a050">📜 ${bbEducation.title}</h2>
+      <div style="font-size:11px;color:#888;margin-bottom:12px">${bbEducation.subtitle}</div>
+      <p style="font-size:12px;color:#444;line-height:1.7;margin-bottom:14px">${bbEducation.summary}</p>
+      ${bbEducation.sections.map(s=>`<div style="border-left:3px solid #c8a050;padding:8px 14px;margin-bottom:8px;background:#fffdf5;border-radius:0 6px 6px 0"><div style="font-weight:600;font-size:12px;margin-bottom:3px">${s.icon} ${s.title}</div><div style="font-size:11px;color:#666;line-height:1.6">${s.body}</div></div>`).join("")}
+    </div>` : "";
+
+  // Facts grid
+  const factsEN = [["70%+","of people 65+ will need long-term care"],["11%","only — have LTC coverage"],["$10–15K","average funeral & burial cost"],["$12K+","average monthly nursing home cost"],["47%","can't cover a $500 emergency"],["Rule of 72","At 8%, money doubles every 9 years"]];
+  const factsES = [["70%+","de personas 65+ necesitarán cuidado a largo plazo"],["11%","solamente tiene cobertura LTC"],["$10–15K","costo promedio de funeral y entierro"],["$12K+","costo mensual promedio de hogar de ancianos"],["47%","no puede cubrir una emergencia de $500"],["Regla del 72","Al 8%, el dinero se duplica cada 9 años"]];
+  const facts = isEN ? factsEN : factsES;
+  const factsHtml = facts.map(([stat,desc])=>`<div style="background:#fffbf0;border:1px solid #e8d89040;border-radius:8px;padding:10px 12px"><div style="font-size:16px;font-weight:700;color:#b8860b;margin-bottom:3px">${stat}</div><div style="font-size:10px;color:#666;line-height:1.4">${desc}</div></div>`).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
+  <title>Financial Protection Assessment — ${clientName||"Client"}</title>
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;color:#1a1a1a;background:#fff;font-size:13px}
+    @media print{
+      @page{margin:0.5in;size:letter}
+      body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .no-break{page-break-inside:avoid}
+    }
+  </style></head><body>
+
+  <!-- HEADER -->
+  <div style="background:linear-gradient(135deg,#0a1628,#112240);color:#e8c878;padding:28px 40px;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:20px;font-weight:700;margin-bottom:3px">⚖️ Financial Protection Assessment</div>
+      <div style="font-size:11px;color:#8899aa">Asesor de Protección Financiera</div>
+    </div>
+    <div style="text-align:right;font-size:12px;color:#c8a050;line-height:1.9">
+      ${clientName ? `<div><strong style="color:#e8c878">${clientName}</strong></div>` : ""}
+      ${advisorName ? `<div>Advisor: ${advisorName}</div>` : ""}
+      <div>${new Date().toLocaleDateString(isEN?"en-US":"es-US",{year:"numeric",month:"long",day:"numeric"})}</div>
+    </div>
+  </div>
+
+  <!-- SCORE HERO -->
+  <div style="background:#f8f9fa;padding:28px 40px;text-align:center;border-bottom:2px solid #eee">
+    <div style="display:inline-block;width:96px;height:96px;border-radius:50%;border:6px solid ${overallColor};line-height:84px;font-size:34px;font-weight:700;color:${overallColor};margin-bottom:10px">${avgScore}</div>
+    <div style="font-size:20px;font-weight:700;color:${overallColor};margin-bottom:6px">${overallLabel}</div>
+    <div style="font-size:11px;color:#888">${isEN?"Overall Financial Health Score — Based on":"Puntuación General de Salud Financiera — Basado en"} ${Object.keys(scores).length} ${isEN?"categories":"categorías"}</div>
+    <div style="display:flex;justify-content:center;gap:12px;margin-top:12px;flex-wrap:wrap">
+      ${critGaps.length>0?`<span style="font-size:11px;color:#c0392b;background:#fdf0ee;border:1px solid #f0c0b8;border-radius:20px;padding:3px 12px">🔴 ${critGaps.length} ${isEN?"Critical":"Crítico"}</span>`:""}
+      ${impGaps.length>0?`<span style="font-size:11px;color:#b8860b;background:#fdf8ee;border:1px solid #e8d890;border-radius:20px;padding:3px 12px">🟡 ${impGaps.length} ${isEN?"Important":"Importante"}</span>`:""}
+      ${oppGaps.length>0?`<span style="font-size:11px;color:#2d8a5e;background:#eef8f3;border:1px solid #90d8b8;border-radius:20px;padding:3px 12px">💡 ${oppGaps.length} ${isEN?"Opportunities":"Oportunidades"}</span>`:""}
+    </div>
+  </div>
+
+  <!-- SCORES -->
+  <div style="padding:24px 40px;border-bottom:1px solid #f0f0f0">
+    <h2 style="font-size:13px;font-weight:700;color:#1a1a1a;margin:0 0 16px;text-transform:uppercase;letter-spacing:1px;padding-bottom:6px;border-bottom:2px solid ${overallColor}">${isEN?"Score by Category":"Puntuación por Categoría"}</h2>
+    <table style="width:100%;border-collapse:collapse">${scoreRows}</table>
+  </div>
+
+  <!-- FINDINGS -->
+  <div style="padding:24px 40px;border-bottom:1px solid #f0f0f0">
+    <h2 style="font-size:13px;font-weight:700;color:#1a1a1a;margin:0 0 16px;text-transform:uppercase;letter-spacing:1px;padding-bottom:6px;border-bottom:2px solid ${overallColor}">${isEN?"Key Findings & Recommendations":"Hallazgos Clave y Recomendaciones"}</h2>
+    ${gapSection}
+  </div>
+
+  <!-- BUDGET -->
+  <div style="padding:24px 40px;border-bottom:1px solid #f0f0f0;page-break-inside:avoid">
+    <h2 style="font-size:13px;font-weight:700;color:#1a1a1a;margin:0 0 6px;text-transform:uppercase;letter-spacing:1px;padding-bottom:6px;border-bottom:2px solid #c8a050">${isEN?"Suggested Monthly Budget":"Presupuesto Mensual Sugerido"} — ${budget}/${isEN?"mo":"mes"}</h2>
+    <table style="width:100%;border-collapse:collapse;margin-top:12px">
+      <thead><tr style="background:#f5f5f5">
+        <th style="text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:#555">${isEN?"Coverage Item":"Elemento"}</th>
+        <th style="text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:#555">${isEN?"Note":"Nota"}</th>
+        <th style="text-align:right;padding:9px 14px;font-size:11px;font-weight:600;color:#555">${isEN?"Est. Amount":"Monto Est."}</th>
+      </tr></thead>
+      <tbody>${budgetRows}</tbody>
+    </table>
+  </div>
+
+  ${bbSection}
+
+  <!-- KEY FACTS -->
+  <div style="padding:24px 40px;border-bottom:1px solid #f0f0f0">
+    <h2 style="font-size:13px;font-weight:700;color:#1a1a1a;margin:0 0 14px;text-transform:uppercase;letter-spacing:1px;padding-bottom:6px;border-bottom:2px solid #2c6fad">${isEN?"Key Facts":"Datos Clave"}</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">${factsHtml}</div>
+  </div>
+
+  <!-- NEXT STEPS -->
+  <div style="padding:24px 40px;background:#fffbf0;border-bottom:1px solid #f0f0f0">
+    <h2 style="font-size:13px;font-weight:700;color:#b8860b;margin:0 0 10px;text-transform:uppercase;letter-spacing:1px">${isEN?"Next Steps":"Próximos Pasos"}</h2>
+    <p style="font-size:12px;color:#444;line-height:1.8;margin:0">
+      ${isEN
+        ? `${clientName||"Your"} assessment is complete. ${advisorName||"Your advisor"} will carefully review your results and reach out to guide you and present personalized options and strategies for your specific situation. There is nothing more you need to do right now — we will take it from here.`
+        : `${clientName||"Tu"} evaluación está completa. ${advisorName||"Tu asesor"} revisará cuidadosamente tus resultados y se pondrá en contacto contigo para guiarte y presentarte opciones y estrategias personalizadas para tu situación. No necesitas hacer nada más por ahora — nosotros nos encargamos a partir de aquí.`}
+    </p>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="background:#f8f9fa;padding:14px 40px;font-size:10px;color:#999;text-align:center;line-height:1.7">
+    ${isEN?"For educational purposes only. Does not constitute legal, tax, or financial advice.":"Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero."}
+    ${advisorName?` ${isEN?"Presented by":"Presentado por"} ${advisorName}.`:""}
+  </div>
+
+  </body></html>`;
+
+  const win = window.open('', '_blank', 'width=900,height=1000');
+  if (!win) { alert(isEN?"Please allow popups to print the report.":"Por favor permite ventanas emergentes para imprimir el reporte."); return; }
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => { win.focus(); win.print(); }, 800);
+}) {
   if (!plan) { window.print(); return; }
   const isEN = lang === "en";
   const { scores, gaps, budget, plan: budgetPlan } = plan;
@@ -1958,8 +2127,11 @@ function printReport({ answers, plan, clientName, advisorName, lang }) {
   }).join('');
 
   const gapRows = gaps.map(g => {
-    const tagColor = g.tag.includes("CRIT") ? "#c0392b" : g.tag.includes("IMP") ? "#b8860b" : "#2d8a5e";
-    return `<div style="border-left:3px solid ${tagColor};padding:10px 14px;margin-bottom:10px;background:#fafafa;border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:3px">${g.icon||''} ${g.title}</div><div style="font-size:12px;color:#555">${g.body}</div><span style="font-size:10px;color:${tagColor};font-weight:700;letter-spacing:1px">${g.tag}</span></div>`;
+    const tagColor = g.tag && g.tag.includes("CRIT") ? "#c0392b" : g.tag && g.tag.includes("IMP") ? "#b8860b" : "#2d8a5e";
+    const title = g.area || g.title || "";
+    const body = g.reason || g.body || "";
+    const icon = g.icon || "";
+    return `<div style="border-left:3px solid ${tagColor};padding:12px 16px;margin-bottom:10px;background:#fafafa;border-radius:0 8px 8px 0"><div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:4px">${icon} ${title}</div><div style="font-size:12px;color:#555;line-height:1.6">${body}</div><span style="display:inline-block;margin-top:6px;font-size:10px;color:${tagColor};font-weight:700;letter-spacing:1px;background:${tagColor}18;padding:2px 8px;border-radius:3px">${g.tag||""}</span></div>`;
   }).join('');
 
   const budgetRows = budgetPlan.map(item => `<tr><td style="padding:7px 12px;border-bottom:1px solid #eee;font-size:12px">${item.item}</td><td style="padding:7px 12px;border-bottom:1px solid #eee;font-size:11px;color:#888">${item.note}</td><td style="padding:7px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600;color:#c8a050;font-size:12px">${item.amount}</td></tr>`).join('');
@@ -2022,7 +2194,7 @@ async function sendReport({ answers, plan, clientName, clientEmail, clientPhone,
   const avgScore = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/Object.values(scores).length);
 
   // Build a clean summary of findings
-  const findingsSummary = gaps.map(g => `[${g.tag}] ${g.title}: ${g.body}`).join(" | ");
+  const findingsSummary = gaps.map(g => `[${g.tag}] ${g.area||g.title||""}: ${g.reason||g.body||""}`).join(" | ");
 
   // All scores as individual fields (shows nicely in Formspree dashboard)
   const scoreFields = {};
@@ -2070,22 +2242,33 @@ async function sendReport({ answers, plan, clientName, clientEmail, clientPhone,
     college_savings:      answers.college_savings || "N/A",
   };
 
-  console.log("📤 Sending to Formspree...", Object.keys(payload).length, "fields");
+  // Use Web3Forms — free, no account blocking
+  const web3payload = {
+    access_key: "87cf4c89-8fa4-446e-8874-dd7be227c1ff", // REPLACE with your key from web3forms.com
+    subject: payload._subject,
+    from_name: "Financial Advisor Bot",
+    message: Object.entries(payload)
+      .filter(([k]) => !k.startsWith("_"))
+      .map(([k, v]) => `${k}: ${v}`)
+      .join("\n"),
+    ...payload,
+  };
+
+  console.log("📤 Sending survey to iprotections@yahoo.com...");
   try {
-    const res = await fetch("https://formspree.io/f/xnjbraol", {
+    const res = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(web3payload),
     });
     const json = await res.json();
-    if (res.ok) {
-      console.log("✅ Survey sent! Formspree response:", json);
+    if (json.success) {
+      console.log("✅ Survey sent successfully to iprotections@yahoo.com!");
     } else {
-      console.warn("❌ Formspree error:", res.status, json);
+      console.warn("❌ Web3Forms error:", json);
     }
   } catch (err) {
     console.warn("Survey submission failed:", err);
-    // Don't block the UI
   }
 }
 
