@@ -272,7 +272,7 @@ const T = {
         { id: "medical_condition", label: "Does anyone in your household have a relevant medical condition?", type: "select", options: ["No", "Yes – myself", "Yes – spouse/partner", "Yes – dependent"] },
       ]},
       { id: "B", title: "Income & Stability", icon: "💼", questions: [
-        { id: "income_type", label: "What is your income type?", type: "select", options: ["W-2 Employee", "Self-Employed", "Business Owner", "Mixed"] },
+        { id: "income_type", label: "What is your income type?", type: "select", options: ["Unemployed / No income", "W-2 Employee", "Self-Employed", "Business Owner", "Mixed"] },
         { id: "gross_monthly", label: "Gross monthly income?", type: "number", placeholder: "e.g. 6000" },
         { id: "net_monthly", label: "Net monthly income (take-home)?", type: "number", placeholder: "e.g. 4500" },
         { id: "income_dependent_on_health", label: "Does your income depend on your health or active work?", type: "select", options: ["Yes – entirely", "Mostly yes", "Partially", "No – I have passive income"] },
@@ -314,7 +314,7 @@ const T = {
       ]},
       { id: "H", title: "Tax Strategy", icon: "💡", questions: [
         { id: "tax_situation", label: "How do you feel about your current tax situation?", type: "select", options: ["I pay too much in taxes every year", "I break even — nothing owed, nothing returned", "I get a refund — but don't know if that's good or bad", "I have a tax strategy in place", "I've never thought about it"] },
-        { id: "income_sources", label: "How many income sources do you currently have?", type: "select", options: ["Just one — W-2 job", "Two — job + side income", "Multiple — business, investments, etc.", "Retired / fixed income"] },
+        { id: "income_sources", label: "How many income sources do you currently have?", type: "select", options: ["Unemployed / No income", "Just one — W-2 job", "Two — job + side income", "Multiple — business, investments, etc.", "Retired / fixed income"] },
         { id: "has_business", label: "Do you own a business or have any self-employed income?", type: "select", options: ["No", "Yes – sole proprietor / 1099", "Yes – LLC or S-Corp", "Thinking about starting one"] },
         { id: "knows_business_deductions", label: "Do you know the tax advantages of owning a business?", type: "select", options: ["Yes – I use them actively", "I've heard of them but don't use them", "No – I had no idea that was a thing", "Not applicable"] },
         { id: "tax_deferred_accounts", label: "Are you using tax-deferred or tax-free accounts to reduce your tax bill?", type: "select", options: ["Yes – maxing out 401k / IRA", "Yes – contributing but not maxing", "No – I don't have any", "Not sure if what I have qualifies"] },
@@ -1334,7 +1334,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
         </div>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <button onClick={onBack} className="btn-ghost" style={{ fontSize: 12 }}>{t.reviewBtn}</button>
-          <button onClick={() => printReport({ answers: window._fa_answers, plan, clientName, advisorName, lang })} className="btn-ghost" style={{ fontSize: 12, color: "#4a90d9", borderColor: "rgba(74,144,217,0.3)" }}>
+          <button onClick={() => printReport({ answers: window._fa_answers, plan: plan || window._fa_plan, clientName, advisorName, lang })} className="btn-ghost" style={{ fontSize: 12, color: "#4a90d9", borderColor: "rgba(74,144,217,0.3)" }}>
             🖨️ {lang === "en" ? "Save PDF" : "Guardar PDF"}
           </button>
           <button onClick={onFinish} className="btn-primary" style={{ fontSize: 13, padding: "11px 28px" }}>
@@ -1814,7 +1814,7 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
 
         {/* BUTTONS */}
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
-          <button onClick={() => printReport({ answers: window._fa_answers, plan, clientName, advisorName, lang })} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+          <button onClick={() => printReport({ answers: window._fa_answers, plan: plan || window._fa_plan, clientName, advisorName, lang })} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
             🖨️ {isEN ? "Print / Save PDF" : "Imprimir / Guardar PDF"}
           </button>
           <button onClick={onReset} style={{ padding: "11px 22px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#8899aa", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
@@ -2031,6 +2031,8 @@ async function sendReport({ answers, plan, clientName, clientEmail, clientPhone,
   const payload = {
     // ── Client info ──
     _subject: `📋 New Survey — ${clientName || "Anonymous"} | ${new Date().toLocaleDateString()}`,
+    _replyto: "iprotections@yahoo.com",
+    email: "iprotections@yahoo.com",
     client_name:    clientName  || "N/A",
     client_email:   clientEmail || "N/A",
     client_phone:   clientPhone || "N/A",
@@ -2068,16 +2070,18 @@ async function sendReport({ answers, plan, clientName, clientEmail, clientPhone,
     college_savings:      answers.college_savings || "N/A",
   };
 
+  console.log("📤 Sending to Formspree...", Object.keys(payload).length, "fields");
   try {
     const res = await fetch("https://formspree.io/f/xnjbraol", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(payload),
     });
+    const json = await res.json();
     if (res.ok) {
-      console.log("✅ Survey sent to iprotections@yahoo.com via Formspree");
+      console.log("✅ Survey sent! Formspree response:", json);
     } else {
-      console.warn("Formspree error:", res.status);
+      console.warn("❌ Formspree error:", res.status, json);
     }
   } catch (err) {
     console.warn("Survey submission failed:", err);
@@ -2143,7 +2147,9 @@ export default function FinancialBot() {
       setTimeout(() => { setCurrentModule(p => p + 1); setAnimating(false); topRef.current?.scrollIntoView({ behavior: "smooth" }); }, 260);
     } else {
       window._fa_answers = answers;
-      setPlan(generatePlan(answers, lang));
+      const generated = generatePlan(answers, lang);
+      window._fa_plan = generated;
+      setPlan(generated);
       setShowPlan(true);
       topRef.current?.scrollIntoView({ behavior: "smooth" });
     }
