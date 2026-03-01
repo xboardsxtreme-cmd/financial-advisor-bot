@@ -2770,14 +2770,14 @@ export default function FinancialBot() {
         ) : (
           <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => {
             // Mark token as used (one-time link)
-            const token = new URLSearchParams(window.location.search).get("token");
-            if (token) {
-              try {
+            try {
+              const token = new URLSearchParams(window.location.search).get("token");
+              if (token) {
                 const used = JSON.parse(localStorage.getItem("_fa_used_tokens") || "[]");
                 used.push(token);
-                localStorage.setItem("_fa_used_tokens", JSON.stringify(used.slice(-100))); // keep last 100
-              } catch(e) {}
-            }
+                localStorage.setItem("_fa_used_tokens", JSON.stringify(used.slice(-100)));
+              }
+            } catch(e) {}
             sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang });
             setShowThanks(true);
           }} />
