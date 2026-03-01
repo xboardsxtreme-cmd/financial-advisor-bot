@@ -2589,6 +2589,24 @@ export default function FinancialBot() {
   const [animating, setAnimating] = useState(false);
   const topRef = useRef(null);
 
+  // Notify advisor when client opens the survey (runs once on mount)
+  useEffect(() => {
+    if (!isTestMode && clientName && GOOGLE_SHEET_URL && !GOOGLE_SHEET_URL.includes("PASTE_YOUR")) {
+      try {
+        const fd = new FormData();
+        fd.append("data", JSON.stringify({
+          action: "notifyOpened",
+          clientName: clientName || "Unknown",
+          clientEmail: clientEmail || "",
+          clientPhone: clientPhone || "",
+          advisorName: advisorName || "",
+          timestamp: new Date().toLocaleString("en-US"),
+        }));
+        fetch(GOOGLE_SHEET_URL, { method: "POST", mode: "no-cors", body: fd });
+      } catch(e) {}
+    }
+  }, []);
+
   // Show impact screen first — it also handles language selection
   if (!seenIntro) {
     return <ImpactScreen clientName={clientName} advisorName={advisorName} onContinue={(selectedLang) => { setLang(selectedLang); setSeenIntro(true); }} />;
@@ -2774,4 +2792,3 @@ export default function FinancialBot() {
     </div>
   );
 }
-
