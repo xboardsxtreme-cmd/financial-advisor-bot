@@ -1348,7 +1348,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <button onClick={onBack} className="btn-ghost" style={{ fontSize: 12 }}>{t.reviewBtn}</button>
           <button onClick={() => printReport({ answers: window._fa_answers, plan: window._fa_plan, clientName, advisorName, lang })} className="btn-ghost" style={{ fontSize: 12, color: "#4a90d9", borderColor: "rgba(74,144,217,0.3)" }}>
-            🖨️ {lang === "en" ? "Save PDF" : "Guardar PDF"}
+            🖨️ {lang === "en" ? "Download Report" : "Descargar Reporte"}
           </button>
           <button onClick={onFinish} className="btn-primary" style={{ fontSize: 13, padding: "11px 28px" }}>
             ✅ {lang === "en" ? "Done — Submit" : "Listo — Enviar"}
@@ -2264,11 +2264,15 @@ function printReport({ answers, plan, clientName, advisorName, lang }) {
 
 </body></html>`;
 
-  const win = window.open('', '_blank', 'width=850,height=1100');
-  if (!win) { alert(isEN ? "Please allow popups to view the report." : "Por favor permite ventanas emergentes para ver el reporte."); return; }
-  win.document.write(html);
-  win.document.close();
-  setTimeout(() => { win.focus(); win.print(); }, 900);
+const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (cName.replace(/[^a-zA-Z0-9]/g, '_') || 'Client') + '_Financial_Assessment.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 // ─── GOOGLE SHEETS ENDPOINT — paste your deployed Apps Script URL here ────────
