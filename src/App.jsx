@@ -1,14 +1,15 @@
 // ╔═══════════════════════════════════════════════════════════════════════════════╗
-// ║  FINANCIAL ADVISOR BOT — VERSION 7                                          ║
+// ║  FINANCIAL ADVISOR BOT — VERSION 8                                          ║
 // ║  Date: March 2, 2026                                                        ║
 // ║  IF YOU SEE A LOWER VERSION NUMBER, YOU HAVE THE WRONG FILE!                ║
 // ╚═══════════════════════════════════════════════════════════════════════════════╝
-// CHANGES IN V7:
-//   ✅ NEW: Designer Report Generator — beautiful 2-page print-ready PDF
-//   ✅ Clean white theme optimized for paper printing
-//   ✅ Auto-detects client language from survey data
+// CHANGES IN V8:
+//   ✅ NEW: Approved Designer Report v2 — motivational block + enlarged fonts
+//   ✅ Page 1: enlarged scores, findings, opportunities (fills page)
+//   ✅ Page 2: motivational congratulations + budget + facts + CTA (approved)
+//   ✅ Updated disclaimers — positions YOUR team as licensed professionals
 //   ✅ Includes all previous V6 fixes (onFinish, notifyOpened, CSV, async)
-console.log("🟢 Financial Advisor Bot VERSION 7 loaded");
+console.log("🟢 Financial Advisor Bot VERSION 8 loaded");
 
 import { useState, useRef, useEffect } from "react";
 
@@ -268,7 +269,7 @@ const T = {
     scoresTitle: "📊 Protection Score Breakdown",
     factsTitle: "📌 Key Facts",
     ctaText: "Ready to take the next step? A complimentary strategy session costs nothing — but not having a plan could cost everything.",
-    disclaimer: "⚠️ For educational purposes only. Not financial, legal, or tax advice. Consult a licensed financial professional for personalized recommendations.",
+    disclaimer: "This assessment is for informational purposes. Your advisor will contact you to discuss personalized recommendations tailored to your specific situation.",
     criticalBadge: "CRITICAL", importantBadge: "IMPORTANT", opportunityBadge: "OPPORTUNITY", tipBadge: "TIP",
     wellProtected: "Well Protected", partiallyProtected: "Partially Protected", significantGaps: "Significant Gaps Detected",
     critical: "Critical", important: "Important", opportunity: "Opportunity",
@@ -384,7 +385,7 @@ const T = {
     scoresTitle: "📊 Desglose de Puntuación de Protección",
     factsTitle: "📌 Datos Clave",
     ctaText: "¿Listo para el siguiente paso? Una sesión de estrategia gratuita no cuesta nada — pero no tener un plan puede costarlo todo.",
-    disclaimer: "⚠️ Solo con fines educativos. No es asesoramiento financiero, legal ni fiscal. Consulta con un profesional financiero licenciado.",
+    disclaimer: "Esta evaluación es con fines informativos. Tu asesor se pondrá en contacto contigo para discutir recomendaciones personalizadas para tu situación específica.",
     criticalBadge: "CRÍTICO", importantBadge: "IMPORTANTE", opportunityBadge: "OPORTUNIDAD", tipBadge: "CONSEJO",
     wellProtected: "Bien Protegido/a", partiallyProtected: "Parcialmente Protegido/a", significantGaps: "Brechas Significativas Detectadas",
     critical: "Crítico", important: "Importante", opportunity: "Oportunidad",
@@ -1359,8 +1360,8 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
       <div style={{ textAlign: "center", padding: "10px 16px", marginBottom: 20 }}>
         <div style={{ fontSize: 9, color: "#1e2c3a", lineHeight: 1.7 }}>
           {lang === "en"
-            ? `For educational purposes only. Does not constitute legal, tax, or financial advice. ${advisorName ? `Presented by ${advisorName}.` : ""} We will contact you to present personalized options and strategies for your situation.`
-            : `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. ${advisorName ? `Presentado por ${advisorName}.` : ""} Nos pondremos en contacto contigo para presentarte opciones y estrategias personalizadas para tu situación.`}
+            ? `This assessment is for informational purposes. ${advisorName ? `${advisorName}` : "Your advisor"} will be in touch with you to provide personalized recommendations from our team of licensed professionals.`
+            : `Esta evaluación es con fines informativos. ${advisorName ? `${advisorName}` : "Tu asesor"} se pondrá en contacto contigo para brindarte recomendaciones personalizadas de nuestro equipo de profesionales con licencia.`}
         </div>
       </div>
     </div>
@@ -1836,8 +1837,8 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
 
         <div style={{ textAlign: "center", fontSize: 10, color: "#2a3a4a", lineHeight: 1.7 }}>
           {isEN
-            ? `For educational purposes only. Does not constitute legal, tax, or financial advice.${advisorName ? ` Presented by ${advisorName}.` : ""}`
-            : `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero.${advisorName ? ` Presentado por ${advisorName}.` : ""}`}
+            ? `This assessment is for informational purposes. ${advisorName ? `${advisorName}` : "Your advisor"} will be in touch to provide personalized recommendations from our licensed professionals.`
+            : `Esta evaluación es con fines informativos. ${advisorName ? `${advisorName}` : "Tu asesor"} se pondrá en contacto para brindarte recomendaciones personalizadas de nuestros profesionales con licencia.`}
         </div>
 
       </div>
@@ -2063,13 +2064,13 @@ function AdvisorScreen() {
 
 
 // ─── PRINT FULL REPORT ──────────────────────────────────────────────────────────
-// ─── DESIGNER REPORT GENERATOR v1 ────────────────────────────────────────────
+// ─── DESIGNER REPORT GENERATOR v2 (APPROVED TEMPLATE) ─────────────────────────
 function printReport({ answers, plan, clientName, advisorName, lang }) {
   const p = window._fa_plan || plan;
   if (!p || !p.gaps) { alert(lang === "en" ? "Report data not found." : "Datos del reporte no encontrados."); return; }
   
   const isEN = lang === "en";
-  const { scores, gaps, budget, plan: budgetPlan, insights, bbEducation, showBBEdu, ltcEducation, showLTCEdu } = p;
+  const { scores, gaps, budget, plan: budgetPlan } = p;
   const avgScore = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/Object.values(scores).length);
   const scoreColor = avgScore >= 7 ? "#1a8a5e" : avgScore >= 4 ? "#c48800" : "#c0392b";
   const scoreBg = avgScore >= 7 ? "#e8f5ef" : avgScore >= 4 ? "#fff8e8" : "#fdf0ee";
@@ -2091,274 +2092,174 @@ function printReport({ answers, plan, clientName, advisorName, lang }) {
   const topOpps = oppGaps.slice(0, 4);
 
   const dateStr = new Date().toLocaleDateString(isEN ? "en-US" : "es-US", { year:"numeric", month:"long", day:"numeric" });
+  const cName = clientName || (isEN ? "Client" : "Cliente");
+  const aName = advisorName || (isEN ? "Your Advisor" : "Tu Asesor");
 
-  // Score bar rows (compact, 2-column layout)
+  // ── Score category rows (2 columns) ──
   const scoreEntries = Object.entries(scores);
   const leftScores = scoreEntries.slice(0, Math.ceil(scoreEntries.length / 2));
   const rightScores = scoreEntries.slice(Math.ceil(scoreEntries.length / 2));
 
-  const renderScoreRow = ([key, val]) => {
+  const renderScoreCol = (entries) => entries.map(([key, val]) => {
     const c = val >= 7 ? "#1a8a5e" : val >= 4 ? "#c48800" : "#c0392b";
-    const bg = val >= 7 ? "#e8f5ef" : val >= 4 ? "#fff8e8" : "#fdf0ee";
-    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-      <div style="flex:1;font-size:9.5px;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${scoreLabels[key]||key}</div>
-      <div style="width:80px;height:5px;background:#f0f0f0;border-radius:3px;overflow:hidden;flex-shrink:0">
-        <div style="height:100%;width:${val*10}%;background:${c};border-radius:3px"></div>
-      </div>
-      <div style="font-size:10px;font-weight:700;color:${c};width:22px;text-align:right;flex-shrink:0">${val}</div>
-    </div>`;
+    return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:10px"><div style="flex:1;font-size:13px;color:#444">${scoreLabels[key]||key}</div><div style="width:80px;height:7px;background:#f0f0f0;border-radius:3px;overflow:hidden"><div style="height:100%;width:${val*10}%;background:${c};border-radius:3px"></div></div><div style="font-size:14px;font-weight:700;color:${c};width:24px;text-align:right">${val}</div></div>`;
+  }).join('');
+
+  // ── Gap cards ──
+  const renderGap = (g) => {
+    const isCrit = cTags.includes(g.tag);
+    const isImp = iTags.includes(g.tag);
+    const tc = isCrit ? "#c0392b" : "#c48800";
+    const bg = isCrit ? "#fdf0ee" : "#fff8e8";
+    const tagLabel = isCrit ? (isEN?"CRITICAL":"CRÍTICO") : (isEN?"IMPORTANT":"IMPORTANTE");
+    return `<div style="padding:12px 14px;background:${bg};border-radius:7px;border-left:4px solid ${tc}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px"><div style="font-size:14px;font-weight:700;color:#1a1a1a">${g.area||""}</div><span style="font-size:8px;font-weight:800;color:${tc};background:${tc}15;padding:2px 7px;border-radius:4px">${tagLabel}</span></div><div style="font-size:12px;color:#555;line-height:1.55">${g.reason||""}</div></div>`;
   };
 
-  // Gap cards
-  const renderGapCompact = (g) => {
-    const tc = cTags.includes(g.tag) ? "#c0392b" : iTags.includes(g.tag) ? "#c48800" : "#1a8a5e";
-    const tbg = cTags.includes(g.tag) ? "#fdf0ee" : iTags.includes(g.tag) ? "#fff8e8" : "#e8f5ef";
-    const tagLabel = cTags.includes(g.tag) ? (isEN?"CRITICAL":"CRÍTICO") : iTags.includes(g.tag) ? (isEN?"IMPORTANT":"IMPORTANTE") : (isEN?"OPPORTUNITY":"OPORTUNIDAD");
-    return `<div style="padding:8px 10px;margin-bottom:5px;background:${tbg};border-radius:6px;border-left:3px solid ${tc};page-break-inside:avoid">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
-        <div style="font-size:10px;font-weight:700;color:#1a1a1a">${g.area||""}</div>
-        <span style="font-size:7px;font-weight:800;letter-spacing:0.8px;color:${tc};background:${tc}15;padding:2px 6px;border-radius:3px">${tagLabel}</span>
-      </div>
-      <div style="font-size:8.5px;color:#555;line-height:1.55">${g.reason||""}</div>
-    </div>`;
+  // ── Opportunity cards ──
+  const renderOpp = (g) => {
+    return `<div style="padding:10px 13px;background:#f0f8f4;border-radius:7px;border-left:4px solid #1a8a5e"><div style="font-size:12.5px;font-weight:700;color:#1a1a1a;margin-bottom:3px">${(g.area||"").replace(/💡\s*/g,"")}</div><div style="font-size:11px;color:#555;line-height:1.5">${g.reason||""}</div></div>`;
   };
 
-  // Opportunity cards (even more compact)
-  const renderOppCompact = (g) => {
-    return `<div style="padding:6px 10px;margin-bottom:4px;background:#f0f8f4;border-radius:5px;border-left:3px solid #1a8a5e">
-      <div style="font-size:9.5px;font-weight:700;color:#1a1a1a;margin-bottom:2px">${(g.area||"").replace(/💡\s*/g,"")}</div>
-      <div style="font-size:8px;color:#555;line-height:1.5">${g.reason||""}</div>
-    </div>`;
-  };
-
-  // Budget table rows
+  // ── Budget table ──
   const budgetRows = (budgetPlan||[]).map((item, i) => 
-    `<tr style="background:${i%2===0?"#fafbfd":"#fff"}">
-      <td style="padding:5px 8px;font-size:9px;color:#1a1a1a;font-weight:500;border-bottom:1px solid #f0f0f0">${item.item}</td>
-      <td style="padding:5px 8px;font-size:8px;color:#777;border-bottom:1px solid #f0f0f0">${item.note}</td>
-      <td style="padding:5px 8px;text-align:right;font-weight:700;color:#c48800;font-size:9.5px;border-bottom:1px solid #f0f0f0;white-space:nowrap">${item.amount}</td>
-    </tr>`
+    `<tr${i%2===0?' style="background:#fafbfd"':''}><td style="padding:8px 12px;font-size:12px;color:#1a1a1a;font-weight:500;border-bottom:1px solid #eee">${item.item}</td><td style="padding:8px 12px;font-size:11px;color:#777;border-bottom:1px solid #eee">${item.note}</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#c48800;font-size:13px;border-bottom:1px solid #eee;white-space:nowrap">${item.amount}</td></tr>`
   ).join('');
 
-  // Beautiful Bill summary (compact)
-  const bbSection = showBBEdu && bbEducation ? `
-    <div style="margin-top:10px;padding:8px 10px;background:#fffdf5;border:1px solid #f0e8d0;border-radius:6px">
-      <div style="font-size:9px;font-weight:800;color:#c48800;letter-spacing:0.8px;margin-bottom:4px">📜 ${bbEducation.title}</div>
-      <div style="font-size:8px;color:#555;line-height:1.5;margin-bottom:4px">${bbEducation.summary}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:3px">
-        ${bbEducation.sections.slice(0,4).map(s => `<span style="font-size:7.5px;background:#fff8e8;border:1px solid #f0e0b0;border-radius:3px;padding:2px 6px;color:#8a6800">${s.icon} ${s.title}</span>`).join("")}
-      </div>
-    </div>` : "";
-
-  // Key facts (compact strip)
-  const factsEN = [["70%+","need LTC after 65"],["$12K+/mo","nursing home cost"],["47%","can't cover $500 emergency"],["Rule of 72","money doubles at 8% in 9 yrs"]];
-  const factsES = [["70%+","necesitan LTC después de 65"],["$12K+/mes","costo hogar de ancianos"],["47%","no cubre emergencia de $500"],["Regla del 72","el dinero se duplica al 8% en 9 años"]];
-  const facts = isEN ? factsEN : factsES;
-
-  // Advisor phone for SMS CTA
-  const advisorPhone = ""; // Will be filled from URL params if available
+  // ── Key facts ──
+  const facts = isEN 
+    ? [["70%+","need LTC after 65"],["$12K+/mo","nursing home cost"],["47%","can't cover $500 emergency"],["Rule of 72","money doubles at 8% in 9 yrs"]]
+    : [["70%+","necesitan LTC después de 65"],["$12K+/mes","costo hogar de ancianos"],["47%","no cubre emergencia de $500"],["Regla del 72","el dinero se duplica al 8% en 9 años"]];
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
-<title>${isEN?"Financial Assessment":"Evaluación Financiera"} — ${clientName||"Client"}</title>
+<title>${isEN?"Financial Assessment":"Evaluación Financiera"} — ${cName}</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:wght@400;600;700;800&display=swap');
-  
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:'Plus Jakarta Sans',sans-serif; color:#1a1a1a; background:#fff; font-size:10px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  
-  @page { 
-    margin: 0.35in 0.4in; 
-    size: letter; 
-  }
-  @media print {
-    .page-break { page-break-before: always; }
-    body { font-size: 10px; }
-  }
-  
+  body { font-family:'Plus Jakarta Sans',sans-serif; color:#1a1a1a; background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  @page { margin: 0.35in 0.45in; size: letter; }
+  .page-break { page-break-before: always; }
   .serif { font-family: 'Fraunces', serif; }
-  
-  .score-ring {
-    width: 90px; height: 90px; border-radius: 50%;
-    background: conic-gradient(${scoreColor} ${avgScore*36}deg, #f0f0f0 ${avgScore*36}deg);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  .score-ring-inner {
-    width: 72px; height: 72px; border-radius: 50%; background: #fff;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-  }
 </style>
 </head><body>
 
-<!-- ═══════════ PAGE 1 ═══════════ -->
-<div style="min-height:0">
-
-  <!-- HEADER -->
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:2px solid #1a1a1a;margin-bottom:14px">
+<!-- ═══ PAGE 1: SCORES + FINDINGS + OPPORTUNITIES ═══ -->
+<div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:3px solid #1a1a1a;margin-bottom:18px">
     <div>
-      <div style="font-size:7px;font-weight:800;letter-spacing:3px;color:#999;text-transform:uppercase;margin-bottom:2px">${isEN?"CONFIDENTIAL FINANCIAL ASSESSMENT":"EVALUACIÓN FINANCIERA CONFIDENCIAL"}</div>
-      <div class="serif" style="font-size:22px;font-weight:800;color:#1a1a1a;line-height:1.1;letter-spacing:-0.5px">${isEN?"Financial Protection":"Protección Financiera"}<br><span style="color:${scoreColor}">${isEN?"Assessment Report":"Reporte de Evaluación"}</span></div>
+      <div style="font-size:10px;font-weight:800;letter-spacing:3px;color:#999;text-transform:uppercase;margin-bottom:2px">${isEN?"CONFIDENTIAL FINANCIAL ASSESSMENT":"EVALUACIÓN FINANCIERA CONFIDENCIAL"}</div>
+      <div class="serif" style="font-size:30px;font-weight:800;color:#1a1a1a;line-height:1.1">${isEN?"Financial Protection":"Protección Financiera"}<br><span style="color:${scoreColor}">${isEN?"Assessment Report":"Reporte de Evaluación"}</span></div>
     </div>
     <div style="text-align:right">
-      <div style="font-size:9px;color:#777;margin-bottom:4px">${dateStr}</div>
-      ${clientName ? `<div style="font-size:12px;font-weight:700;color:#1a1a1a">${clientName}</div>` : ""}
-      ${advisorName ? `<div style="font-size:9px;color:#999;margin-top:1px">${isEN?"Advisor":"Asesor"}: ${advisorName}</div>` : ""}
+      <div style="font-size:12px;color:#777;margin-bottom:4px">${dateStr}</div>
+      <div style="font-size:18px;font-weight:700;color:#1a1a1a">${cName}</div>
+      <div style="font-size:12px;color:#999;margin-top:2px">${isEN?"Advisor":"Asesor"}: ${aName}</div>
     </div>
   </div>
 
-  <!-- SCORE HERO + CATEGORY SCORES (side by side) -->
-  <div style="display:flex;gap:16px;margin-bottom:14px">
-    
-    <!-- Left: Score Ring -->
-    <div style="flex-shrink:0;text-align:center;padding:14px 18px;background:${scoreBg};border-radius:12px;border:1px solid ${scoreColor}22">
-      <div class="score-ring" style="margin:0 auto 8px">
-        <div class="score-ring-inner">
-          <div class="serif" style="font-size:28px;font-weight:800;color:${scoreColor};line-height:1">${avgScore}</div>
-          <div style="font-size:8px;color:#999">${isEN?"of":"de"} 10</div>
+  <div style="display:flex;gap:18px;margin-bottom:16px">
+    <div style="flex-shrink:0;text-align:center;padding:16px 22px;background:${scoreBg};border-radius:12px;border:1px solid ${scoreColor}22">
+      <div style="width:112px;height:112px;border-radius:50%;background:conic-gradient(${scoreColor} ${avgScore*36}deg, #f0f0f0 ${avgScore*36}deg);display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
+        <div style="width:90px;height:90px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div class="serif" style="font-size:40px;font-weight:800;color:${scoreColor};line-height:1">${avgScore}</div>
+          <div style="font-size:11px;color:#999">${isEN?"of":"de"} 10</div>
         </div>
       </div>
-      <div class="serif" style="font-size:12px;font-weight:700;color:${scoreColor}">${overallLabel}</div>
-      <div style="display:flex;gap:6px;justify-content:center;margin-top:6px;flex-wrap:wrap">
-        ${critGaps.length > 0 ? `<span style="font-size:7px;color:#c0392b;background:#fdf0ee;border:1px solid #f0c0b0;border-radius:10px;padding:2px 7px;font-weight:700">🔴 ${critGaps.length}</span>` : ""}
-        ${impGaps.length > 0 ? `<span style="font-size:7px;color:#c48800;background:#fff8e8;border:1px solid #f0e0b0;border-radius:10px;padding:2px 7px;font-weight:700">🟡 ${impGaps.length}</span>` : ""}
-        ${oppGaps.length > 0 ? `<span style="font-size:7px;color:#1a8a5e;background:#e8f5ef;border:1px solid #b0e0c8;border-radius:10px;padding:2px 7px;font-weight:700">💡 ${oppGaps.length}</span>` : ""}
+      <div class="serif" style="font-size:16px;font-weight:700;color:${scoreColor}">${overallLabel}</div>
+      <div style="display:flex;gap:6px;justify-content:center;margin-top:8px">
+        ${critGaps.length > 0 ? `<span style="font-size:10px;color:#c0392b;background:#fdf0ee;border:1px solid #f0c0b0;border-radius:10px;padding:3px 8px;font-weight:700">🔴 ${critGaps.length}</span>` : ""}
+        ${impGaps.length > 0 ? `<span style="font-size:10px;color:#c48800;background:#fff8e8;border:1px solid #f0e0b0;border-radius:10px;padding:3px 8px;font-weight:700">🟡 ${impGaps.length}</span>` : ""}
+        ${oppGaps.length > 0 ? `<span style="font-size:10px;color:#1a8a5e;background:#e8f5ef;border:1px solid #b0e0c8;border-radius:10px;padding:3px 8px;font-weight:700">💡 ${oppGaps.length}</span>` : ""}
       </div>
     </div>
-
-    <!-- Right: Category Scores (2 columns) -->
-    <div style="flex:1;padding:10px 14px;background:#fafbfd;border-radius:10px;border:1px solid #eef0f4">
-      <div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#999;text-transform:uppercase;margin-bottom:8px">${isEN?"SCORE BY CATEGORY":"PUNTUACIÓN POR CATEGORÍA"}</div>
-      <div style="display:flex;gap:16px">
-        <div style="flex:1">${leftScores.map(renderScoreRow).join("")}</div>
-        <div style="flex:1">${rightScores.map(renderScoreRow).join("")}</div>
+    <div style="flex:1;padding:14px 18px;background:#fafbfd;border-radius:12px;border:1px solid #eef0f4">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:#999;text-transform:uppercase;margin-bottom:12px">${isEN?"SCORE BY CATEGORY":"PUNTUACIÓN POR CATEGORÍA"}</div>
+      <div style="display:flex;gap:18px">
+        <div style="flex:1">${renderScoreCol(leftScores)}</div>
+        <div style="flex:1">${renderScoreCol(rightScores)}</div>
       </div>
     </div>
   </div>
 
-  <!-- CRITICAL & IMPORTANT GAPS -->
-  ${topGaps.length > 0 ? `
-  <div style="margin-bottom:10px">
-    <div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#c0392b;text-transform:uppercase;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid #f0e0d8">
-      🚨 ${isEN?"KEY FINDINGS & RECOMMENDATIONS":"HALLAZGOS CLAVE Y RECOMENDACIONES"}
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
-      ${topGaps.map(renderGapCompact).join("")}
-    </div>
+  ${topGaps.length > 0 ? `<div style="margin-bottom:14px">
+    <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#c0392b;text-transform:uppercase;margin-bottom:9px;padding-bottom:5px;border-bottom:2px solid rgba(192,57,43,0.2)">🚨 ${isEN?"KEY FINDINGS & RECOMMENDATIONS":"HALLAZGOS CLAVE Y RECOMENDACIONES"}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">${topGaps.map(renderGap).join("")}</div>
   </div>` : ""}
 
-  <!-- OPPORTUNITIES -->
-  ${topOpps.length > 0 ? `
-  <div style="margin-bottom:10px">
-    <div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#1a8a5e;text-transform:uppercase;margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid #d0eade">
-      💡 ${isEN?"OPPORTUNITIES":"OPORTUNIDADES"}
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">
-      ${topOpps.map(renderOppCompact).join("")}
-    </div>
+  ${topOpps.length > 0 ? `<div>
+    <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#1a8a5e;text-transform:uppercase;margin-bottom:9px;padding-bottom:5px;border-bottom:2px solid rgba(26,138,94,0.2)">💡 ${isEN?"OPPORTUNITIES":"OPORTUNIDADES"}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">${topOpps.map(renderOpp).join("")}</div>
   </div>` : ""}
-
-  <!-- INSIGHTS (if any) -->
-  ${insights && insights.length > 0 ? `
-  <div style="margin-bottom:8px">
-    <div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#2c6fad;text-transform:uppercase;margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid #d0e0f0">
-      🔎 ${isEN?"PERSONALIZED INSIGHTS":"IDEAS PERSONALIZADAS"}
-    </div>
-    ${insights.slice(0,2).map(ins => `
-      <div style="padding:6px 10px;margin-bottom:4px;background:#f5f8ff;border-radius:5px;border-left:3px solid #2c6fad">
-        <div style="font-size:9.5px;font-weight:700;color:#1a1a1a;margin-bottom:2px">${ins.icon||""} ${ins.title||""}</div>
-        <div style="font-size:8px;color:#555;line-height:1.5">${ins.body||""}</div>
-      </div>
-    `).join("")}
-  </div>` : ""}
-
 </div>
 
-<!-- ═══════════ PAGE 2 ═══════════ -->
+<!-- ═══ PAGE 2: MOTIVATIONAL + BUDGET + FACTS + CTA ═══ -->
 <div class="page-break">
-
-  <!-- BUDGET ALLOCATION -->
-  <div style="margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #1a1a1a">
-      <div>
-        <div class="serif" style="font-size:15px;font-weight:800;color:#1a1a1a">${isEN?"Recommended Budget":"Presupuesto Recomendado"}</div>
-        <div style="font-size:8px;color:#999">${isEN?"Based on your selected monthly budget":"Basado en tu presupuesto mensual seleccionado"}</div>
+  <div style="background:linear-gradient(135deg,#f8faf5,#eef6e8);border:1.5px solid #c5ddb5;border-radius:14px;padding:28px 30px;margin-bottom:24px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-20px;right:-10px;font-size:80px;opacity:0.08">🌟</div>
+    <div style="display:flex;gap:20px;align-items:flex-start">
+      <div style="flex-shrink:0;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#2ecc71,#27ae60);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 12px rgba(46,204,113,0.25)">✅</div>
+      <div style="flex:1">
+        <div class="serif" style="font-size:22px;font-weight:800;color:#1a6b3a;line-height:1.2;margin-bottom:8px">${cName}, ${isEN?"congratulations on taking this important step.":"felicidades por tomar este paso tan importante."}</div>
+        <div style="font-size:13.5px;color:#3a6b4a;line-height:1.75">
+          ${isEN
+            ? `Most people never take the time to truly understand their financial situation — but you did. By completing this assessment, you've already done something that <strong>93% of families never do</strong>: you sat down, answered honestly, and looked at where you really stand. That takes courage, and it matters.`
+            : `La mayoría de las personas nunca se toman el tiempo para entender realmente su situación financiera — pero tú sí lo hiciste. Al completar esta evaluación, ya hiciste algo que el <strong>93% de las familias nunca hacen</strong>: te sentaste, respondiste con honestidad y miraste dónde realmente estás. Eso requiere valor, y es importante.`}
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(46,204,113,0.2)">
+          <div style="font-size:13px;color:#3a6b4a;line-height:1.75">
+            ${isEN
+              ? `The good news? <strong>Knowing where you are is the hardest part.</strong> Every gap identified here has a solution, and none of them require drastic changes to your lifestyle. Small, smart adjustments — made with the right guidance — can transform your family's financial security in ways that will last for generations.`
+              : `¿La buena noticia? <strong>Saber dónde estás es la parte más difícil.</strong> Cada brecha identificada aquí tiene solución, y ninguna requiere cambios drásticos en tu estilo de vida. Pequeños ajustes inteligentes — con la guía correcta — pueden transformar la seguridad financiera de tu familia por generaciones.`}
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;margin-top:14px">
+          <div style="display:flex;align-items:center;gap:6px;background:rgba(46,204,113,0.12);border-radius:8px;padding:8px 14px"><span style="font-size:16px">🎯</span><div style="font-size:11px;color:#2a7a42;font-weight:600">${isEN?"Your goals are clear":"Tus metas son claras"}</div></div>
+          <div style="display:flex;align-items:center;gap:6px;background:rgba(46,204,113,0.12);border-radius:8px;padding:8px 14px"><span style="font-size:16px">🛡️</span><div style="font-size:11px;color:#2a7a42;font-weight:600">${isEN?"Solutions exist for every gap":"Hay solución para cada brecha"}</div></div>
+          <div style="display:flex;align-items:center;gap:6px;background:rgba(46,204,113,0.12);border-radius:8px;padding:8px 14px"><span style="font-size:16px">🤝</span><div style="font-size:11px;color:#2a7a42;font-weight:600">${isEN?"We'll guide you every step":"Te guiaremos en cada paso"}</div></div>
+        </div>
       </div>
-      <div style="background:#c48800;color:#fff;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700">${budget}${isEN?"/mo":"/mes"}</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:5px;border-bottom:3px solid #1a1a1a">
+      <div><div class="serif" style="font-size:22px;font-weight:800;color:#1a1a1a">${isEN?"Recommended Budget":"Presupuesto Recomendado"}</div><div style="font-size:11px;color:#999;margin-top:2px">${isEN?"Based on your selected monthly budget":"Basado en tu presupuesto mensual seleccionado"}</div></div>
+      <div style="background:#c48800;color:#fff;padding:6px 18px;border-radius:20px;font-size:14px;font-weight:700">${budget}${isEN?"/mo":"/mes"}</div>
     </div>
     <table style="width:100%;border-collapse:collapse">
-      <thead>
-        <tr style="background:#f5f6f8">
-          <th style="text-align:left;padding:5px 8px;font-size:8px;font-weight:700;color:#777;letter-spacing:0.5px">${isEN?"COVERAGE":"COBERTURA"}</th>
-          <th style="text-align:left;padding:5px 8px;font-size:8px;font-weight:700;color:#777;letter-spacing:0.5px">${isEN?"NOTE":"NOTA"}</th>
-          <th style="text-align:right;padding:5px 8px;font-size:8px;font-weight:700;color:#777;letter-spacing:0.5px">${isEN?"AMOUNT":"MONTO"}</th>
-        </tr>
-      </thead>
+      <thead><tr style="background:#f5f6f8"><th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;color:#777">${isEN?"COVERAGE":"COBERTURA"}</th><th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;color:#777">${isEN?"NOTE":"NOTA"}</th><th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;color:#777">${isEN?"AMOUNT":"MONTO"}</th></tr></thead>
       <tbody>${budgetRows}</tbody>
     </table>
   </div>
 
-  ${bbSection}
-
-  <!-- KEY FACTS STRIP -->
-  <div style="margin-top:12px;margin-bottom:14px">
-    <div style="font-size:8px;font-weight:800;letter-spacing:1.5px;color:#999;text-transform:uppercase;margin-bottom:6px">${isEN?"KEY FACTS":"DATOS CLAVE"}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">
-      ${facts.map(([stat,desc]) => `
-        <div style="background:#fafbfd;border:1px solid #eef0f4;border-radius:6px;padding:8px 10px;text-align:center">
-          <div class="serif" style="font-size:14px;font-weight:800;color:#c48800;line-height:1">${stat}</div>
-          <div style="font-size:7.5px;color:#777;margin-top:3px;line-height:1.3">${desc}</div>
-        </div>
-      `).join("")}
+  <div style="margin-bottom:18px">
+    <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:#999;text-transform:uppercase;margin-bottom:8px">${isEN?"KEY FACTS":"DATOS CLAVE"}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
+      ${facts.map(([stat,desc]) => `<div style="background:#fafbfd;border:1px solid #eef0f4;border-radius:8px;padding:14px 10px;text-align:center"><div class="serif" style="font-size:20px;font-weight:800;color:#c48800">${stat}</div><div style="font-size:10px;color:#777;margin-top:4px">${desc}</div></div>`).join("")}
     </div>
   </div>
 
-  <!-- NEXT STEPS — CTA -->
-  <div style="background:linear-gradient(135deg,#1a1a1a,#2a2a3a);border-radius:12px;padding:18px 22px;margin-bottom:12px;color:#fff">
-    <div style="display:flex;align-items:flex-start;gap:16px">
-      <div style="flex-shrink:0;width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:24px">📱</div>
+  <div style="background:linear-gradient(135deg,#1a1a1a,#2a2a3a);border-radius:14px;padding:22px 26px;margin-bottom:14px;color:#fff">
+    <div style="display:flex;align-items:flex-start;gap:18px">
+      <div style="flex-shrink:0;width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:26px">📱</div>
       <div style="flex:1">
-        <div class="serif" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">
-          ${isEN ? "What Happens Next?" : "¿Qué Sigue?"}
-        </div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:10px">
-          ${isEN 
-            ? `${clientName || "Your"} assessment is complete. ${advisorName || "Your advisor"} will review your results and reach out to discuss personalized strategies for your specific situation. There is nothing more you need to do — we will take it from here.`
-            : `${clientName || "Tu"} evaluación está completa. ${advisorName || "Tu asesor"} revisará tus resultados y se pondrá en contacto contigo para discutir estrategias personalizadas para tu situación. No necesitas hacer nada más — nosotros nos encargamos.`}
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <div style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;display:flex;align-items:center;gap:6px">
-            <span style="font-size:14px">📞</span>
-            <div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.5)">${isEN?"CALL OR TEXT":"LLAMA O ENVÍA TEXTO"}</div>
-              <div style="font-size:11px;font-weight:700;color:#fff">${advisorName || (isEN?"Your Advisor":"Tu Asesor")}</div>
-            </div>
-          </div>
-          <div style="background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);border-radius:8px;padding:8px 14px;display:flex;align-items:center;gap:6px">
-            <span style="font-size:14px">💬</span>
-            <div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.5)">WHATSAPP</div>
-              <div style="font-size:10px;font-weight:600;color:#25d366">${isEN?"Send a message":"Envía un mensaje"}</div>
-            </div>
-          </div>
+        <div class="serif" style="font-size:22px;font-weight:700;color:#fff;margin-bottom:5px">${isEN?"What Happens Next?":"¿Qué Sigue?"}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;margin-bottom:12px">${isEN
+          ? `${cName}, your assessment is complete. ${aName} will review your results and reach out to discuss personalized strategies. There is nothing more you need to do — we will take it from here.`
+          : `${cName}, tu evaluación está completa. ${aName} revisará tus resultados y se pondrá en contacto contigo para discutir estrategias personalizadas. No necesitas hacer nada más — nosotros nos encargamos.`}</div>
+        <div style="display:flex;gap:10px">
+          <div style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 18px;display:flex;align-items:center;gap:8px"><span style="font-size:18px">📞</span><div><div style="font-size:9px;color:rgba(255,255,255,0.5)">${isEN?"CALL OR TEXT":"LLAMA O ENVÍA TEXTO"}</div><div style="font-size:14px;font-weight:700;color:#fff">${aName}</div></div></div>
+          <div style="background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);border-radius:10px;padding:10px 18px;display:flex;align-items:center;gap:8px"><span style="font-size:18px">💬</span><div><div style="font-size:9px;color:rgba(255,255,255,0.5)">WHATSAPP</div><div style="font-size:12px;font-weight:600;color:#25d366">${isEN?"Send a message":"Envía un mensaje"}</div></div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- DISCLAIMER -->
-  <div style="text-align:center;padding:8px 20px;border-top:1px solid #eee">
-    <div style="font-size:7px;color:#bbb;line-height:1.6">
-      ${isEN 
-        ? "For educational purposes only. Does not constitute legal, tax, or financial advice. Consult a licensed financial professional for personalized recommendations."
-        : "Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. Consulta con un profesional financiero licenciado."}
-      ${advisorName ? ` ${isEN?"Presented by":"Presentado por"} ${advisorName}.` : ""}
-    </div>
-    <div style="margin-top:4px;display:flex;justify-content:center;align-items:center;gap:8px">
-      <div style="font-size:14px">⚖️</div>
-      <div style="font-size:8px;font-weight:700;color:#ccc;letter-spacing:1.5px">FINANCIAL PROTECTION ADVISOR</div>
-    </div>
+  <div style="text-align:center;padding:8px 16px;border-top:1px solid #eee">
+    <div style="font-size:9px;color:#bbb;line-height:1.6">${isEN
+      ? `This assessment is for informational purposes. ${aName} will be in touch to provide personalized recommendations from our team of licensed professionals.`
+      : `Esta evaluación es con fines informativos. ${aName} se pondrá en contacto para brindarte recomendaciones personalizadas de nuestro equipo de profesionales con licencia.`}</div>
+    <div style="margin-top:5px;display:flex;justify-content:center;align-items:center;gap:8px"><div style="font-size:14px">⚖️</div><div style="font-size:10px;font-weight:700;color:#ccc;letter-spacing:1.5px">FINANCIAL PROTECTION ADVISOR</div></div>
   </div>
-
 </div>
 
 </body></html>`;
@@ -2804,8 +2705,8 @@ export default function FinancialBot() {
   const progress = showPlan ? 100 : (currentModule / MODULES.length) * 100;
 
   const disclaimerText = lang === "en"
-    ? `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. ${advisorName ? `Presentado por ${advisorName}.` : ""} We will contact you to present personalized options and strategies.`
-    : `Con fines educativos únicamente. No constituye asesoramiento legal, fiscal ni financiero. ${advisorName ? `Presentado por ${advisorName}.` : ""} Nos pondremos en contacto para presentarte opciones y estrategias personalizadas.`;
+    ? `This assessment is for informational purposes. ${advisorName ? `${advisorName}` : "Your advisor"} will be in touch to provide personalized recommendations from our licensed professionals.`
+    : `Esta evaluación es con fines informativos. ${advisorName ? `${advisorName}` : "Tu asesor"} se pondrá en contacto para brindarte recomendaciones personalizadas de nuestros profesionales con licencia.`;
 
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 50%, #080e1a 100%)", fontFamily: "'DM Sans', sans-serif", color: "#e8dcc8", position: "relative", overflow: "hidden" }}>
