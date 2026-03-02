@@ -1,3 +1,16 @@
+// ╔═══════════════════════════════════════════════════════════════════════════════╗
+// ║  FINANCIAL ADVISOR BOT — VERSION 6                                          ║
+// ║  Date: March 2, 2026                                                        ║
+// ║  IF YOU SEE A LOWER VERSION NUMBER, YOU HAVE THE WRONG FILE!                ║
+// ╚═══════════════════════════════════════════════════════════════════════════════╝
+// CHANGES IN V6:
+//   ✅ onFinish try-catch (Done/Submit button ALWAYS advances to thanks screen)
+//   ✅ notifyOpened useEffect (advisor gets email when client opens survey)
+//   ✅ Dashboard CSV parser (gviz URL + proper quoted-field parsing + auto-load)
+//   ✅ async test button fix
+//   ✅ Version banner added to prevent deploying old files
+console.log("🟢 Financial Advisor Bot VERSION 6 loaded");
+
 import { useState, useRef, useEffect } from "react";
 
 // ─── GLOBAL STYLES ─────────────────────────────────────────────────────────────
@@ -2769,7 +2782,7 @@ export default function FinancialBot() {
           </div>
         ) : (
           <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => {
-            // Mark token as used (one-time link)
+            // Layer 1: Mark token as used (one-time link)
             try {
               const token = new URLSearchParams(window.location.search).get("token");
               if (token) {
@@ -2778,11 +2791,11 @@ export default function FinancialBot() {
                 localStorage.setItem("_fa_used_tokens", JSON.stringify(used.slice(-100)));
               }
             } catch(e) { console.warn("Token marking failed:", e); }
-            // Send report to Google Sheets (fire and forget)
+            // Layer 2: Send report to Google Sheets (fire and forget)
             try {
               sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang });
             } catch(e) { console.warn("sendReport failed:", e); }
-            // ALWAYS show thanks screen no matter what
+            // Layer 3: ALWAYS show thanks screen no matter what
             setShowThanks(true);
           }} />
         )}
