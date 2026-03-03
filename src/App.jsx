@@ -1,9 +1,9 @@
 // ╔═══════════════════════════════════════════════════════════════════════════════╗
-// ║  FINANCIAL ADVISOR BOT — VERSION 8                                          ║
-// ║  Date: March 2, 2026                                                        ║
+// ║  FINANCIAL ADVISOR BOT — VERSION 9                                         ║
+// ║  Date: March 3, 2026                                                        ║
 // ║  IF YOU SEE A LOWER VERSION NUMBER, YOU HAVE THE WRONG FILE!                ║
 // ╚═══════════════════════════════════════════════════════════════════════════════╝
-// CHANGES IN V8:
+// CHANGES IN V9:
 //   ✅ NEW: Approved Designer Report v2 — motivational block + enlarged fonts
 //   ✅ Page 1: enlarged scores, findings, opportunities (fills page)
 //   ✅ Page 2: motivational congratulations + budget + facts + CTA (approved)
@@ -1813,7 +1813,8 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
           <div style={{ textAlign: "center", fontSize: 14, color: "#c8a050", fontStyle: "italic", marginBottom: 28 }}>
             — {advisorName}
           </div>
-        )}
+<div style={{ fontSize: 8, color: "#1a2530", marginTop: 4, letterSpacing: 1 }}>v9</div>
+      )}
 
         {/* SIMPLE OPPORTUNITY MENTION */}
         <div style={{ background: "rgba(200,160,80,0.05)", border: "1px solid rgba(200,160,80,0.18)", borderRadius: 12, padding: "18px 22px", marginBottom: 20, textAlign: "center" }}>
@@ -1828,7 +1829,7 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
         {/* BUTTONS */}
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
           <button onClick={() => printReport({ answers: window._fa_answers, plan: window._fa_plan, clientName, advisorName, lang })} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-            🖨️ {isEN ? "Print / Save PDF" : "Imprimir / Guardar PDF"}
+            🖨️ {isEN ? "Download Report" : "Desgargar Reporte"}
           </button>
           <button onClick={onReset} style={{ padding: "11px 22px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#8899aa", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
             {isEN ? "Start New Assessment" : "Nueva Evaluación"}
@@ -2064,217 +2065,167 @@ function AdvisorScreen() {
 
 
 // ─── PRINT FULL REPORT ──────────────────────────────────────────────────────────
-// ─── DESIGNER REPORT GENERATOR v2 (APPROVED TEMPLATE) ─────────────────────────
+// ─── PRINT FULL REPORT ──────────────────────────────────────────────────────────
+// ─── PLAIN PDF REPORT v9 — window.print() for clean 2-page PDF ─────────────────
 function printReport({ answers, plan, clientName, advisorName, lang }) {
   const p = window._fa_plan || plan;
   if (!p || !p.gaps) { alert(lang === "en" ? "Report data not found." : "Datos del reporte no encontrados."); return; }
-  
+
   const isEN = lang === "en";
   const { scores, gaps, budget, plan: budgetPlan } = p;
-  const avgScore = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/Object.values(scores).length);
-  const scoreColor = avgScore >= 7 ? "#1a8a5e" : avgScore >= 4 ? "#c48800" : "#c0392b";
-  const scoreBg = avgScore >= 7 ? "#e8f5ef" : avgScore >= 4 ? "#fff8e8" : "#fdf0ee";
-  const overallLabel = avgScore >= 7 
-    ? (isEN ? "Well Protected" : "Bien Protegido/a") 
-    : avgScore >= 4 
-      ? (isEN ? "Needs Attention" : "Necesita Atención") 
+  const avgScore = Math.round(Object.values(scores).reduce((a,b)=>a+b,0) / Object.values(scores).length);
+  const overallLabel = avgScore >= 7
+    ? (isEN ? "Well Protected" : "Bien Protegido/a")
+    : avgScore >= 4
+      ? (isEN ? "Needs Attention" : "Necesita Atención")
       : (isEN ? "Significant Gaps" : "Brechas Significativas");
-  
-  const scoreLabels = isEN 
-    ? { "Life & Family Protection":"Life & Family","Final Expense Coverage":"Final Expense","Health & LTC":"Health & LTC","Income Protection":"Income Protection","Retirement Planning":"Retirement","Emergency Fund":"Emergency Fund","Savings Optimization":"Savings","Estate Planning":"Estate Planning","Medicare & Social Security":"Medicare & SS","Tax Strategy":"Tax Strategy" }
-    : { "Life & Family Protection":"Vida y Familia","Final Expense Coverage":"Gastos Finales","Health & LTC":"Salud y LTC","Income Protection":"Protección de Ingresos","Retirement Planning":"Retiro","Emergency Fund":"Fondo de Emergencia","Savings Optimization":"Ahorros","Estate Planning":"Planificación Patrimonial","Medicare & Social Security":"Medicare y SS","Tax Strategy":"Estrategia Fiscal" };
+
+  const scoreLabels = isEN
+    ? { "Life & Family Protection":"Life &amp; Family","Final Expense Coverage":"Final Expense","Health & LTC":"Health &amp; LTC","Income Protection":"Income Protection","Retirement Planning":"Retirement","Emergency Fund":"Emergency Fund","Savings Optimization":"Savings","Estate Planning":"Estate Planning","Medicare & Social Security":"Medicare &amp; SS","Tax Strategy":"Tax Strategy" }
+    : { "Life & Family Protection":"Vida y Familia","Final Expense Coverage":"Gastos Finales","Health & LTC":"Salud y LTC","Income Protection":"Protección de Ingresos","Retirement Planning":"Retiro","Emergency Fund":"Fondo de Emergencia","Savings Optimization":"Ahorros","Estate Planning":"Plan. Patrimonial","Medicare & Social Security":"Medicare y SS","Tax Strategy":"Estrategia Fiscal" };
 
   const cTags = ["CRITICAL","CRÍTICO"], iTags = ["IMPORTANT","IMPORTANTE"], oTags = ["OPPORTUNITY","OPORTUNIDAD","TIP","CONSEJO"];
   const critGaps = gaps.filter(g => cTags.includes(g.tag));
-  const impGaps = gaps.filter(g => iTags.includes(g.tag));
-  const oppGaps = gaps.filter(g => oTags.includes(g.tag));
-  const topGaps = [...critGaps, ...impGaps].slice(0, 6);
+  const impGaps  = gaps.filter(g => iTags.includes(g.tag));
+  const oppGaps  = gaps.filter(g => oTags.includes(g.tag));
+  const topFindings = [...critGaps, ...impGaps].slice(0, 6);
   const topOpps = oppGaps.slice(0, 4);
 
   const dateStr = new Date().toLocaleDateString(isEN ? "en-US" : "es-US", { year:"numeric", month:"long", day:"numeric" });
   const cName = clientName || (isEN ? "Client" : "Cliente");
   const aName = advisorName || (isEN ? "Your Advisor" : "Tu Asesor");
 
-  // ── Score category rows (2 columns) ──
+  // Score table — 2-column compact layout (5 rows instead of 10)
   const scoreEntries = Object.entries(scores);
-  const leftScores = scoreEntries.slice(0, Math.ceil(scoreEntries.length / 2));
-  const rightScores = scoreEntries.slice(Math.ceil(scoreEntries.length / 2));
-
-  const renderScoreCol = (entries) => entries.map(([key, val]) => {
-    const c = val >= 7 ? "#1a8a5e" : val >= 4 ? "#c48800" : "#c0392b";
-    return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:10px"><div style="flex:1;font-size:13px;color:#444">${scoreLabels[key]||key}</div><div style="width:80px;height:7px;background:#f0f0f0;border-radius:3px;overflow:hidden"><div style="height:100%;width:${val*10}%;background:${c};border-radius:3px"></div></div><div style="font-size:14px;font-weight:700;color:${c};width:24px;text-align:right">${val}</div></div>`;
+  const half = Math.ceil(scoreEntries.length / 2);
+  const leftScores = scoreEntries.slice(0, half);
+  const rightScores = scoreEntries.slice(half);
+  const scoreRows = leftScores.map((entry, i) => {
+    const [k1, v1] = entry;
+    const c1 = v1 >= 7 ? "#1a7a4e" : v1 >= 4 ? "#b8860b" : "#c0392b";
+    const right = rightScores[i];
+    let rightCells = '<td></td><td></td>';
+    if (right) {
+      const [k2, v2] = right;
+      const c2 = v2 >= 7 ? "#1a7a4e" : v2 >= 4 ? "#b8860b" : "#c0392b";
+      rightCells = '<td>' + (scoreLabels[k2]||k2) + '</td><td class="center" style="color:' + c2 + ';font-weight:bold">' + v2 + '</td>';
+    }
+    return '<tr><td>' + (scoreLabels[k1]||k1) + '</td><td class="center" style="color:' + c1 + ';font-weight:bold">' + v1 + '</td>' + rightCells + '</tr>';
   }).join('');
 
-  // ── Gap cards ──
-  const renderGap = (g) => {
+  // Findings
+  const findingsHtml = topFindings.map(g => {
     const isCrit = cTags.includes(g.tag);
-    const isImp = iTags.includes(g.tag);
-    const tc = isCrit ? "#c0392b" : "#c48800";
-    const bg = isCrit ? "#fdf0ee" : "#fff8e8";
+    const cls = isCrit ? "crit" : "imp";
     const tagLabel = isCrit ? (isEN?"CRITICAL":"CRÍTICO") : (isEN?"IMPORTANT":"IMPORTANTE");
-    return `<div style="padding:12px 14px;background:${bg};border-radius:7px;border-left:4px solid ${tc}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px"><div style="font-size:14px;font-weight:700;color:#1a1a1a">${g.area||""}</div><span style="font-size:8px;font-weight:800;color:${tc};background:${tc}15;padding:2px 7px;border-radius:4px">${tagLabel}</span></div><div style="font-size:12px;color:#555;line-height:1.55">${g.reason||""}</div></div>`;
-  };
+    const area = (g.area||"").replace(/💡\s*/g,"").split(" — ")[0].split(" – ")[0].substring(0, 35);
+    const reason = (g.reason||"").substring(0, 160) + ((g.reason||"").length > 160 ? "..." : "");
+    return '<div class="finding"><p class="ftitle">' + area + ' <span class="' + cls + '">(' + tagLabel + ')</span></p><p class="fdesc">' + reason + '</p></div>';
+  }).join('\n');
 
-  // ── Opportunity cards ──
-  const renderOpp = (g) => {
-    return `<div style="padding:10px 13px;background:#f0f8f4;border-radius:7px;border-left:4px solid #1a8a5e"><div style="font-size:12.5px;font-weight:700;color:#1a1a1a;margin-bottom:3px">${(g.area||"").replace(/💡\s*/g,"")}</div><div style="font-size:11px;color:#555;line-height:1.5">${g.reason||""}</div></div>`;
-  };
+  // Opportunities — keep descriptions short to fit page 1
+  const oppsHtml = topOpps.map(g => {
+    const area = (g.area||"").replace(/💡\s*/g,"").split(" — ")[0].split(" – ")[0].substring(0, 35);
+    const reason = (g.reason||"").substring(0, 80) + ((g.reason||"").length > 80 ? "..." : "");
+    return '<div class="finding"><p class="ftitle opp">' + area + '</p><p class="fdesc">' + reason + '</p></div>';
+  }).join('\n');
 
-  // ── Budget table ──
-  const budgetRows = (budgetPlan||[]).map((item, i) => 
-    `<tr${i%2===0?' style="background:#fafbfd"':''}><td style="padding:8px 12px;font-size:12px;color:#1a1a1a;font-weight:500;border-bottom:1px solid #eee">${item.item}</td><td style="padding:8px 12px;font-size:11px;color:#777;border-bottom:1px solid #eee">${item.note}</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#c48800;font-size:13px;border-bottom:1px solid #eee;white-space:nowrap">${item.amount}</td></tr>`
+  // Budget table
+  const budgetRows = (budgetPlan||[]).slice(0, 5).map(item =>
+    '<tr><td>' + item.item + '</td><td>' + item.note + '</td><td class="right"><b>' + item.amount + '</b></td></tr>'
   ).join('');
 
-  // ── Key facts ──
-  const facts = isEN 
-    ? [["70%+","need LTC after 65"],["$12K+/mo","nursing home cost"],["47%","can't cover $500 emergency"],["Rule of 72","money doubles at 8% in 9 yrs"]]
-    : [["70%+","necesitan LTC después de 65"],["$12K+/mes","costo hogar de ancianos"],["47%","no cubre emergencia de $500"],["Regla del 72","el dinero se duplica al 8% en 9 años"]];
+  // Key facts
+  const factsArr = isEN
+    ? [["70%+","need LTC after 65"],["$12K+/mo","nursing home cost"],["47%","can't cover $500"],["Rule of 72","doubles at 8% in 9y"]]
+    : [["70%+","necesitan LTC 65+"],["$12K+/mes","hogar de ancianos"],["47%","no cubre $500"],["Regla 72","se duplica 8% en 9a"]];
+  const factsHtml = factsArr.map(([s,d]) => '&bull; ' + s + ' — ' + d).join('<br>\n');
 
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
-<title>${isEN?"Financial Assessment":"Evaluación Financiera"} — ${cName}</title>
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>${isEN ? "Financial Assessment" : "Evaluación Financiera"} — ${cName}</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:wght@400;600;700;800&display=swap');
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:'Plus Jakarta Sans',sans-serif; color:#1a1a1a; background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  @page { margin: 0.35in 0.45in; size: letter; }
-  .page-break { page-break-before: always; }
-  .serif { font-family: 'Fraunces', serif; }
-</style>
-</head><body>
+@page { size:8.5in 11in; margin:0.4in 0.55in 0.3in 0.55in; }
+@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+body { font-family:Calibri,Arial,sans-serif; font-size:9.5pt; color:#222; line-height:1.3; }
+h1 { font-size:16pt; font-weight:bold; margin:0; }
+h2 { font-size:11pt; font-weight:bold; margin:8px 0 3px; border-bottom:1pt solid #333; padding-bottom:2px; }
+table { border-collapse:collapse; width:100%; margin:3px 0 6px; }
+th,td { border:1px solid #bbb; padding:2px 5px; font-size:9pt; vertical-align:top; }
+th { background:#f0f0f0; font-weight:bold; text-align:left; }
+p { margin:0 0 3px; }
+.hdr { font-size:8pt; color:#888; letter-spacing:2px; text-transform:uppercase; font-weight:bold; }
+.sub { font-size:9pt; color:#777; }
+.right { text-align:right; }
+.center { text-align:center; }
+.crit { color:#c0392b; font-weight:bold; }
+.imp { color:#b8860b; font-weight:bold; }
+.opp { color:#1a7a4e; font-weight:bold; }
+.finding { margin:0 0 3px; }
+.ftitle { font-weight:bold; font-size:9.5pt; margin:0; }
+.fdesc { font-size:9pt; color:#444; margin:0; }
+.disclaimer { font-size:8pt; color:#888; text-align:center; margin-top:8px; }
+</style></head><body>
 
-<!-- ═══ PAGE 1: SCORES + FINDINGS + OPPORTUNITIES ═══ -->
-<div>
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:3px solid #1a1a1a;margin-bottom:18px">
-    <div>
-      <div style="font-size:10px;font-weight:800;letter-spacing:3px;color:#999;text-transform:uppercase;margin-bottom:2px">${isEN?"CONFIDENTIAL FINANCIAL ASSESSMENT":"EVALUACIÓN FINANCIERA CONFIDENCIAL"}</div>
-      <div class="serif" style="font-size:30px;font-weight:800;color:#1a1a1a;line-height:1.1">${isEN?"Financial Protection":"Protección Financiera"}<br><span style="color:${scoreColor}">${isEN?"Assessment Report":"Reporte de Evaluación"}</span></div>
-    </div>
-    <div style="text-align:right">
-      <div style="font-size:12px;color:#777;margin-bottom:4px">${dateStr}</div>
-      <div style="font-size:18px;font-weight:700;color:#1a1a1a">${cName}</div>
-      <div style="font-size:12px;color:#999;margin-top:2px">${isEN?"Advisor":"Asesor"}: ${aName}</div>
-    </div>
-  </div>
+<p class="hdr">${isEN ? "CONFIDENTIAL FINANCIAL ASSESSMENT" : "EVALUACIÓN FINANCIERA CONFIDENCIAL"}</p>
+<h1>${isEN ? "Financial Protection" : "Protección Financiera"}<br>${isEN ? "Assessment Report" : "Reporte de Evaluación"}</h1>
+<p class="sub">${dateStr}</p>
+<p style="font-size:13pt; font-weight:bold; margin:4px 0 1px">${cName}</p>
+<p class="sub">${isEN ? "Advisor" : "Asesor"}: ${aName}</p>
 
-  <div style="display:flex;gap:18px;margin-bottom:16px">
-    <div style="flex-shrink:0;text-align:center;padding:16px 22px;background:${scoreBg};border-radius:12px;border:1px solid ${scoreColor}22">
-      <div style="width:112px;height:112px;border-radius:50%;background:conic-gradient(${scoreColor} ${avgScore*36}deg, #f0f0f0 ${avgScore*36}deg);display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
-        <div style="width:90px;height:90px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center">
-          <div class="serif" style="font-size:40px;font-weight:800;color:${scoreColor};line-height:1">${avgScore}</div>
-          <div style="font-size:11px;color:#999">${isEN?"of":"de"} 10</div>
-        </div>
-      </div>
-      <div class="serif" style="font-size:16px;font-weight:700;color:${scoreColor}">${overallLabel}</div>
-      <div style="display:flex;gap:6px;justify-content:center;margin-top:8px">
-        ${critGaps.length > 0 ? `<span style="font-size:10px;color:#c0392b;background:#fdf0ee;border:1px solid #f0c0b0;border-radius:10px;padding:3px 8px;font-weight:700">🔴 ${critGaps.length}</span>` : ""}
-        ${impGaps.length > 0 ? `<span style="font-size:10px;color:#c48800;background:#fff8e8;border:1px solid #f0e0b0;border-radius:10px;padding:3px 8px;font-weight:700">🟡 ${impGaps.length}</span>` : ""}
-        ${oppGaps.length > 0 ? `<span style="font-size:10px;color:#1a8a5e;background:#e8f5ef;border:1px solid #b0e0c8;border-radius:10px;padding:3px 8px;font-weight:700">💡 ${oppGaps.length}</span>` : ""}
-      </div>
-    </div>
-    <div style="flex:1;padding:14px 18px;background:#fafbfd;border-radius:12px;border:1px solid #eef0f4">
-      <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:#999;text-transform:uppercase;margin-bottom:12px">${isEN?"SCORE BY CATEGORY":"PUNTUACIÓN POR CATEGORÍA"}</div>
-      <div style="display:flex;gap:18px">
-        <div style="flex:1">${renderScoreCol(leftScores)}</div>
-        <div style="flex:1">${renderScoreCol(rightScores)}</div>
-      </div>
-    </div>
-  </div>
+<h2>${isEN ? "Overall Score" : "Puntuación General"}: ${avgScore} / 10 — ${overallLabel}</h2>
 
-  ${topGaps.length > 0 ? `<div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#c0392b;text-transform:uppercase;margin-bottom:9px;padding-bottom:5px;border-bottom:2px solid rgba(192,57,43,0.2)">🚨 ${isEN?"KEY FINDINGS & RECOMMENDATIONS":"HALLAZGOS CLAVE Y RECOMENDACIONES"}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">${topGaps.map(renderGap).join("")}</div>
-  </div>` : ""}
+<table>
+<tr><th>${isEN ? "Category" : "Categoría"}</th><th class="center" style="width:50px">${isEN ? "Score" : "Punt"}</th><th>${isEN ? "Category" : "Categoría"}</th><th class="center" style="width:50px">${isEN ? "Score" : "Punt"}</th></tr>
+${scoreRows}
+</table>
 
-  ${topOpps.length > 0 ? `<div>
-    <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#1a8a5e;text-transform:uppercase;margin-bottom:9px;padding-bottom:5px;border-bottom:2px solid rgba(26,138,94,0.2)">💡 ${isEN?"OPPORTUNITIES":"OPORTUNIDADES"}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">${topOpps.map(renderOpp).join("")}</div>
-  </div>` : ""}
-</div>
+<h2>${isEN ? "🚨 Key Findings &amp; Recommendations" : "🚨 Hallazgos Clave y Recomendaciones"}</h2>
 
-<!-- ═══ PAGE 2: MOTIVATIONAL + BUDGET + FACTS + CTA ═══ -->
-<div class="page-break">
-  <div style="background:linear-gradient(135deg,#f8faf5,#eef6e8);border:1.5px solid #c5ddb5;border-radius:14px;padding:28px 30px;margin-bottom:24px;position:relative;overflow:hidden">
-    <div style="position:absolute;top:-20px;right:-10px;font-size:80px;opacity:0.08">🌟</div>
-    <div style="display:flex;gap:20px;align-items:flex-start">
-      <div style="flex-shrink:0;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#2ecc71,#27ae60);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 12px rgba(46,204,113,0.25)">✅</div>
-      <div style="flex:1">
-        <div class="serif" style="font-size:22px;font-weight:800;color:#1a6b3a;line-height:1.2;margin-bottom:8px">${cName}, ${isEN?"congratulations on taking this important step.":"felicidades por tomar este paso tan importante."}</div>
-        <div style="font-size:13.5px;color:#3a6b4a;line-height:1.75">
-          ${isEN
-            ? `Most people never take the time to truly understand their financial situation — but you did. By completing this assessment, you've already done something that <strong>93% of families never do</strong>: you sat down, answered honestly, and looked at where you really stand. That takes courage, and it matters.`
-            : `La mayoría de las personas nunca se toman el tiempo para entender realmente su situación financiera — pero tú sí lo hiciste. Al completar esta evaluación, ya hiciste algo que el <strong>93% de las familias nunca hacen</strong>: te sentaste, respondiste con honestidad y miraste dónde realmente estás. Eso requiere valor, y es importante.`}
-        </div>
-        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(46,204,113,0.2)">
-          <div style="font-size:13px;color:#3a6b4a;line-height:1.75">
-            ${isEN
-              ? `The good news? <strong>Knowing where you are is the hardest part.</strong> Every gap identified here has a solution, and none of them require drastic changes to your lifestyle. Small, smart adjustments — made with the right guidance — can transform your family's financial security in ways that will last for generations.`
-              : `¿La buena noticia? <strong>Saber dónde estás es la parte más difícil.</strong> Cada brecha identificada aquí tiene solución, y ninguna requiere cambios drásticos en tu estilo de vida. Pequeños ajustes inteligentes — con la guía correcta — pueden transformar la seguridad financiera de tu familia por generaciones.`}
-          </div>
-        </div>
-        <div style="display:flex;gap:14px;margin-top:14px">
-          <div style="display:flex;align-items:center;gap:6px;background:rgba(46,204,113,0.12);border-radius:8px;padding:8px 14px"><span style="font-size:16px">🎯</span><div style="font-size:11px;color:#2a7a42;font-weight:600">${isEN?"Your goals are clear":"Tus metas son claras"}</div></div>
-          <div style="display:flex;align-items:center;gap:6px;background:rgba(46,204,113,0.12);border-radius:8px;padding:8px 14px"><span style="font-size:16px">🛡️</span><div style="font-size:11px;color:#2a7a42;font-weight:600">${isEN?"Solutions exist for every gap":"Hay solución para cada brecha"}</div></div>
-          <div style="display:flex;align-items:center;gap:6px;background:rgba(46,204,113,0.12);border-radius:8px;padding:8px 14px"><span style="font-size:16px">🤝</span><div style="font-size:11px;color:#2a7a42;font-weight:600">${isEN?"We'll guide you every step":"Te guiaremos en cada paso"}</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
+${findingsHtml}
 
-  <div style="margin-bottom:18px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:5px;border-bottom:3px solid #1a1a1a">
-      <div><div class="serif" style="font-size:22px;font-weight:800;color:#1a1a1a">${isEN?"Recommended Budget":"Presupuesto Recomendado"}</div><div style="font-size:11px;color:#999;margin-top:2px">${isEN?"Based on your selected monthly budget":"Basado en tu presupuesto mensual seleccionado"}</div></div>
-      <div style="background:#c48800;color:#fff;padding:6px 18px;border-radius:20px;font-size:14px;font-weight:700">${budget}${isEN?"/mo":"/mes"}</div>
-    </div>
-    <table style="width:100%;border-collapse:collapse">
-      <thead><tr style="background:#f5f6f8"><th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;color:#777">${isEN?"COVERAGE":"COBERTURA"}</th><th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;color:#777">${isEN?"NOTE":"NOTA"}</th><th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;color:#777">${isEN?"AMOUNT":"MONTO"}</th></tr></thead>
-      <tbody>${budgetRows}</tbody>
-    </table>
-  </div>
+<h2>${isEN ? "💡 Opportunities" : "💡 Oportunidades"}</h2>
 
-  <div style="margin-bottom:18px">
-    <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:#999;text-transform:uppercase;margin-bottom:8px">${isEN?"KEY FACTS":"DATOS CLAVE"}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
-      ${facts.map(([stat,desc]) => `<div style="background:#fafbfd;border:1px solid #eef0f4;border-radius:8px;padding:14px 10px;text-align:center"><div class="serif" style="font-size:20px;font-weight:800;color:#c48800">${stat}</div><div style="font-size:10px;color:#777;margin-top:4px">${desc}</div></div>`).join("")}
-    </div>
-  </div>
+${oppsHtml}
 
-  <div style="background:linear-gradient(135deg,#1a1a1a,#2a2a3a);border-radius:14px;padding:22px 26px;margin-bottom:14px;color:#fff">
-    <div style="display:flex;align-items:flex-start;gap:18px">
-      <div style="flex-shrink:0;width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:26px">📱</div>
-      <div style="flex:1">
-        <div class="serif" style="font-size:22px;font-weight:700;color:#fff;margin-bottom:5px">${isEN?"What Happens Next?":"¿Qué Sigue?"}</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;margin-bottom:12px">${isEN
-          ? `${cName}, your assessment is complete. ${aName} will review your results and reach out to discuss personalized strategies. There is nothing more you need to do — we will take it from here.`
-          : `${cName}, tu evaluación está completa. ${aName} revisará tus resultados y se pondrá en contacto contigo para discutir estrategias personalizadas. No necesitas hacer nada más — nosotros nos encargamos.`}</div>
-        <div style="display:flex;gap:10px">
-          <div style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 18px;display:flex;align-items:center;gap:8px"><span style="font-size:18px">📞</span><div><div style="font-size:9px;color:rgba(255,255,255,0.5)">${isEN?"CALL OR TEXT":"LLAMA O ENVÍA TEXTO"}</div><div style="font-size:14px;font-weight:700;color:#fff">${aName}</div></div></div>
-          <div style="background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);border-radius:10px;padding:10px 18px;display:flex;align-items:center;gap:8px"><span style="font-size:18px">💬</span><div><div style="font-size:9px;color:rgba(255,255,255,0.5)">WHATSAPP</div><div style="font-size:12px;font-weight:600;color:#25d366">${isEN?"Send a message":"Envía un mensaje"}</div></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
+<br clear="all" style="page-break-before:always">
 
-  <div style="text-align:center;padding:8px 16px;border-top:1px solid #eee">
-    <div style="font-size:9px;color:#bbb;line-height:1.6">${isEN
-      ? `This assessment is for informational purposes. ${aName} will be in touch to provide personalized recommendations from our team of licensed professionals.`
-      : `Esta evaluación es con fines informativos. ${aName} se pondrá en contacto para brindarte recomendaciones personalizadas de nuestro equipo de profesionales con licencia.`}</div>
-    <div style="margin-top:5px;display:flex;justify-content:center;align-items:center;gap:8px"><div style="font-size:14px">⚖️</div><div style="font-size:10px;font-weight:700;color:#ccc;letter-spacing:1.5px">FINANCIAL PROTECTION ADVISOR</div></div>
-  </div>
-</div>
+<h2 style="border-bottom:none; margin-top:0">${cName}, ${isEN ? "congratulations on taking this important step." : "felicidades por tomar este paso tan importante."}</h2>
+
+<p>${isEN
+  ? "Most people never take the time to truly understand their financial situation — but you did. By completing this assessment, you've done something that 93% of families never do. The good news: every gap identified here has a solution. Small, smart adjustments — with the right guidance — can transform your family's financial security for generations."
+  : "La mayoría de las personas nunca se toman el tiempo para entender realmente su situación financiera — pero tú sí lo hiciste. Al completar esta evaluación, ya hiciste algo que el 93% de las familias nunca hacen. La buena noticia: cada brecha identificada aquí tiene solución. Pequeños ajustes inteligentes — con la guía correcta — pueden transformar la seguridad financiera de tu familia por generaciones."}</p>
+
+<h2>${isEN ? "💵 Recommended Budget" : "💵 Presupuesto Recomendado"}: ${budget}${isEN ? "/mo" : "/mes"}</h2>
+
+<table>
+<tr><th>${isEN ? "Coverage" : "Cobertura"}</th><th>${isEN ? "Note" : "Nota"}</th><th class="right" style="width:100px">${isEN ? "Amount" : "Monto"}</th></tr>
+${budgetRows}
+</table>
+
+<h2>${isEN ? "📌 Key Facts" : "📌 Datos Clave"}</h2>
+
+<p>${factsHtml}</p>
+
+<h2>${isEN ? "📱 What Happens Next?" : "📱 ¿Qué Sigue?"}</h2>
+
+<p>${cName}, ${isEN
+  ? `your assessment is complete. ${aName} will review your results and reach out to discuss personalized strategies. There is nothing more you need to do — we will take it from here.`
+  : `tu evaluación está completa. ${aName} revisará tus resultados y se pondrá en contacto contigo para discutir estrategias personalizadas. No necesitas hacer nada más — nosotros nos encargamos.`}</p>
+
+<p class="disclaimer">${isEN
+  ? `This assessment is for informational purposes. ${aName} will be in touch to provide personalized recommendations from our team of licensed professionals.`
+  : `Esta evaluación es con fines informativos. ${aName} se pondrá en contacto contigo para brindarte recomendaciones personalizadas de nuestro equipo de profesionales con licencia.`}</p>
+<p class="disclaimer" style="font-weight:bold; letter-spacing:1.5px">FINANCIAL PROTECTION ADVISOR — v9</p>
 
 </body></html>`;
 
-const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = (cName.replace(/[^a-zA-Z0-9]/g, '_') || 'Client') + '_Financial_Assessment.doc';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const win = window.open('', '_blank');
+  if (!win) { alert(isEN ? "Please allow pop-ups to print the report." : "Por favor permite ventanas emergentes para imprimir el reporte."); return; }
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => { win.print(); }, 500);
 }
-
 // ─── GOOGLE SHEETS ENDPOINT — paste your deployed Apps Script URL here ────────
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwwC1jVVfC52BXvpKpsA8gFfeNBvd60BH8n5YqgH_CKytbUNt6410zgvmSjq0cohsLVmQ/exec";
 
