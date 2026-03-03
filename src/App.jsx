@@ -1812,10 +1812,9 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
         {advisorName && (
           <div style={{ textAlign: "center", fontSize: 14, color: "#c8a050", fontStyle: "italic", marginBottom: 28 }}>
             — {advisorName}
-          </div>
-<div style={{ fontSize: 8, color: "#1a2530", marginTop: 4, letterSpacing: 1 }}>v9</div>
-      )}
-
+        </div>  
+        )}
+        <div style={{ fontSize: 8, color: "#1a2530", marginTop: 4, letterSpacing: 1, textAlign: "center" }}>v9</div>
         {/* SIMPLE OPPORTUNITY MENTION */}
         <div style={{ background: "rgba(200,160,80,0.05)", border: "1px solid rgba(200,160,80,0.18)", borderRadius: 12, padding: "18px 22px", marginBottom: 20, textAlign: "center" }}>
           <div style={{ fontSize: 22, marginBottom: 10 }}>🤝</div>
