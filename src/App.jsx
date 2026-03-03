@@ -2063,8 +2063,6 @@ function AdvisorScreen() {
   );
 }
 
-
-// ─── PRINT FULL REPORT ──────────────────────────────────────────────────────────
 // ─── PRINT FULL REPORT ──────────────────────────────────────────────────────────
 // ─── PLAIN PDF REPORT v9 — window.print() for clean 2-page PDF ─────────────────
 function printReport({ answers, plan, clientName, advisorName, lang }) {
