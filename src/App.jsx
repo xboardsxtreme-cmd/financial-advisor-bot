@@ -1350,7 +1350,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
           <button onClick={() => printReport({ answers: window._fa_answers, plan: window._fa_plan, clientName, advisorName, lang })} className="btn-ghost" style={{ fontSize: 12, color: "#4a90d9", borderColor: "rgba(74,144,217,0.3)" }}>
             🖨️ {lang === "en" ? "Download Report" : "Descargar Reporte"}
           </button>
-          <button onClick={onFinish} className="btn-primary" style={{ fontSize: 13, padding: "11px 28px" }}>
+          <button onClick={() => { console.log("🔥 DIRECT CLICK"); onFinish(); }} className="btn-primary" style={{ fontSize: 13, padding: "11px 28px" }}>
             ✅ {lang === "en" ? "Done — Submit" : "Listo — Enviar"}
           </button>
         </div>
