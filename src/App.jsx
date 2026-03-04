@@ -9,7 +9,7 @@
 //   ✅ Page 2: motivational congratulations + budget + facts + CTA (approved)
 //   ✅ Updated disclaimers — positions YOUR team as licensed professionals
 //   ✅ Includes all previous V6 fixes (onFinish, notifyOpened, CSV, async)
-console.log("🟢 Financial Advisor Bot VERSION 8 loaded");
+console.log("🟢 Financial Advisor Bot VERSION 9 loaded");
 
 import { useState, useRef, useEffect } from "react";
 
@@ -20,7 +20,7 @@ const GLOBAL_STYLE = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;  
     -webkit-font-smoothing: antialiased;
   }
 
