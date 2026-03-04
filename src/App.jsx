@@ -2769,6 +2769,7 @@ export default function FinancialBot() {
           </div>
         ) : (
        <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => { sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang }).catch(e => {}); setShowThanks(true); }} />
+      )}
       </div>
 
       {/* Footer */}
