@@ -2768,8 +2768,7 @@ export default function FinancialBot() {
             )}
           </div>
         ) : (
-          <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => {
-           onFinish={() => setShowThanks(true)}
+         <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => setShowThanks(true)} />
         )}
       </div>
 
