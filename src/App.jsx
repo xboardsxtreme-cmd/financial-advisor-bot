@@ -2770,21 +2770,8 @@ export default function FinancialBot() {
           </div>
         ) : (
           <PlanDisplay plan={plan} lang={lang} clientName={clientName} advisorName={advisorName} onBack={back} onReset={reset} onFinish={() => {
-            // Layer 1: Mark token as used (one-time link)
-            try {
-              const token = new URLSearchParams(window.location.search).get("token");
-              if (token) {
-                const used = JSON.parse(localStorage.getItem("_fa_used_tokens") || "[]");
-                used.push(token);
-                localStorage.setItem("_fa_used_tokens", JSON.stringify(used.slice(-100)));
-              }
-            } catch(e) { console.warn("Token marking failed:", e); }
-          // Layer 2: Send report to Google Sheets (fire and forget)
-          try { sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang }).catch(e => console.warn("sendReport failed:", e)); } catch(e) { console.warn("sendReport sync error:", e); }
-          // Layer 3: ALWAYS show thanks screen no matter what
-          console.log("🔥 ABOUT TO SET SHOW THANKS TRUE");
-          setShowThanks(true);
-          console.log("🔥 SHOW THANKS SET TO TRUE");
+            onFinish={() => {
+            setShowThanks(true);
           }} />
         )}
       </div>
