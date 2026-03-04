@@ -2270,7 +2270,6 @@ async function sendReport({ answers, plan, clientName, clientEmail, clientPhone,
 // ─── DASHBOARD SCREEN ──────────────────────────────────────────────────────────
 function DashboardScreen() {
   const PUBLISHED_TSV_URL = `https://docs.google.com/spreadsheets/d/1StKhKjKw8Dv98G11YBJki4c1li4-OBuQe10KrbeJ0D4/gviz/tq?tqx=out:csv&sheet=Clients`;
-
   const [sheetUrl, setSheetUrl] = useState(PUBLISHED_TSV_URL);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
