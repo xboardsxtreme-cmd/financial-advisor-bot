@@ -2779,10 +2779,13 @@ export default function FinancialBot() {
                 localStorage.setItem("_fa_used_tokens", JSON.stringify(used.slice(-100)));
               }
             } catch(e) { console.warn("Token marking failed:", e); }
-            // Layer 2: Send report to Google Sheets (fire and forget)
-            sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang }).catch(e => console.warn("sendReport failed:", e));
-            // Layer 3: ALWAYS show thanks screen no matter what
-            setTimeout(() => setShowThanks(true), 100);
+          // Layer 2: Send report to Google Sheets (fire and forget)
+          try { sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang }).catch(e => console.warn("sendReport failed:", e)); } catch(e) { console.warn("sendReport sync error:", e); }
+          // Layer 3: ALWAYS show thanks screen no matter what
+          console.log("🔥 ABOUT TO SET SHOW THANKS TRUE");
+          setShowThanks(true);
+          console.log("🔥 SHOW THANKS SET TO TRUE");
+          }} />
           }} />
         )}
       </div>
