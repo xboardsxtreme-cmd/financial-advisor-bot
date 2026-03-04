@@ -2780,11 +2780,9 @@ export default function FinancialBot() {
               }
             } catch(e) { console.warn("Token marking failed:", e); }
             // Layer 2: Send report to Google Sheets (fire and forget)
-            try {
-              sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang });
-            } catch(e) { console.warn("sendReport failed:", e); }
+            sendReport({ answers, plan, clientName, clientEmail, clientPhone, advisorName, lang }).catch(e => console.warn("sendReport failed:", e));
             // Layer 3: ALWAYS show thanks screen no matter what
-            setShowThanks(true);
+            setTimeout(() => setShowThanks(true), 100);
           }} />
         )}
       </div>
