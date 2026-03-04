@@ -2786,7 +2786,6 @@ export default function FinancialBot() {
           setShowThanks(true);
           console.log("🔥 SHOW THANKS SET TO TRUE");
           }} />
-          }} />
         )}
       </div>
 
