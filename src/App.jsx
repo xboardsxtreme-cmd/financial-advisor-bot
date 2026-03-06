@@ -2063,7 +2063,7 @@ function AdvisorScreen() {
 }
 
 // ─── PRINT FULL REPORT ──────────────────────────────────────────────────────────
-// ─── PLAIN PDF REPORT v9 — window.print() for clean 2-page PDF ─────────────────
+// ─── PLAIN PDF REPORT v9.1 — full content, no truncation ───────────────────────
 function printReport({ answers, plan, clientName, advisorName, lang }) {
   const p = window._fa_plan || plan;
   if (!p || !p.gaps) { alert(lang === "en" ? "Report data not found." : "Datos del reporte no encontrados."); return; }
@@ -2085,14 +2085,12 @@ function printReport({ answers, plan, clientName, advisorName, lang }) {
   const critGaps = gaps.filter(g => cTags.includes(g.tag));
   const impGaps  = gaps.filter(g => iTags.includes(g.tag));
   const oppGaps  = gaps.filter(g => oTags.includes(g.tag));
-  const topFindings = [...critGaps, ...impGaps].slice(0, 6);
-  const topOpps = oppGaps.slice(0, 4);
 
   const dateStr = new Date().toLocaleDateString(isEN ? "en-US" : "es-US", { year:"numeric", month:"long", day:"numeric" });
   const cName = clientName || (isEN ? "Client" : "Cliente");
   const aName = advisorName || (isEN ? "Your Advisor" : "Tu Asesor");
 
-  // Score table — 2-column compact layout (5 rows instead of 10)
+  // Score table — 2-column compact layout
   const scoreEntries = Object.entries(scores);
   const half = Math.ceil(scoreEntries.length / 2);
   const leftScores = scoreEntries.slice(0, half);
@@ -2110,47 +2108,51 @@ function printReport({ answers, plan, clientName, advisorName, lang }) {
     return '<tr><td>' + (scoreLabels[k1]||k1) + '</td><td class="center" style="color:' + c1 + ';font-weight:bold">' + v1 + '</td>' + rightCells + '</tr>';
   }).join('');
 
-  // Findings
-  const findingsHtml = topFindings.map(g => {
-    const isCrit = cTags.includes(g.tag);
-    const cls = isCrit ? "crit" : "imp";
-    const tagLabel = isCrit ? (isEN?"CRITICAL":"CRÍTICO") : (isEN?"IMPORTANT":"IMPORTANTE");
-    const area = (g.area||"").replace(/💡\s*/g,"").split(" — ")[0].split(" – ")[0].substring(0, 35);
-    const reason = (g.reason||"").substring(0, 160) + ((g.reason||"").length > 160 ? "..." : "");
-    return '<div class="finding"><p class="ftitle">' + area + ' <span class="' + cls + '">(' + tagLabel + ')</span></p><p class="fdesc">' + reason + '</p></div>';
+  // ALL Critical findings — full text
+  const critHtml = critGaps.map(g => {
+    const area = (g.area||"").replace(/💡\s*/g,"");
+    const reason = g.reason||"";
+    return '<div class="finding"><p class="ftitle">' + area + ' <span class="crit">(' + (isEN?"CRITICAL":"CRÍTICO") + ')</span></p><p class="fdesc">' + reason + '</p></div>';
   }).join('\n');
 
-  // Opportunities — keep descriptions short to fit page 1
-  const oppsHtml = topOpps.map(g => {
-    const area = (g.area||"").replace(/💡\s*/g,"").split(" — ")[0].split(" – ")[0].substring(0, 35);
-    const reason = (g.reason||"").substring(0, 80) + ((g.reason||"").length > 80 ? "..." : "");
+  // ALL Important findings — full text
+  const impHtml = impGaps.map(g => {
+    const area = (g.area||"").replace(/💡\s*/g,"");
+    const reason = g.reason||"";
+    return '<div class="finding"><p class="ftitle">' + area + ' <span class="imp">(' + (isEN?"IMPORTANT":"IMPORTANTE") + ')</span></p><p class="fdesc">' + reason + '</p></div>';
+  }).join('\n');
+
+  // ALL Opportunities — full text
+  const oppsHtml = oppGaps.map(g => {
+    const area = (g.area||"").replace(/💡\s*/g,"");
+    const reason = g.reason||"";
     return '<div class="finding"><p class="ftitle opp">' + area + '</p><p class="fdesc">' + reason + '</p></div>';
   }).join('\n');
 
-  // Budget table
-  const budgetRows = (budgetPlan||[]).slice(0, 5).map(item =>
+  // Budget table — all rows
+  const budgetRows = (budgetPlan||[]).map(item =>
     '<tr><td>' + item.item + '</td><td>' + item.note + '</td><td class="right"><b>' + item.amount + '</b></td></tr>'
   ).join('');
 
   // Key facts
   const factsArr = isEN
-    ? [["70%+","need LTC after 65"],["$12K+/mo","nursing home cost"],["47%","can't cover $500"],["Rule of 72","doubles at 8% in 9y"]]
-    : [["70%+","necesitan LTC 65+"],["$12K+/mes","hogar de ancianos"],["47%","no cubre $500"],["Regla 72","se duplica 8% en 9a"]];
-  const factsHtml = factsArr.map(([s,d]) => '&bull; ' + s + ' — ' + d).join('<br>\n');
+    ? [["70%+","of people 65+ will need long-term care"],["$12K+/mo","average nursing home cost"],["47%","of Americans can't cover a $500 emergency"],["Rule of 72","at 8%, money doubles every 9 years"]]
+    : [["70%+","de personas 65+ necesitarán cuidado a largo plazo"],["$12K+/mes","costo promedio de hogar de ancianos"],["47%","no puede cubrir una emergencia de $500"],["Regla del 72","al 8%, el dinero se duplica cada 9 años"]];
+  const factsHtml = factsArr.map(([s,d]) => '&bull; <b>' + s + '</b> — ' + d).join('<br>\n');
 
   const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8">
 <title>${isEN ? "Financial Assessment" : "Evaluación Financiera"} — ${cName}</title>
 <style>
-@page { size:8.5in 11in; margin:0.4in 0.55in 0.3in 0.55in; }
+@page { size:8.5in 11in; margin:0.5in 0.6in; }
 @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
-body { font-family:Calibri,Arial,sans-serif; font-size:9.5pt; color:#222; line-height:1.3; }
+body { font-family:Calibri,Arial,sans-serif; font-size:10pt; color:#222; line-height:1.4; }
 h1 { font-size:16pt; font-weight:bold; margin:0; }
-h2 { font-size:11pt; font-weight:bold; margin:8px 0 3px; border-bottom:1pt solid #333; padding-bottom:2px; }
-table { border-collapse:collapse; width:100%; margin:3px 0 6px; }
-th,td { border:1px solid #bbb; padding:2px 5px; font-size:9pt; vertical-align:top; }
+h2 { font-size:11pt; font-weight:bold; margin:14px 0 4px; border-bottom:1pt solid #333; padding-bottom:2px; }
+table { border-collapse:collapse; width:100%; margin:4px 0 8px; }
+th,td { border:1px solid #bbb; padding:3px 6px; font-size:9pt; vertical-align:top; }
 th { background:#f0f0f0; font-weight:bold; text-align:left; }
-p { margin:0 0 3px; }
+p { margin:0 0 4px; }
 .hdr { font-size:8pt; color:#888; letter-spacing:2px; text-transform:uppercase; font-weight:bold; }
 .sub { font-size:9pt; color:#777; }
 .right { text-align:right; }
@@ -2158,10 +2160,10 @@ p { margin:0 0 3px; }
 .crit { color:#c0392b; font-weight:bold; }
 .imp { color:#b8860b; font-weight:bold; }
 .opp { color:#1a7a4e; font-weight:bold; }
-.finding { margin:0 0 3px; }
-.ftitle { font-weight:bold; font-size:9.5pt; margin:0; }
-.fdesc { font-size:9pt; color:#444; margin:0; }
-.disclaimer { font-size:8pt; color:#888; text-align:center; margin-top:8px; }
+.finding { margin:0 0 6px; }
+.ftitle { font-weight:bold; font-size:10pt; margin:0; }
+.fdesc { font-size:9.5pt; color:#333; margin:1px 0 0; line-height:1.45; }
+.disclaimer { font-size:8pt; color:#888; text-align:center; margin-top:14px; }
 </style></head><body>
 
 <p class="hdr">${isEN ? "CONFIDENTIAL FINANCIAL ASSESSMENT" : "EVALUACIÓN FINANCIERA CONFIDENCIAL"}</p>
@@ -2177,17 +2179,13 @@ p { margin:0 0 3px; }
 ${scoreRows}
 </table>
 
-<h2>${isEN ? "🚨 Key Findings &amp; Recommendations" : "🚨 Hallazgos Clave y Recomendaciones"}</h2>
+${critGaps.length > 0 ? '<h2>' + (isEN ? "🚨 Critical — Address Immediately" : "🚨 Crítico — Atender de Inmediato") + '</h2>\n' + critHtml : ''}
 
-${findingsHtml}
+${impGaps.length > 0 ? '<h2>' + (isEN ? "⚠️ Important — Plan Within 90 Days" : "⚠️ Importante — Planificar en 90 Días") + '</h2>\n' + impHtml : ''}
 
-<h2>${isEN ? "💡 Opportunities" : "💡 Oportunidades"}</h2>
+${oppGaps.length > 0 ? '<h2>' + (isEN ? "💡 Opportunities" : "💡 Oportunidades") + '</h2>\n' + oppsHtml : ''}
 
-${oppsHtml}
-
-<br clear="all" style="page-break-before:always">
-
-<h2 style="border-bottom:none; margin-top:0">${cName}, ${isEN ? "congratulations on taking this important step." : "felicidades por tomar este paso tan importante."}</h2>
+<h2 style="border-bottom:none; margin-top:18px">${cName}, ${isEN ? "congratulations on taking this important step." : "felicidades por tomar este paso tan importante."}</h2>
 
 <p>${isEN
   ? "Most people never take the time to truly understand their financial situation — but you did. By completing this assessment, you've done something that 93% of families never do. The good news: every gap identified here has a solution. Small, smart adjustments — with the right guidance — can transform your family's financial security for generations."
@@ -2207,12 +2205,12 @@ ${budgetRows}
 <h2>${isEN ? "📱 What Happens Next?" : "📱 ¿Qué Sigue?"}</h2>
 
 <p>${cName}, ${isEN
-  ? `your assessment is complete. ${aName} will review your results and reach out to discuss personalized strategies. There is nothing more you need to do — we will take it from here.`
-  : `tu evaluación está completa. ${aName} revisará tus resultados y se pondrá en contacto contigo para discutir estrategias personalizadas. No necesitas hacer nada más — nosotros nos encargamos.`}</p>
+  ? aName + " will review your results and reach out to discuss personalized strategies. There is nothing more you need to do — we will take it from here."
+  : aName + " revisará tus resultados y se pondrá en contacto contigo para discutir estrategias personalizadas. No necesitas hacer nada más — nosotros nos encargamos."}</p>
 
 <p class="disclaimer">${isEN
-  ? `This assessment is for informational purposes. ${aName} will be in touch to provide personalized recommendations from our team of licensed professionals.`
-  : `Esta evaluación es con fines informativos. ${aName} se pondrá en contacto contigo para brindarte recomendaciones personalizadas de nuestro equipo de profesionales con licencia.`}</p>
+  ? "This assessment is for informational purposes. " + aName + " will be in touch to provide personalized recommendations from our team of licensed professionals."
+  : "Esta evaluación es con fines informativos. " + aName + " se pondrá en contacto contigo para brindarte recomendaciones personalizadas de nuestro equipo de profesionales con licencia."}</p>
 <p class="disclaimer" style="font-weight:bold; letter-spacing:1.5px">FINANCIAL PROTECTION ADVISOR — v9</p>
 
 </body></html>`;
