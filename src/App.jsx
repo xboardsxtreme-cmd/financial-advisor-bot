@@ -285,10 +285,10 @@ const T = {
         { id: "medical_condition", label: "Does anyone in your household have a relevant medical condition?", type: "select", options: ["No", "Yes – myself", "Yes – spouse/partner", "Yes – dependent"] },
       ]},
       { id: "B", title: "Income & Stability", icon: "💼", questions: [
-        { id: "income_type", label: "What is your income type?", type: "select", options: ["Unemployed / No income", "W-2 Employee", "Self-Employed", "Business Owner", "Mixed"] },
+        { id: "income_type", label: "What is your income type?", type: "select", options: ["Unemployed / No income", "W-2 Employee", "Self-Employed", "Business Owner", "Retired / Pension", "Mixed"] },
         { id: "gross_monthly", label: "Gross monthly income?", type: "number", placeholder: "e.g. 6000" },
         { id: "net_monthly", label: "Net monthly income (take-home)?", type: "number", placeholder: "e.g. 4500" },
-        { id: "income_dependent_on_health", label: "Does your income depend on your health or active work?", type: "select", options: ["Yes – entirely", "Mostly yes", "Partially", "No – I have passive income"] },
+        { id: "income_dependent_on_health", label: "Does your income depend on your health or active work?", type: "select", options: ["Yes – entirely", "Mostly yes", "Partially", "No – my income continues regardless"] },
         { id: "passive_income", label: "Do you have passive income sources?", type: "select", options: ["No", "Yes – rental", "Yes – investments", "Yes – business", "Multiple sources"] },
       ]},
       { id: "C", title: "Cash Flow & Savings", icon: "💰", questions: [
@@ -303,7 +303,7 @@ const T = {
         { id: "mortgage", label: "Do you have a mortgage?", type: "select", options: ["No", "Yes – under $1,500/mo", "Yes – $1,500–$2,500/mo", "Yes – $2,500+/mo"] },
         { id: "auto_loan", label: "Do you have auto loans?", type: "select", options: ["No", "Yes – under $500/mo", "Yes – $500+/mo"] },
         { id: "credit_cards", label: "Do you carry credit card debt?", type: "select", options: ["No", "Yes – under $5,000", "Yes – $5,000–$20,000", "Yes – $20,000+"] },
-        { id: "personal_loans", label: "Personal loans or other debts?", type: "select", options: ["No", "Yes – manageable", "Yes – high interest (20%+)"] },
+        { id: "personal_loans", label: "Personal loans or other debts?", type: "select", options: ["None", "Yes – manageable", "Yes – high interest (20%+)"] },
         { id: "total_debt_payments", label: "Total monthly debt payments?", type: "number", placeholder: "e.g. 1200" },
       ]},
       { id: "E", title: "Current Protection", icon: "🛡️", questions: [
@@ -320,10 +320,10 @@ const T = {
         { id: "retirement_accounts", label: "Do you have retirement accounts?", type: "select", options: ["No", "401(k) / 403(b)", "IRA / Roth IRA", "TSP / 457", "Multiple"] },
         { id: "retirement_savings_total", label: "Approximate total retirement savings?", type: "select", options: ["$0 – nothing saved", "Under $25,000", "$25K–$100K", "$100K–$300K", "$300K–$500K", "$500K+"] },
         { id: "rollover_experience", label: "Have you ever done a 401k rollover?", type: "select", options: ["No", "Yes", "Not sure what that is"] },
-        { id: "retirement_age_goal", label: "When would you like to retire?", type: "select", options: ["In 5 years or less", "In 5–10 years", "In 10–20 years", "In 20+ years", "Not sure"] },
+        { id: "retirement_age_goal", label: "When would you like to retire?", type: "select", options: ["Already retired", "In 5 years or less", "In 5–10 years", "In 10–20 years", "In 20+ years", "Not sure"] },
         { id: "retirement_priority", label: "Your #1 retirement priority?", type: "select", options: ["Safety & Guarantees", "Maximum Growth", "Tax Efficiency", "Balance of all three"] },
         { id: "college_savings", label: "Are you saving for a child's college education?", type: "select", options: ["No children / not applicable", "No – not saving yet", "Yes – 529 plan", "Yes – other savings", "Looking for better options"] },
-        { id: "monthly_budget", label: "Monthly budget available for financial protection & savings?", type: "select", options: ["Under $100", "$100–$250", "$250–$500", "$500–$1,000", "$1,000+"] },
+        { id: "monthly_budget", label: "Monthly budget available for insurance, protection & savings?", type: "select", options: ["Under $100", "$100–$250", "$250–$500", "$500–$1,000", "$1,000+"] },
       ]},
       { id: "H", title: "Tax Strategy", icon: "💡", questions: [
         { id: "tax_situation", label: "How do you feel about your current tax situation?", type: "select", options: ["I pay too much in taxes every year", "I break even — nothing owed, nothing returned", "I get a refund — but don't know if that's good or bad", "I have a tax strategy in place", "I've never thought about it"] },
@@ -401,10 +401,10 @@ const T = {
         { id: "medical_condition", label: "¿Algún miembro del hogar tiene una condición médica relevante?", type: "select", options: ["No", "Sí – yo mismo/a", "Sí – esposo/a o pareja", "Sí – un dependiente"] },
       ]},
       { id: "B", title: "Ingresos y Estabilidad", icon: "💼", questions: [
-        { id: "income_type", label: "¿Cuál es tu tipo de ingreso?", type: "select", options: ["Sin empleo / Sin trabajo", "Empleado W-2", "Trabajador Independiente", "Dueño de Negocio", "Mixto"] },
+        { id: "income_type", label: "¿Cuál es tu tipo de ingreso?", type: "select", options: ["Sin empleo / Sin trabajo", "Empleado W-2", "Trabajador Independiente", "Dueño de Negocio", "Retirado/a / Pensión", "Mixto"] },
         { id: "gross_monthly", label: "¿Ingreso mensual bruto?", type: "number", placeholder: "ej. 6000" },
         { id: "net_monthly", label: "¿Ingreso mensual neto (lo que recibes)?", type: "number", placeholder: "ej. 4500" },
-        { id: "income_dependent_on_health", label: "¿Tu ingreso depende de tu salud o de trabajar activamente?", type: "select", options: ["Sí – completamente", "En su mayoría sí", "Parcialmente", "No – tengo ingresos pasivos"] },
+        { id: "income_dependent_on_health", label: "¿Tu ingreso depende de tu salud o de trabajar activamente?", type: "select", options: ["Sí – completamente", "En su mayoría sí", "Parcialmente", "No – mi ingreso continúa sin importar"] },
         { id: "passive_income", label: "¿Tienes fuentes de ingresos pasivos?", type: "select", options: ["No", "Sí – rentas", "Sí – inversiones", "Sí – negocio", "Múltiples fuentes"] },
       ]},
       { id: "C", title: "Flujo de Efectivo y Ahorros", icon: "💰", questions: [
@@ -419,7 +419,7 @@ const T = {
         { id: "mortgage", label: "¿Tienes hipoteca?", type: "select", options: ["No", "Sí – menos de $1,500/mes", "Sí – $1,500 a $2,500/mes", "Sí – $2,500+/mes"] },
         { id: "auto_loan", label: "¿Tienes préstamos de auto?", type: "select", options: ["No", "Sí – menos de $500/mes", "Sí – $500+/mes"] },
         { id: "credit_cards", label: "¿Tienes deudas en tarjetas de crédito?", type: "select", options: ["No", "Sí – menos de $5,000", "Sí – $5,000 a $20,000", "Sí – $20,000+"] },
-        { id: "personal_loans", label: "¿Préstamos personales u otras deudas?", type: "select", options: ["No", "Sí – manejable", "Sí – interés alto (20%+)"] },
+        { id: "personal_loans", label: "¿Préstamos personales u otras deudas?", type: "select", options: ["Ninguno", "Sí – manejable", "Sí – interés alto (20%+)"] },
         { id: "total_debt_payments", label: "¿Total de pagos mensuales de deudas?", type: "number", placeholder: "ej. 1200" },
       ]},
       { id: "E", title: "Protección Actual", icon: "🛡️", questions: [
@@ -436,7 +436,7 @@ const T = {
         { id: "retirement_accounts", label: "¿Tienes cuentas de retiro?", type: "select", options: ["No", "401(k) / 403(b)", "IRA / Roth IRA", "TSP / 457", "Múltiples"] },
         { id: "retirement_savings_total", label: "¿Total aproximado de ahorros para el retiro?", type: "select", options: ["$0 – nada ahorrado", "Menos de $25,000", "$25K–$100K", "$100K–$300K", "$300K–$500K", "$500K+"] },
         { id: "rollover_experience", label: "¿Alguna vez has hecho un rollover de 401k?", type: "select", options: ["No", "Sí", "No sé qué es eso"] },
-        { id: "retirement_age_goal", label: "¿Cuándo te gustaría retirarte?", type: "select", options: ["En 5 años o menos", "En 5–10 años", "En 10–20 años", "En 20+ años", "No estoy seguro/a"] },
+        { id: "retirement_age_goal", label: "¿Cuándo te gustaría retirarte?", type: "select", options: ["Ya estoy retirado/a", "En 5 años o menos", "En 5–10 años", "En 10–20 años", "En 20+ años", "No estoy seguro/a"] },
         { id: "retirement_priority", label: "¿Tu prioridad #1 para el retiro?", type: "select", options: ["Seguridad y Garantías", "Máximo Crecimiento", "Eficiencia Fiscal", "Equilibrio de los tres"] },
         { id: "college_savings", label: "¿Estás ahorrando para la educación universitaria de tus hijos?", type: "select", options: ["Sin hijos / no aplica", "No – aún no ahorro", "Sí – plan 529", "Sí – otros ahorros", "Buscando mejores opciones"] },
         { id: "monthly_budget", label: "¿Presupuesto mensual para protección financiera y ahorros?", type: "select", options: ["Menos de $100", "$100–$250", "$250–$500", "$500–$1,000", "$1,000+"] },
@@ -2625,7 +2625,10 @@ export default function FinancialBot() {
   const module = MODULES[currentModule];
 
   const handleAnswer = (id, value) => setAnswers(prev => ({ ...prev, [id]: value }));
-  const isModuleComplete = () => module.questions.every(q => answers[q.id] && String(answers[q.id]).trim() !== "");
+  const isModuleComplete = () => module.questions.every(q => {
+  if (q.id === "dependent_ages" && (answers.dependents === "No" || !answers.dependents)) return true;
+  return answers[q.id] && String(answers[q.id]).trim() !== "";
+})
 
   const next = () => {
     // Before moving to Module E (index 4 = Protection), show LTC education screen
