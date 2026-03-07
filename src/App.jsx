@@ -1611,7 +1611,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
 
           {/* Trust badges */}
           <div className="anim-fadeup delay-4" style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 32, flexWrap: "wrap" }}>
-            {["🔒 100% Confidential", "📋 Takes ~5 minutes", "🆓 Completely Free"].map(badge => (
+            {["🔒 100% Confidential", "📋 Takes ~15 minutes", "🆓 Completely Free"].map(badge => (
               <span key={badge} style={{ fontSize: 10, color: "#445566", letterSpacing: 0.5 }}>{badge}</span>
             ))}
           </div>
