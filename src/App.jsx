@@ -1302,35 +1302,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
 
   return (
     <div className="anim-fadeup">
-
-      {/* SCORE HERO */}
-      <div style={{ textAlign: "center", marginBottom: 32, padding: "32px 20px", background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 20 }}>
-        <div style={{ fontSize: 10, color: "#445566", letterSpacing: 3, textTransform: "uppercase", marginBottom: 14, fontWeight: 600 }}>{t.assessmentTitle}</div>
-        {clientName && (
-          <div style={{ fontSize: 12, color: "#c8a050", marginBottom: 16, fontWeight: 500 }}>
-            👤 <strong style={{ color: "#e8c878" }}>{clientName}</strong>
-          </div>
-        )}
-        <div style={{ position: "relative", width: 148, height: 148, margin: "0 auto 18px" }}>
-          <svg width="148" height="148" style={{ transform: "rotate(-90deg)" }}>
-            <circle cx="74" cy="74" r="62" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="10" />
-            <circle cx="74" cy="74" r="62" fill="none" stroke={overallColor} strokeWidth="10"
-              strokeDasharray={`${2 * Math.PI * 62 * avgScore / 10} ${2 * Math.PI * 62}`}
-              strokeLinecap="round"
-              style={{ filter: `drop-shadow(0 0 8px ${overallColor}88)` }} />
-          </svg>
-          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", textAlign: "center" }}>
-            <div style={{ fontSize: 36, fontWeight: 700, color: overallColor, lineHeight: 1, fontFamily: "'Playfair Display', serif" }}>{avgScore}</div>
-            <div style={{ fontSize: 10, color: "#445566", marginTop: 2 }}>/ 10</div>
-          </div>
-        </div>
-        <div style={{ fontSize: 18, color: overallColor, fontWeight: 600, marginBottom: 10, fontFamily: "'Playfair Display', serif" }}>{overallLabel}</div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
-          {criticalGaps.length > 0 && <span style={{ fontSize: 11, color: "#e05050", background: "rgba(224,80,80,0.1)", border: "1px solid rgba(224,80,80,0.2)", borderRadius: 20, padding: "3px 12px" }}>🔴 {criticalGaps.length} {t.critical}</span>}
-          {importantGaps.length > 0 && <span style={{ fontSize: 11, color: "#e8a050", background: "rgba(232,160,80,0.1)", border: "1px solid rgba(232,160,80,0.2)", borderRadius: 20, padding: "3px 12px" }}>🟡 {importantGaps.length} {t.important}</span>}
-          {opportunities.length > 0 && <span style={{ fontSize: 11, color: "#4caf82", background: "rgba(76,175,130,0.1)", border: "1px solid rgba(76,175,130,0.2)", borderRadius: 20, padding: "3px 12px" }}>💡 {opportunities.length} {t.opportunity}</span>}
-        </div>
-      </div>
+      
 {/* ── PROTECTION GAUGE ── */}
       <div style={{ textAlign: "center", marginBottom: 28 }}>
         <div style={{ fontSize: 10, letterSpacing: 3, color: "#c8a050", textTransform: "uppercase", marginBottom: 6 }}>
