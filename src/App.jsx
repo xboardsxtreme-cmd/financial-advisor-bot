@@ -1881,6 +1881,10 @@ function LTCEducationScreen({ lang, onContinue }) {
           {current.content()}
         </div>
 
+      </div>
+   </div>
+  );
+}
 // ─── THANKS SCREEN ─────────────────────────────────────────────────────────────
 function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
   const isEN = lang === "en";
