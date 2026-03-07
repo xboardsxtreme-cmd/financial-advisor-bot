@@ -1648,6 +1648,62 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
               — {advisorName}
             </div>
           )}
+{/* ── BEFORE YOU BEGIN ── */}
+          <div style={{
+            background: "rgba(200,160,80,0.06)",
+            border: "1px solid rgba(200,160,80,0.2)",
+            borderRadius: 14,
+            padding: "18px 22px",
+            marginBottom: 24,
+            textAlign: "left",
+          }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#e8c878", marginBottom: 10, textAlign: "center" }}>
+              {lang === "en" ? "⏱️ Before You Begin" : "⏱️ Antes de Comenzar"}
+            </div>
+            <div style={{ fontSize: 11, color: "#c8d8e8", lineHeight: 1.8, marginBottom: 10 }}>
+              {lang === "en"
+                ? "This assessment takes about 10–15 minutes. Please set aside uninterrupted time — once you start, your answers are not saved, and you will need to complete it in one sitting."
+                : "Esta evaluación toma aproximadamente 10–15 minutos. Por favor aparta un momento sin interrupciones — una vez que comiences, tus respuestas no se guardan, y necesitarás completarla de una sola vez."}
+            </div>
+            <div style={{ fontSize: 11, color: "#c8d8e8", lineHeight: 1.8, marginBottom: 10 }}>
+              {lang === "en"
+                ? "What you're about to answer matters more than you think. Every question is designed to reveal the real gaps in your financial protection. The accuracy of your results depends entirely on your honesty."
+                : "Lo que vas a contestar importa más de lo que crees. Cada pregunta está diseñada para revelar las brechas reales en tu protección financiera. La precisión de tus resultados depende completamente de tu honestidad."}
+            </div>
+            <div style={{ fontSize: 11, color: "#e8c878", lineHeight: 1.8, fontWeight: 500, fontStyle: "italic", textAlign: "center" }}>
+              {lang === "en"
+                ? "No one else can do this for you. Your family's financial security — and your plans and goals for the future or for the unexpected — starts with the truth about where you stand today. Take this seriously — your future self will thank you."
+                : "Nadie más puede hacer esto por ti. La seguridad financiera de tu familia — y tus planes y metas para el futuro o para lo inesperado — comienza con la verdad sobre dónde estás hoy. Tómate esto en serio — tu yo del futuro te lo agradecerá."}
+            </div>
+          </div>
+        
+        {/* Navigation */}
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          {slide > 0 && (
+            <button onClick={() => setSlide(p => p - 1)} style={{ padding: "10px 22px", background: "transparent", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#667788", fontSize: 13, cursor: "pointer" }}>
+              ←
+            </button>
+          )}
+          {!isLast ? (
+            <button onClick={() => setSlide(p => p + 1)} style={{ padding: "13px 36px", background: `linear-gradient(135deg, ${current.accent}bb, ${current.accent})`, border: "none", borderRadius: 10, color: "#050a12", fontSize: 14, fontWeight: "bold", cursor: "pointer", boxShadow: `0 4px 20px ${current.accent}44`, letterSpacing: 1 }}>
+              {isEN ? "Next →" : "Siguiente →"}
+            </button>
+          ) : (
+            <button onClick={onContinue} style={{ padding: "14px 40px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 12, color: "#050a12", fontSize: 15, fontWeight: "bold", cursor: "pointer", boxShadow: "0 6px 28px rgba(200,160,80,0.5)", letterSpacing: 1 }}>
+              {isEN ? "Continue to Survey →" : "Continuar al Cuestionario →"}
+            </button>
+          )}
+          {!isLast && (
+            <button onClick={onContinue} style={{ background: "transparent", border: "none", color: "#445566", fontSize: 11, cursor: "pointer", textDecoration: "underline", padding: "10px 8px" }}>
+              {isEN ? "Skip" : "Saltar"}
+            </button>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+}
 
           <div style={{ textAlign: "center" }}>
             <button onClick={() => setSeenIntroMsg(true)} className="btn-primary" style={{ padding: "15px 52px", fontSize: 15 }}>
@@ -1853,62 +1909,6 @@ function LTCEducationScreen({ lang, onContinue }) {
         <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${current.accent}33`, borderRadius: 16, padding: "24px 22px", marginBottom: 20 }}>
           {current.content()}
         </div>
-{/* ── BEFORE YOU BEGIN ── */}
-          <div style={{
-            background: "rgba(200,160,80,0.06)",
-            border: "1px solid rgba(200,160,80,0.2)",
-            borderRadius: 14,
-            padding: "18px 22px",
-            marginBottom: 24,
-            textAlign: "left",
-          }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#e8c878", marginBottom: 10, textAlign: "center" }}>
-              {lang === "en" ? "⏱️ Before You Begin" : "⏱️ Antes de Comenzar"}
-            </div>
-            <div style={{ fontSize: 11, color: "#c8d8e8", lineHeight: 1.8, marginBottom: 10 }}>
-              {lang === "en"
-                ? "This assessment takes about 10–15 minutes. Please set aside uninterrupted time — once you start, your answers are not saved, and you will need to complete it in one sitting."
-                : "Esta evaluación toma aproximadamente 10–15 minutos. Por favor aparta un momento sin interrupciones — una vez que comiences, tus respuestas no se guardan, y necesitarás completarla de una sola vez."}
-            </div>
-            <div style={{ fontSize: 11, color: "#c8d8e8", lineHeight: 1.8, marginBottom: 10 }}>
-              {lang === "en"
-                ? "What you're about to answer matters more than you think. Every question is designed to reveal the real gaps in your financial protection. The accuracy of your results depends entirely on your honesty."
-                : "Lo que vas a contestar importa más de lo que crees. Cada pregunta está diseñada para revelar las brechas reales en tu protección financiera. La precisión de tus resultados depende completamente de tu honestidad."}
-            </div>
-            <div style={{ fontSize: 11, color: "#e8c878", lineHeight: 1.8, fontWeight: 500, fontStyle: "italic", textAlign: "center" }}>
-              {lang === "en"
-                ? "No one else can do this for you. Your family's financial security — and your plans and goals for the future or for the unexpected — starts with the truth about where you stand today. Take this seriously — your future self will thank you."
-                : "Nadie más puede hacer esto por ti. La seguridad financiera de tu familia — y tus planes y metas para el futuro o para lo inesperado — comienza con la verdad sobre dónde estás hoy. Tómate esto en serio — tu yo del futuro te lo agradecerá."}
-            </div>
-          </div>
-        
-        {/* Navigation */}
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          {slide > 0 && (
-            <button onClick={() => setSlide(p => p - 1)} style={{ padding: "10px 22px", background: "transparent", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#667788", fontSize: 13, cursor: "pointer" }}>
-              ←
-            </button>
-          )}
-          {!isLast ? (
-            <button onClick={() => setSlide(p => p + 1)} style={{ padding: "13px 36px", background: `linear-gradient(135deg, ${current.accent}bb, ${current.accent})`, border: "none", borderRadius: 10, color: "#050a12", fontSize: 14, fontWeight: "bold", cursor: "pointer", boxShadow: `0 4px 20px ${current.accent}44`, letterSpacing: 1 }}>
-              {isEN ? "Next →" : "Siguiente →"}
-            </button>
-          ) : (
-            <button onClick={onContinue} style={{ padding: "14px 40px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 12, color: "#050a12", fontSize: 15, fontWeight: "bold", cursor: "pointer", boxShadow: "0 6px 28px rgba(200,160,80,0.5)", letterSpacing: 1 }}>
-              {isEN ? "Continue to Survey →" : "Continuar al Cuestionario →"}
-            </button>
-          )}
-          {!isLast && (
-            <button onClick={onContinue} style={{ background: "transparent", border: "none", color: "#445566", fontSize: 11, cursor: "pointer", textDecoration: "underline", padding: "10px 8px" }}>
-              {isEN ? "Skip" : "Saltar"}
-            </button>
-          )}
-        </div>
-
-      </div>
-    </div>
-  );
-}
 
 // ─── THANKS SCREEN ─────────────────────────────────────────────────────────────
 function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
