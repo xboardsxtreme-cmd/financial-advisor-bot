@@ -1183,6 +1183,111 @@ function LTCEduCard({ edu, lang }) {
     </div>
   );
 }
+// ═══════════════════════════════════════════════════════════════════════════
+// PROTECTION GAUGE COMPONENT — paste this BEFORE the PlanDisplay function
+// ═══════════════════════════════════════════════════════════════════════════
+
+function ProtectionGauge({ scores, lang }) {
+  const [animated, setAnimated] = useState(false);
+  useEffect(() => { setTimeout(() => setAnimated(true), 200); }, []);
+
+  const isEN = lang === "en";
+  const scoreLabels = isEN
+    ? { "Life & Family Protection":"Life & Family","Final Expense Coverage":"Final Expense","Health & LTC":"Health & LTC","Income Protection":"Income","Retirement Planning":"Retirement","Emergency Fund":"Emergency Fund","Savings Optimization":"Savings","Estate Planning":"Estate Planning","Medicare & Social Security":"Medicare & SS","Tax Strategy":"Tax Strategy" }
+    : { "Life & Family Protection":"Vida y Familia","Final Expense Coverage":"Gastos Finales","Health & LTC":"Salud y LTC","Income Protection":"Ingresos","Retirement Planning":"Retiro","Emergency Fund":"Fondo Emergencia","Savings Optimization":"Ahorros","Estate Planning":"Plan. Patrimonial","Medicare & Social Security":"Medicare y SS","Tax Strategy":"Estrategia Fiscal" };
+
+  const getColor = (score) => score >= 7 ? "#2eac5e" : score >= 4 ? "#e8a020" : "#d63031";
+
+  const entries = Object.entries(scores);
+  const avgScore = Math.round(entries.reduce((s, [, v]) => s + v, 0) / entries.length);
+  const avgPct = avgScore * 10;
+
+  const gaugeR = 90;
+  const gaugeW = 14;
+  const gaugeCx = 150;
+  const gaugeCy = 105;
+  const circumHalf = Math.PI * gaugeR;
+  const fillLen = (avgPct / 100) * circumHalf;
+
+  return (
+    <div style={{ maxWidth: 440, margin: "0 auto" }}>
+      {/* Semi-circle gauge */}
+      <div style={{ position: "relative", width: 300, height: 140, margin: "0 auto 12px" }}>
+        <svg width="300" height="140" viewBox="0 0 300 140">
+          <path d={`M ${gaugeCx - gaugeR} ${gaugeCy} A ${gaugeR} ${gaugeR} 0 0 1 ${gaugeCx + gaugeR} ${gaugeCy}`}
+            fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={gaugeW} strokeLinecap="round" />
+          <path d={`M ${gaugeCx - gaugeR} ${gaugeCy} A ${gaugeR} ${gaugeR} 0 0 1 ${gaugeCx + gaugeR} ${gaugeCy}`}
+            fill="none" stroke={getColor(avgScore)} strokeWidth={gaugeW} strokeLinecap="round"
+            strokeDasharray={`${circumHalf}`}
+            strokeDashoffset={animated ? circumHalf - fillLen : circumHalf}
+            style={{ transition: "stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s" }}
+          />
+          {[0, 25, 50, 75, 100].map((pct) => {
+            const a = Math.PI - (pct / 100) * Math.PI;
+            const x1 = gaugeCx + (gaugeR + gaugeW / 2 + 3) * Math.cos(a);
+            const y1 = gaugeCy - (gaugeR + gaugeW / 2 + 3) * Math.sin(a);
+            const x2 = gaugeCx + (gaugeR + gaugeW / 2 + 8) * Math.cos(a);
+            const y2 = gaugeCy - (gaugeR + gaugeW / 2 + 8) * Math.sin(a);
+            return (
+              <g key={pct}>
+                <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                <text x={x2 + 8 * Math.cos(a)} y={y2 - 8 * Math.sin(a) + 3}
+                  textAnchor="middle" fill="#556677" fontSize="8" fontWeight="500">
+                  {pct}%
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+        <div style={{
+          position: "absolute", bottom: 8, left: "50%", transform: "translateX(-50%)",
+          textAlign: "center",
+        }}>
+          <div style={{
+            fontSize: 38, fontWeight: 900, color: getColor(avgScore), lineHeight: 1,
+            fontFamily: "'Playfair Display', serif",
+            opacity: animated ? 1 : 0,
+            transition: "opacity 0.5s ease 0.5s",
+          }}>{avgPct}%</div>
+          <div style={{ fontSize: 10, color: "#667788", fontWeight: 600, letterSpacing: 1 }}>
+            {isEN ? "PROTECTION SCORE" : "PUNTUACIÓN DE PROTECCIÓN"}
+          </div>
+        </div>
+      </div>
+
+      {/* Category bars */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, padding: "0 4px" }}>
+        {entries.map(([key, val], i) => {
+          const pct = val * 10;
+          const color = getColor(val);
+          return (
+            <div key={key} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 100, fontSize: 10, color: "#8899aa", fontWeight: 500, textAlign: "right", fontFamily: "'DM Sans', sans-serif" }}>
+                {scoreLabels[key] || key}
+              </div>
+              <div style={{ flex: 1, height: 18, background: "rgba(255,255,255,0.04)", borderRadius: 9, overflow: "hidden", position: "relative", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div style={{
+                  height: "100%", borderRadius: 9,
+                  background: `linear-gradient(90deg, ${color}, ${color}dd)`,
+                  width: animated ? `${pct}%` : "0%",
+                  transition: `width 0.8s ease ${i * 0.06}s`,
+                  boxShadow: `0 0 8px ${color}44`,
+                }} />
+                <span style={{
+                  position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)",
+                  fontSize: 9, fontWeight: 800, color: pct > 30 ? "#fff" : "#8899aa",
+                  opacity: animated ? 1 : 0,
+                  transition: `opacity 0.3s ease ${0.5 + i * 0.05}s`,
+                  textShadow: pct > 30 ? "0 1px 2px rgba(0,0,0,0.3)" : "none",
+                }}>{val}/10</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onFinish }) {
   const t = T[lang];
@@ -1226,16 +1331,36 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
           {opportunities.length > 0 && <span style={{ fontSize: 11, color: "#4caf82", background: "rgba(76,175,130,0.1)", border: "1px solid rgba(76,175,130,0.2)", borderRadius: 20, padding: "3px 12px" }}>💡 {opportunities.length} {t.opportunity}</span>}
         </div>
       </div>
-
-      {/* SCORE BARS */}
-      <div style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 18, padding: "24px 24px", marginBottom: 18 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-          <div style={{ width: 3, height: 18, borderRadius: 2, background: "linear-gradient(180deg, #c8a050, #e8c878)" }} />
-          <h3 style={{ color: "#e8c878", margin: 0, fontSize: 14, fontWeight: 600, fontFamily: "'Playfair Display', serif" }}>{t.scoresTitle}</h3>
+{/* ── PROTECTION GAUGE ── */}
+      <div style={{ textAlign: "center", marginBottom: 28 }}>
+        <div style={{ fontSize: 10, letterSpacing: 3, color: "#c8a050", textTransform: "uppercase", marginBottom: 6 }}>
+          {lang === "en" ? "YOUR FINANCIAL PROTECTION ASSESSMENT" : "TU EVALUACIÓN DE PROTECCIÓN FINANCIERA"}
         </div>
-        {Object.entries(scores).map(([key, score], i) => <ScoreBar key={key} label={t.scoreLabels[key] || key} score={score} index={i} />)}
+        {clientName && (
+          <div style={{ fontSize: 15, color: "#c8a050", marginBottom: 4 }}>👤 {clientName}</div>
+        )}
       </div>
 
+      <div className="card-glass" style={{ padding: "28px 16px 20px", marginBottom: 24 }}>
+        <ProtectionGauge scores={scores} lang={lang} />
+        <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
+          {criticalGaps.length > 0 && (
+            <span style={{ padding: "5px 14px", borderRadius: 20, fontSize: 11, fontWeight: 600, background: "rgba(214,48,49,0.12)", color: "#e05050", border: "1px solid rgba(214,48,49,0.25)" }}>
+              🔴 {criticalGaps.length} {t.critical}
+            </span>
+          )}
+          {importantGaps.length > 0 && (
+            <span style={{ padding: "5px 14px", borderRadius: 20, fontSize: 11, fontWeight: 600, background: "rgba(232,160,32,0.12)", color: "#e8a020", border: "1px solid rgba(232,160,32,0.25)" }}>
+              🟡 {importantGaps.length} {t.important}
+            </span>
+          )}
+          {opportunities.length > 0 && (
+            <span style={{ padding: "5px 14px", borderRadius: 20, fontSize: 11, fontWeight: 600, background: "rgba(46,172,94,0.12)", color: "#4caf82", border: "1px solid rgba(46,172,94,0.25)" }}>
+              💡 {opportunities.length} {t.opportunity}
+            </span>
+          )}
+        </div>
+      </div>
       {criticalGaps.length > 0 && (
         <div style={{ marginBottom: 18 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
