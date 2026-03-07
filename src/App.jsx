@@ -320,7 +320,10 @@ const T = {
         { id: "retirement_accounts", label: "Do you have retirement accounts?", type: "select", options: ["No", "401(k) / 403(b)", "IRA / Roth IRA", "TSP / 457", "Multiple"] },
         { id: "retirement_savings_total", label: "Approximate total retirement savings?", type: "select", options: ["$0 – nothing saved", "Under $25,000", "$25K–$100K", "$100K–$300K", "$300K–$500K", "$500K+"] },
         { id: "rollover_experience", label: "Have you ever done a 401k rollover?", type: "select", options: ["No", "Yes", "Not sure what that is"] },
-        { id: "retirement_age_goal", label: "When would you like to retire?", type: "select", options: ["Already retired", "In 5 years or less", "In 5–10 years", "In 10–20 years", "In 20+ years", "Not sure"] },
+        { id: "retirement_age_goal", label: "When would you like to retire?", type: "select", options: ["Already retired", "In 5 years or less", "In 5–10 years", "In 10–20 years", "In 20+ years", "Not sure"] },{ id: "work_in_retirement", label: "Do you plan to work part-time or go back to work in retirement?", type: "select", options: ["Yes", "I'm not sure", "No – fully retired", "Not applicable yet"] },
+        { id: "vesting_knowledge", label: "Do you understand your vesting schedule for your retirement plan(s) and deferred compensation?", type: "select", options: ["Yes", "I think so", "No", "Not applicable"] },
+        { id: "retirement_income_lasts", label: "Will your retirement income and assets last at least 25–30 years — even with inflation and taxes?", type: "select", options: ["Looking good", "I'm not confident", "Doubtful", "No", "I haven't calculated this"] },
+        { id: "spouse_retirement_aligned", label: "Are you and your spouse on the same page when it comes to retirement?", type: "select", options: ["Yes", "Work in progress", "No", "N/A – I don't have a spouse"] },
         { id: "retirement_priority", label: "Your #1 retirement priority?", type: "select", options: ["Safety & Guarantees", "Maximum Growth", "Tax Efficiency", "Balance of all three"] },
         { id: "college_savings", label: "Are you saving for a child's college education?", type: "select", options: ["No children / not applicable", "No – not saving yet", "Yes – 529 plan", "Yes – other savings", "Looking for better options"] },
         { id: "monthly_budget", label: "Monthly budget available for insurance, protection & savings?", type: "select", options: ["Under $100", "$100–$250", "$250–$500", "$500–$1,000", "$1,000+"] },
@@ -345,6 +348,10 @@ const T = {
         { id: "knows_ss", label: "Do you know what Social Security benefits you've earned so far?", type: "select", options: ["Yes – I check it regularly", "I've seen it once but don't track it", "No – I've never checked", "I don't know how to access it"] },
         { id: "ss_account", label: "Do you have an account at SSA.gov (Social Security Administration)?", type: "select", options: ["Yes – I have an account", "No – I don't have one", "I didn't know that was possible"] },
         { id: "ss_claiming_age", label: "Do you know the best age to claim Social Security to maximize your benefit?", type: "select", options: ["Yes – I have a strategy", "I know it depends on age but unsure of best timing", "No – I don't know how that works"] },
+        { id: "healthcare_before_medicare", label: "Have you planned for healthcare costs before and after Medicare eligibility?", type: "select", options: ["Yes – fully planned", "I have it planned before Medicare", "I have it planned after Medicare", "No – I haven't planned for this"] },
+        { id: "withdrawal_strategy", label: "Do you have a sustainable, tax-efficient withdrawal plan for your retirement savings?", type: "select", options: ["Yes", "No, but my situation is simple", "No – I need help with this"] },
+        { id: "ss_knowledge_specific", label: "Do you have a good understanding of how Social Security works for your specific situation?", type: "select", options: ["Yes", "Not sure", "Probably not", "No"] },
+        { id: "stress_test_plan", label: "Have you stress-tested your income plan for inflation, market downturns, and unexpected expenses?", type: "select", options: ["Yes", "No, but I have an idea", "No"] },
       ]},
       { id: "I", title: "Tax Prep 2025", icon: "📋", questions: [
         { id: "tax_filing_status", label: "What is your filing status for 2025?", type: "select", options: ["Single", "Married Filing Jointly", "Married Filing Separately", "Head of Household", "Not sure"] },
@@ -437,7 +444,10 @@ const T = {
         { id: "retirement_savings_total", label: "¿Total aproximado de ahorros para el retiro?", type: "select", options: ["$0 – nada ahorrado", "Menos de $25,000", "$25K–$100K", "$100K–$300K", "$300K–$500K", "$500K+"] },
         { id: "rollover_experience", label: "¿Alguna vez has hecho un rollover de 401k?", type: "select", options: ["No", "Sí", "No sé qué es eso"] },
         { id: "retirement_age_goal", label: "¿Cuándo te gustaría retirarte?", type: "select", options: ["Ya estoy retirado/a", "En 5 años o menos", "En 5–10 años", "En 10–20 años", "En 20+ años", "No estoy seguro/a"] },
-        { id: "retirement_priority", label: "¿Tu prioridad #1 para el retiro?", type: "select", options: ["Seguridad y Garantías", "Máximo Crecimiento", "Eficiencia Fiscal", "Equilibrio de los tres"] },
+        { id: "work_in_retirement", label: "¿Planeas trabajar medio tiempo o volver a trabajar en el retiro?", type: "select", options: ["Sí", "No estoy seguro/a", "No – completamente retirado/a", "Aún no aplica"] },
+        { id: "vesting_knowledge", label: "¿Entiendes tu calendario de adquisición (vesting) de tus planes de retiro y compensación diferida?", type: "select", options: ["Sí", "Creo que sí", "No", "No aplica"] },
+        { id: "retirement_income_lasts", label: "¿Tus ingresos y activos de retiro durarán al menos 25–30 años — incluso con inflación e impuestos?", type: "select", options: ["Se ve bien", "No estoy seguro/a", "Lo dudo", "No", "No lo he calculado"] },
+        { id: "spouse_retirement_aligned", label: "¿Tú y tu pareja están de acuerdo cuando se trata del retiro?", type: "select", options: ["Sí", "Trabajando en ello", "No", "N/A – no tengo pareja"] },{ id: "retirement_priority", label: "¿Tu prioridad #1 para el retiro?", type: "select", options: ["Seguridad y Garantías", "Máximo Crecimiento", "Eficiencia Fiscal", "Equilibrio de los tres"] },
         { id: "college_savings", label: "¿Estás ahorrando para la educación universitaria de tus hijos?", type: "select", options: ["Sin hijos / no aplica", "No – aún no ahorro", "Sí – plan 529", "Sí – otros ahorros", "Buscando mejores opciones"] },
         { id: "monthly_budget", label: "¿Presupuesto mensual disponible para protección financiera y ahorros?", type: "select", options: ["Menos de $100", "$100–$250", "$250–$500", "$500–$1,000", "$1,000+"] },
       ]},
@@ -452,6 +462,10 @@ const T = {
         { id: "knows_ss", label: "¿Sabes cuánto has acumulado en beneficios del Seguro Social?", type: "select", options: ["Sí – lo reviso regularmente", "Lo vi una vez pero no lo sigo", "No – nunca lo he revisado", "No sé cómo acceder a esa información"] },
         { id: "ss_account", label: "¿Tienes una cuenta en SSA.gov (Administración del Seguro Social)?", type: "select", options: ["Sí – tengo una cuenta", "No – no tengo cuenta", "No sabía que eso era posible"] },
         { id: "ss_claiming_age", label: "¿Sabes a qué edad conviene reclamar el Seguro Social para maximizar tu beneficio?", type: "select", options: ["Sí – tengo una estrategia", "Sé que depende de la edad pero no sé el mejor momento", "No – no sé cómo funciona eso"] },
+        { id: "healthcare_before_medicare", label: "¿Has planificado los costos de salud antes y después de ser elegible para Medicare?", type: "select", options: ["Sí – completamente planificado", "Lo tengo planificado antes de Medicare", "Lo tengo planificado después de Medicare", "No – no he planificado esto"] },
+        { id: "withdrawal_strategy", label: "¿Tienes un plan de retiro de fondos sostenible y eficiente en impuestos?", type: "select", options: ["Sí", "No, pero mi situación es sencilla", "No – necesito ayuda con esto"] },
+        { id: "ss_knowledge_specific", label: "¿Tienes un buen entendimiento de cómo funciona el Seguro Social para tu situación específica?", type: "select", options: ["Sí", "No estoy seguro/a", "Probablemente no", "No"] },
+        { id: "stress_test_plan", label: "¿Has puesto a prueba tu plan de ingresos contra inflación, caídas del mercado y gastos inesperados?", type: "select", options: ["Sí", "No, pero tengo una idea", "No"] },
       ]},
       { id: "H", title: "Estrategia Fiscal", icon: "💡", questions: [
         { id: "tax_situation", label: "¿Cómo te sientes con tu situación fiscal actual?", type: "select", options: ["Pago demasiado en impuestos cada año", "Quedo en cero — no debo ni me regresan", "Me regresan dinero — pero no sé si eso es bueno o malo", "Tengo una estrategia fiscal establecida", "Nunca lo he pensado"] },
@@ -2628,7 +2642,7 @@ export default function FinancialBot() {
   const isModuleComplete = () => module.questions.every(q => {
   if (q.id === "dependent_ages" && (answers.dependents === "No" || !answers.dependents)) return true;
   return answers[q.id] && String(answers[q.id]).trim() !== "";
-})
+  })
 
   const next = () => {
     // Before moving to Module E (index 4 = Protection), show LTC education screen
