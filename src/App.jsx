@@ -1676,36 +1676,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
                 : "Nadie más puede hacer esto por ti. La seguridad financiera de tu familia — y tus planes y metas para el futuro o para lo inesperado — comienza con la verdad sobre dónde estás hoy. Tómate esto en serio — tu yo del futuro te lo agradecerá."}
             </div>
           </div>
-        
-        {/* Navigation */}
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          {slide > 0 && (
-            <button onClick={() => setSlide(p => p - 1)} style={{ padding: "10px 22px", background: "transparent", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#667788", fontSize: 13, cursor: "pointer" }}>
-              ←
-            </button>
-          )}
-          {!isLast ? (
-            <button onClick={() => setSlide(p => p + 1)} style={{ padding: "13px 36px", background: `linear-gradient(135deg, ${current.accent}bb, ${current.accent})`, border: "none", borderRadius: 10, color: "#050a12", fontSize: 14, fontWeight: "bold", cursor: "pointer", boxShadow: `0 4px 20px ${current.accent}44`, letterSpacing: 1 }}>
-              {isEN ? "Next →" : "Siguiente →"}
-            </button>
-          ) : (
-            <button onClick={onContinue} style={{ padding: "14px 40px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 12, color: "#050a12", fontSize: 15, fontWeight: "bold", cursor: "pointer", boxShadow: "0 6px 28px rgba(200,160,80,0.5)", letterSpacing: 1 }}>
-              {isEN ? "Continue to Survey →" : "Continuar al Cuestionario →"}
-            </button>
-          )}
-          {!isLast && (
-            <button onClick={onContinue} style={{ background: "transparent", border: "none", color: "#445566", fontSize: 11, cursor: "pointer", textDecoration: "underline", padding: "10px 8px" }}>
-              {isEN ? "Skip" : "Saltar"}
-            </button>
-          )}
-        </div>
-
-      </div>
-    </div>
-  );
-}
-
-          <div style={{ textAlign: "center" }}>
+         <div style={{ textAlign: "center" }}>
             <button onClick={() => setSeenIntroMsg(true)} className="btn-primary" style={{ padding: "15px 52px", fontSize: 15 }}>
               {intro.btn}
             </button>
