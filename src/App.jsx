@@ -1880,7 +1880,6 @@ function LTCEducationScreen({ lang, onContinue }) {
         <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${current.accent}33`, borderRadius: 16, padding: "24px 22px", marginBottom: 20 }}>
           {current.content()}
         </div>
-
       </div>
    </div>
   );
