@@ -2179,6 +2179,7 @@ function LanguageScreen({ onSelect }) {
 // ─── LTC EDUCATION SCREEN ──────────────────────────────────────────────────────
 function LTCEducationScreen({ lang, onContinue }) {
   const [slide, setSlide] = useState(0);
+  useEffect(() => { const handleKey = (e) => { if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") { if (slide < slides.length - 1) { setSlide(s => s + 1); } else { onContinue(); } } }; window.addEventListener("keydown", handleKey); return () => window.removeEventListener("keydown", handleKey); }, [slide]);
   const isEN = lang === "en";
 
   const slides = [
@@ -2288,6 +2289,12 @@ function LTCEducationScreen({ lang, onContinue }) {
         {/* Card */}
         <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${current.accent}33`, borderRadius: 16, padding: "24px 22px", marginBottom: 20 }}>
           {current.content()}
+        </div>
+        {/* Navigation Button */}
+        <div style={{ textAlign: "center", marginTop: 8 }}>
+          <button onClick={() => isLast ? onContinue() : setSlide(slide + 1)} style={{ background: `linear-gradient(135deg, ${current.accent}, ${current.accent}cc)`, border: "none", borderRadius: 30, padding: "14px 48px", fontSize: 15, fontWeight: "bold", color: "#0a0e1a", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 0.5, boxShadow: `0 4px 20px ${current.accent}44`, transition: "transform 0.15s ease, box-shadow 0.15s ease" }} onMouseOver={e => { e.target.style.transform="scale(1.04)"; e.target.style.boxShadow=`0 6px 28px ${current.accent}66`; }} onMouseOut={e => { e.target.style.transform="scale(1)"; e.target.style.boxShadow=`0 4px 20px ${current.accent}44`; }}>
+            {isLast ? (isEN ? "I Understand — Let's Continue →" : "Entiendo — Continuemos →") : (isEN ? "Next →" : "Siguiente →")}
+          </button>
         </div>
       </div>
    </div>
