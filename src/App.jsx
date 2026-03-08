@@ -1,6 +1,6 @@
 // ╔═══════════════════════════════════════════════════════════════════════════════╗
-// ║  FINANCIAL ADVISOR BOT — VERSION 9                                         ║
-// ║  Date: March 3, 2026                                                        ║
+// ║  FINANCIAL ADVISOR BOT — VERSION 10                                        ║
+// ║  Date: March 2026 (V10)                                                     ║
 // ║  IF YOU SEE A LOWER VERSION NUMBER, YOU HAVE THE WRONG FILE!                ║
 // ╚═══════════════════════════════════════════════════════════════════════════════╝
 // CHANGES IN V9:
@@ -8,8 +8,9 @@
 //   ✅ Page 1: enlarged scores, findings, opportunities (fills page)
 //   ✅ Page 2: motivational congratulations + budget + facts + CTA (approved)
 //   ✅ Updated disclaimers — positions YOUR team as licensed professionals
-//   ✅ Includes all previous V6 fixes (onFinish, notifyOpened, CSV, async)
-console.log("🟢 Financial Advisor Bot VERSION 9 loaded");
+//   ✅ NEW: IntroVisualSections — LTC/ADLs, Life Insurance, IUL, Kids Savings
+//   ✅ Includes all previous V9 fixes (onFinish, notifyOpened, CSV, async)
+console.log("🟢 Financial Advisor Bot VERSION 10 loaded");
 
 import { useState, useRef, useEffect } from "react";
 
@@ -1474,6 +1475,408 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
   );
 }
 
+// ─── INTRO VISUAL DATA ─────────────────────────────────────────────────────────
+// (INSERT BEFORE ImpactScreen function)
+
+const ADL_CARDS_INTRO = [
+  {
+    id:"bathing", label:"Bathing", labelEs:"Bañarse", age:"elderly",
+    scene:"After the stroke, the shower became a danger zone. Your daughter drives 40 minutes every morning just to help you bathe.",
+    sceneEs:"Después del derrame, la ducha se convirtió en zona de peligro. Tu hija maneja 40 minutos cada mañana solo para ayudarte a bañarte.",
+    color:"#4A90D9",
+    icon:(
+      <svg viewBox="0 0 80 80" fill="none" style={{width:52,height:52}}>
+        <path d="M12 44 Q12 58 40 58 Q68 58 68 44 L68 40 Q68 36 64 36 L16 36 Q12 36 12 40Z" fill="#4A90D920" stroke="#4A90D9" strokeWidth="1.5"/>
+        <path d="M52 28L52 36M58 28L58 36M52 28L58 28" stroke="#4A90D9" strokeWidth="2" strokeLinecap="round"/>
+        <circle cx="34" cy="30" r="6" fill="#4A90D9" opacity="0.5"/>
+        <path d="M30 36 Q28 46 32 50 Q36 54 40 50 Q42 46 40 36" fill="#4A90D930" stroke="#4A90D9" strokeWidth="1.2"/>
+        <circle cx="64" cy="26" r="4" fill="#FF8C42" opacity="0.7"/>
+        <path d="M60 30L54 36" stroke="#FF8C42" strokeWidth="2.5" strokeLinecap="round"/>
+      </svg>
+    )
+  },
+  {
+    id:"continence", label:"Continence", labelEs:"Continencia", age:"young",
+    scene:"At 38, a spinal cord injury changed everything. You plan every outing around bathroom locations. Spontaneity is gone.",
+    sceneEs:"A los 38, una lesión medular lo cambió todo. Planeas cada salida según los baños disponibles. La espontaneidad desapareció.",
+    color:"#9B59B6",
+    icon:(
+      <svg viewBox="0 0 80 80" fill="none" style={{width:52,height:52}}>
+        <circle cx="38" cy="20" r="7" fill="#9B59B640" stroke="#9B59B6" strokeWidth="1.5"/>
+        <path d="M30 28L28 44L44 44M28 32L44 32" stroke="#9B59B6" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+        <circle cx="30" cy="52" r="7" fill="none" stroke="#9B59B6" strokeWidth="1.5"/>
+        <circle cx="46" cy="52" r="5" fill="none" stroke="#9B59B6" strokeWidth="1.5"/>
+        <path d="M56 30L62 24M56 24L62 30M59 18L59 36" stroke="#FF6B6B" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    )
+  },
+  {
+    id:"dressing", label:"Dressing", labelEs:"Vestirse", age:"young",
+    scene:"Multiple sclerosis at 42. Your hands shake. Buttons take 20 minutes. You've started calling in sick to avoid the morning struggle.",
+    sceneEs:"Esclerosis múltiple a los 42. Tus manos tiemblan. Los botones toman 20 minutos. Llamas enfermo al trabajo para evitar la lucha matutina.",
+    color:"#27AE60",
+    icon:(
+      <svg viewBox="0 0 80 80" fill="none" style={{width:52,height:52}}>
+        <path d="M26 18L18 28L26 32L26 62L54 62L54 32L62 28L54 18Q48 23 40 23Q32 23 26 18Z" fill="#27AE6020" stroke="#27AE60" strokeWidth="1.5"/>
+        <path d="M18 44Q14 41 18 38Q22 35 18 32" stroke="#FF6B6B" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <circle cx="40" cy="36" r="2" fill="#27AE60" opacity="0.9"/>
+        <circle cx="40" cy="44" r="2" fill="#27AE60" opacity="0.3"/>
+        <circle cx="40" cy="52" r="2" fill="#27AE60" opacity="0.2"/>
+        <path d="M43 44L48 41" stroke="#FF6B6B" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    )
+  },
+  {
+    id:"eating", label:"Eating", labelEs:"Comer", age:"elderly",
+    scene:"Advanced Parkinson's at 73. The fork won't cooperate. Your family quietly watches every meal, pretending not to notice.",
+    sceneEs:"Parkinson's avanzado a los 73. El tenedor ya no coopera. Tu familia te observa en silencio durante cada comida, fingiendo no darse cuenta.",
+    color:"#E67E22",
+    icon:(
+      <svg viewBox="0 0 80 80" fill="none" style={{width:52,height:52}}>
+        <circle cx="40" cy="48" r="20" fill="#E67E2215" stroke="#E67E22" strokeWidth="1.5"/>
+        <circle cx="40" cy="48" r="13" fill="#E67E2210"/>
+        <path d="M28 22Q29 28 27 32Q29 36 28 42" stroke="#E67E22" strokeWidth="2" strokeLinecap="round" strokeDasharray="2,2"/>
+        <path d="M26 22L26 28Q28 31 30 28L30 22" stroke="#E67E22" strokeWidth="1.5" fill="none"/>
+        <path d="M22 34Q19 32 22 30Q25 28 22 26" stroke="#FF6B6B" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+        <path d="M54 22Q56 28 53 34L51 44" stroke="#E67E22" strokeWidth="2" strokeLinecap="round"/>
+        <circle cx="49" cy="51" r="2" fill="#E67E2260"/>
+      </svg>
+    )
+  },
+  {
+    id:"toileting", label:"Toileting", labelEs:"Ir al Baño", age:"young",
+    scene:"A car accident at 29 left you with a traumatic brain injury. You need reminders, assistance, and someone nearby — always.",
+    sceneEs:"Un accidente de auto a los 29 años te dejó con lesión cerebral traumática. Necesitas recordatorios, asistencia y alguien cerca — siempre.",
+    color:"#E74C3C",
+    icon:(
+      <svg viewBox="0 0 80 80" fill="none" style={{width:52,height:52}}>
+        <circle cx="40" cy="18" r="7" fill="#E74C3C40" stroke="#E74C3C" strokeWidth="1.5"/>
+        <path d="M24 34L24 62M56 34L56 62M20 36L60 36M22 36L22 48M58 36L58 48" stroke="#E74C3C" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M36 25Q32 30 30 36M44 25Q48 30 50 36" stroke="#E74C3C" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <path d="M58 10L54 18L58 18L54 26" stroke="#FF8C42" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    )
+  },
+  {
+    id:"transferring", label:"Transferring", labelEs:"Moverse", age:"elderly",
+    scene:"Hip replacement at 71. Getting from bed to chair requires two people. Your husband threw out his back trying to help.",
+    sceneEs:"Reemplazo de cadera a los 71. Pasar de la cama a la silla requiere dos personas. Tu esposo se lastimó la espalda intentando ayudarte.",
+    color:"#16A085",
+    icon:(
+      <svg viewBox="0 0 80 80" fill="none" style={{width:52,height:52}}>
+        <rect x="8" y="42" width="28" height="14" rx="3" fill="#16A08520" stroke="#16A085" strokeWidth="1.5"/>
+        <ellipse cx="22" cy="40" rx="8" ry="4" fill="#16A08540"/>
+        <circle cx="22" cy="38" r="5" fill="#16A085" opacity="0.5"/>
+        <circle cx="64" cy="60" r="8" fill="none" stroke="#16A085" strokeWidth="1.5"/>
+        <circle cx="52" cy="60" r="5" fill="none" stroke="#16A085" strokeWidth="1.5"/>
+        <path d="M52 52L58 44L66 44L64 56" stroke="#16A085" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+        <path d="M36 46Q46 38 54 50" stroke="#FF8C42" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <path d="M50 47L54 50L51 54" stroke="#FF8C42" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    )
+  }
+];
+
+const LIFE_CARDS_INTRO = [
+  {
+    id:"income", label:"Income Replacement", labelEs:"Reemplazo de Ingreso",
+    headline:"Your paycheck stops. Their life doesn't.",
+    headlineEs:"Tu cheque se detiene. Su vida no.",
+    scene:"You earn $80K/year. If you die tomorrow, how long can your family survive without you? Most families: under 6 months.",
+    sceneEs:"Ganas $80,000 al año. Si mueres mañana, ¿cuánto tiempo puede sobrevivir tu familia sin ti? La mayoría: menos de 6 meses.",
+    color:"#C0392B",
+    icon:(
+      <svg viewBox="0 0 80 80" fill="none" style={{width:52,height:52}}>
+        <circle cx="28" cy="22" r="6" fill="#C0392B" opacity="0.6"/>
+        <path d="M22 30Q22 42 28 42Q34 42 34 30" fill="#C0392B" opacity="0.4"/>
+        <circle cx="52" cy="24" r="5" fill="#C0392B" opacity="0.4"/>
+        <circle cx="40" cy="44" r="4" fill="#FF8C42" opacity="0.5"/>
+        <path d="M10 58L24 50L32 54L40 46" stroke="#27AE60" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M40 46L48 58L66 58" stroke="#FF6B6B" strokeWidth="2" strokeLinecap="round" strokeDasharray="3,2"/>
+        <path d="M36 42L44 50M44 42L36 50" stroke="#FF6B6B" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
+    )
+  },
+  {
+    id:"mortgage", label:"Mortgage Protection", labelEs:"Protección Hipotecaria",
+    headline:"The house stays. Even if you don't.",
+    headlineEs:"La casa permanece. Aunque tú no estés.",
+    scene:"Your mortgage is $2,400/month. Life insurance can make sure your family never has to choose between grief and homelessness.",
+    sceneEs:"Tu hipoteca es $2,400 al mes. El seguro de vida puede asegurar que tu familia nunca tenga que elegir entre el dolor y perder su hogar.",
+    color:"#2471A3",
+    icon:(
+      <svg viewBox="0 0 80 80" fill="none" style={{width:52,height:52}}>
+        <path d="M12 40L40 16L68 40" stroke="#2471A3" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M18 36L18 64L62 64L62 36" fill="#2471A320" stroke="#2471A3" strokeWidth="1.5"/>
+        <rect x="32" y="48" width="16" height="16" rx="2" fill="#2471A340" stroke="#2471A3" strokeWidth="1.2"/>
+        <path d="M54 20Q54 14 60 12Q66 14 66 20Q66 28 60 32Q54 28 54 20Z" fill="#27AE6030" stroke="#27AE60" strokeWidth="1.5"/>
+        <path d="M57 20L59 22L63 18" stroke="#27AE60" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    )
+  },
+  {
+    id:"final", label:"Final Expense", labelEs:"Gastos Finales",
+    headline:"Don't leave your family with a bill on the worst day of their lives.",
+    headlineEs:"No dejes a tu familia con una factura en el peor día de sus vidas.",
+    scene:"Average funeral: $9,000–$12,000. Most families put it on a credit card. A small policy changes everything.",
+    sceneEs:"Funeral promedio: $9,000–$12,000. La mayoría de las familias lo cargan a una tarjeta de crédito. Una póliza pequeña lo cambia todo.",
+    color:"#7D3C98",
+    icon:(
+      <svg viewBox="0 0 80 80" fill="none" style={{width:52,height:52}}>
+        <path d="M40 60Q20 46 20 34Q20 24 30 22Q36 22 40 28Q44 22 50 22Q60 24 60 34Q60 46 40 60Z" fill="#7D3C9820" stroke="#7D3C98" strokeWidth="1.5"/>
+        <path d="M40 34L40 50M34 40L46 40" stroke="#7D3C98" strokeWidth="2" strokeLinecap="round" opacity="0.7"/>
+        <rect x="14" y="52" width="22" height="14" rx="2" fill="#FF6B6B20" stroke="#FF6B6B" strokeWidth="1.2"/>
+        <path d="M17 55L33 55" stroke="#FF6B6B" strokeWidth="1" strokeLinecap="round"/>
+        <path d="M20 63L26 57M26 63L20 57" stroke="#FF6B6B" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    )
+  }
+];
+
+const IUL_POINTS_INTRO = [
+  { en:"Tax-free growth — your money compounds without IRS interference", es:"Crecimiento libre de impuestos — tu dinero crece sin interferencia del IRS", icon:"📈" },
+  { en:"Access your cash value anytime — no penalties, no age rules", es:"Accede a tu valor en efectivo cuando quieras — sin penalidades ni restricciones de edad", icon:"🔓" },
+  { en:"Floor protection — you never lose money in a market crash", es:"Piso de protección — nunca pierdes dinero en una caída del mercado", icon:"🛡️" },
+  { en:"Death benefit protects your family at the same time", es:"El beneficio por muerte protege a tu familia al mismo tiempo", icon:"❤️" },
+];
+
+const KIDS_OPTIONS_INTRO = [
+  {
+    id:"529", label:"529 Plan", color:"#2980B9",
+    pro:{ en:"Tax-free growth for education expenses", es:"Crecimiento libre de impuestos para gastos educativos" },
+    con:{ en:"Penalties if used outside education", es:"Penalidades si se usa fuera de educación" },
+    icon:"🎓"
+  },
+  {
+    id:"trump", label:"Trump Account", color:"#E67E22",
+    pro:{ en:"$1,000 gov. seed money at birth (OBBBA 2025)", es:"$1,000 del gobierno al nacer (OBBBA 2025)" },
+    con:{ en:"Locked until age 18, limited options", es:"Bloqueado hasta los 18 años, opciones limitadas" },
+    icon:"🏛️"
+  },
+  {
+    id:"iul-kids", label:"IUL for Kids", color:"#27AE60",
+    pro:{ en:"Tax-free cash + guaranteed insurability for life", es:"Efectivo libre de impuestos + asegurabilidad garantizada de por vida" },
+    con:{ en:"Requires parent/guardian as owner", es:"Requiere padre/tutor como titular" },
+    icon:"🌱"
+  }
+];
+
+// ─── INTRO VISUAL SECTIONS COMPONENT ──────────────────────────────────────────
+function IntroVisualSections({ lang }) {
+  const [activeADL, setActiveADL] = useState(null);
+  const [activeLife, setActiveLife] = useState(null);
+  const isEs = lang === "es";
+
+  const AGE_BADGE = {
+    young:   { label:"Under 65", labelEs:"Menor de 65", bg:"#FF8C4218", color:"#FF8C42" },
+    elderly: { label:"65+",      labelEs:"65+",          bg:"#4A90D918", color:"#4A90D9" }
+  };
+
+  const sectionHead = (tag, title, sub) => (
+    <div style={{ marginBottom: 20 }}>
+      <p style={{ fontSize:10, letterSpacing:3, textTransform:"uppercase", color:"#FF8C42", marginBottom:6, fontFamily:"'DM Sans',sans-serif", margin:"0 0 6px" }}>{tag}</p>
+      <h3 style={{ fontSize:"clamp(15px,2.5vw,20px)", fontWeight:"normal", color:"#f0e8de", margin:"0 0 6px", lineHeight:1.3, fontFamily:"'Playfair Display',serif" }}>{title}</h3>
+      {sub && <p style={{ fontSize:12, color:"#4a5568", margin:0, fontFamily:"'DM Sans',sans-serif", lineHeight:1.6 }}>{sub}</p>}
+    </div>
+  );
+
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:32 }}>
+
+      {/* ── SECTION 1: LTC / ADLs ── */}
+      <div style={{ background:"linear-gradient(135deg,#0a0f18,#0d1320)", border:"1px solid #ffffff0e", borderRadius:16, padding:"24px 20px" }}>
+        {sectionHead(
+          isEs ? "Cuidado a Largo Plazo" : "Long-Term Care",
+          isEs ? "Esto no es solo sobre envejecer." : "This isn't just about getting old.",
+          isEs
+            ? "Un accidente o diagnóstico puede quitarte la independencia a cualquier edad. Toca cada situación."
+            : "An accident or diagnosis can take your independence at any age. Tap each scenario."
+        )}
+
+        {/* Age legend */}
+        <div style={{ display:"flex", gap:8, marginBottom:16, flexWrap:"wrap", alignItems:"center" }}>
+          {Object.entries(AGE_BADGE).map(([key,b]) => (
+            <div key={key} style={{ background:b.bg, border:`1px solid ${b.color}40`, borderRadius:20, padding:"2px 10px", fontSize:10, color:b.color, fontFamily:"'DM Sans',sans-serif" }}>
+              {isEs ? b.labelEs : b.label}
+            </div>
+          ))}
+          <span style={{ fontSize:10, color:"#3d4f63", fontFamily:"sans-serif" }}>
+            {isEs ? "→ edades reales" : "→ real ages affected"}
+          </span>
+        </div>
+
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))", gap:10 }}>
+          {ADL_CARDS_INTRO.map((card) => {
+            const badge = AGE_BADGE[card.age];
+            const isActive = activeADL === card.id;
+            return (
+              <div key={card.id} onClick={() => setActiveADL(isActive ? null : card.id)}
+                style={{
+                  background: isActive ? `linear-gradient(135deg,${card.color}22,${card.color}0a)` : "rgba(255,255,255,0.03)",
+                  border: isActive ? `1px solid ${card.color}70` : "1px solid #ffffff10",
+                  borderRadius:12, padding:"14px 12px", cursor:"pointer",
+                  transition:"all 0.25s ease", position:"relative", overflow:"hidden"
+                }}>
+                <div style={{ position:"absolute", top:8, right:8, background:badge.bg, border:`1px solid ${badge.color}40`, borderRadius:8, padding:"1px 6px", fontSize:9, color:badge.color, fontFamily:"'DM Sans',sans-serif" }}>
+                  {isEs ? badge.labelEs : badge.label}
+                </div>
+                <div style={{ marginBottom:8 }}>{card.icon}</div>
+                <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, textTransform:"uppercase", color:card.color, marginBottom:3, fontFamily:"'DM Sans',sans-serif" }}>
+                  {isEs ? card.labelEs : card.label}
+                </div>
+                {isActive
+                  ? <p style={{ fontSize:11, lineHeight:1.6, color:"#9ab", margin:"6px 0 0", fontStyle:"italic", fontFamily:"'Playfair Display',serif" }}>{isEs ? card.sceneEs : card.scene}</p>
+                  : <p style={{ fontSize:10, color:"#3d4f63", margin:"2px 0 0", fontFamily:"sans-serif" }}>{isEs ? "Toca →" : "Tap →"}</p>
+                }
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Stats strip */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:1, background:"#ffffff08", borderRadius:12, overflow:"hidden", border:"1px solid #ffffff0e", marginTop:16 }}>
+          {[
+            { v:"70%", l:isEs?"necesitarán cuidado LTC":"will need long-term care", hot:false },
+            { v:"40%", l:isEs?"menores de 65 años":"are under age 65", hot:true },
+            { v:"$15K", l:isEs?"hogar de ancianos/mes":"nursing home per month", hot:false },
+          ].map((s,i) => (
+            <div key={i} style={{ padding:"14px 10px", textAlign:"center", background:s.hot?"#FF8C4210":"transparent", borderRight:i<2?"1px solid #ffffff08":"none" }}>
+              <div style={{ fontSize:"clamp(18px,3vw,26px)", fontWeight:"bold", color:s.hot?"#FF6B6B":"#FF8C42", fontFamily:"'Playfair Display',serif", marginBottom:4 }}>{s.v}</div>
+              <div style={{ fontSize:10, color:"#6b7a8d", lineHeight:1.4, fontFamily:"'DM Sans',sans-serif" }}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── SECTION 2: LIFE INSURANCE ── */}
+      <div style={{ background:"linear-gradient(135deg,#0d1117,#0f1820)", border:"1px solid #ffffff0e", borderRadius:16, padding:"24px 20px" }}>
+        {sectionHead(
+          isEs ? "Seguro de Vida" : "Life Insurance",
+          isEs ? "Tu familia no debería tener que resolverlo sola." : "Your family shouldn't have to figure it out without you.",
+          isEs
+            ? "El seguro de vida no es sobre la muerte. Es sobre asegurarte de que las personas que amas puedan seguir adelante."
+            : "Life insurance isn't about death. It's about making sure the people you love can keep living the life you built together."
+        )}
+
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:10 }}>
+          {LIFE_CARDS_INTRO.map((card) => {
+            const isActive = activeLife === card.id;
+            return (
+              <div key={card.id} onClick={() => setActiveLife(isActive ? null : card.id)}
+                style={{
+                  background: isActive ? `linear-gradient(135deg,${card.color}20,${card.color}08)` : "rgba(255,255,255,0.03)",
+                  border: isActive ? `1px solid ${card.color}60` : "1px solid #ffffff10",
+                  borderRadius:12, padding:"16px 14px", cursor:"pointer", transition:"all 0.25s ease"
+                }}>
+                <div style={{ marginBottom:8 }}>{card.icon}</div>
+                <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, textTransform:"uppercase", color:card.color, marginBottom:5, fontFamily:"'DM Sans',sans-serif" }}>
+                  {isEs ? card.labelEs : card.label}
+                </div>
+                <p style={{ fontSize:12, fontStyle:"italic", color:"#c8c0b4", margin:"0 0 4px", lineHeight:1.4, fontFamily:"'Playfair Display',serif" }}>
+                  {isEs ? card.headlineEs : card.headline}
+                </p>
+                {isActive && <p style={{ fontSize:11, lineHeight:1.6, color:"#8a95a8", margin:"8px 0 0", fontFamily:"'DM Sans',sans-serif" }}>{isEs ? card.sceneEs : card.scene}</p>}
+                {!isActive && <p style={{ fontSize:10, color:"#3d4f63", margin:"2px 0 0", fontFamily:"sans-serif" }}>{isEs ? "Toca para ver →" : "Tap for more →"}</p>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── SECTION 3: CASH VALUE / IUL ── */}
+      <div style={{ background:"linear-gradient(135deg,#0a0f14,#0c1a14)", border:"1px solid #27AE6015", borderRadius:16, padding:"24px 20px" }}>
+        {sectionHead(
+          isEs ? "Seguro de Vida con Valor en Efectivo · IUL" : "Cash Value Life Insurance · IUL",
+          isEs ? "Seguro de vida que construye riqueza mientras vives." : "Life insurance that builds wealth while you're alive.",
+          isEs
+            ? "Un IUL crece libre de impuestos, nunca pierde por el mercado, y es accesible cuando lo necesitas."
+            : "An IUL grows tax-free, never loses to market crashes, and is accessible whenever you need it."
+        )}
+
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
+          {/* Growth bars */}
+          <div style={{ background:"rgba(39,174,96,0.06)", border:"1px solid #27AE6020", borderRadius:12, padding:"16px 14px" }}>
+            <div style={{ fontSize:10, letterSpacing:1, textTransform:"uppercase", color:"#27AE60", marginBottom:12, fontFamily:"'DM Sans',sans-serif" }}>
+              {isEs ? "Crecimiento del efectivo" : "Cash value growth"}
+            </div>
+            {[
+              { label: isEs?"Año 5":"Year 5", w:"30%", v:"$18K" },
+              { label: isEs?"Año 10":"Year 10", w:"55%", v:"$52K" },
+              { label: isEs?"Año 20":"Year 20", w:"100%", v:"$180K+" },
+            ].map((b,i) => (
+              <div key={i} style={{ marginBottom:10 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", marginBottom:3 }}>
+                  <span style={{ fontSize:10, color:"#7a9a80", fontFamily:"sans-serif" }}>{b.label}</span>
+                  <span style={{ fontSize:11, color:"#27AE60", fontWeight:600, fontFamily:"sans-serif" }}>{b.v}</span>
+                </div>
+                <div style={{ background:"#27AE6015", borderRadius:3, height:7 }}>
+                  <div style={{ width:b.w, height:"100%", background:"linear-gradient(90deg,#27AE60,#58D68D)", borderRadius:3 }}/>
+                </div>
+              </div>
+            ))}
+            <p style={{ fontSize:9, color:"#4a6650", margin:"8px 0 0", fontFamily:"sans-serif", fontStyle:"italic" }}>
+              {isEs ? "*$500/mes de prima. Ilustrativo." : "*Based on $500/mo premium. Illustrative."}
+            </p>
+          </div>
+
+          {/* Benefits list */}
+          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+            {IUL_POINTS_INTRO.map((pt,i) => (
+              <div key={i} style={{ background:"rgba(255,255,255,0.03)", border:"1px solid #ffffff0e", borderRadius:10, padding:"10px 12px", display:"flex", alignItems:"flex-start", gap:8 }}>
+                <span style={{ fontSize:16, lineHeight:1, flexShrink:0 }}>{pt.icon}</span>
+                <span style={{ fontSize:11, color:"#9ab", lineHeight:1.5, fontFamily:"'DM Sans',sans-serif" }}>
+                  {isEs ? pt.es : pt.en}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── SECTION 4: KIDS SAVINGS ── */}
+      <div style={{ background:"linear-gradient(135deg,#0d1117,#0f1420)", border:"1px solid #ffffff0e", borderRadius:16, padding:"24px 20px" }}>
+        {sectionHead(
+          isEs ? "Ahorro para Niños" : "Savings for Kids",
+          isEs ? "El mejor momento fue al nacer. El segundo mejor es hoy." : "The best time to start was at birth. The second best time is today.",
+          isEs
+            ? "Tres opciones que usamos con nuestros clientes — cada una con sus ventajas."
+            : "Three options we use with our clients — each with distinct advantages."
+        )}
+
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))", gap:10 }}>
+          {KIDS_OPTIONS_INTRO.map((opt) => (
+            <div key={opt.id} style={{ background:`linear-gradient(135deg,${opt.color}12,${opt.color}06)`, border:`1px solid ${opt.color}28`, borderRadius:12, padding:"16px 14px" }}>
+              <div style={{ fontSize:24, marginBottom:8 }}>{opt.icon}</div>
+              <div style={{ fontSize:11, fontWeight:700, letterSpacing:1, textTransform:"uppercase", color:opt.color, marginBottom:8, fontFamily:"'DM Sans',sans-serif" }}>
+                {opt.label}
+              </div>
+              <div style={{ display:"flex", gap:6, marginBottom:6, alignItems:"flex-start" }}>
+                <span style={{ color:"#27AE60", fontSize:12, marginTop:1, flexShrink:0 }}>✓</span>
+                <span style={{ fontSize:11, color:"#9ab0a0", lineHeight:1.5, fontFamily:"'DM Sans',sans-serif" }}>{isEs ? opt.pro.es : opt.pro.en}</span>
+              </div>
+              <div style={{ display:"flex", gap:6, alignItems:"flex-start" }}>
+                <span style={{ color:"#FF6B6B", fontSize:12, marginTop:1, flexShrink:0 }}>✗</span>
+                <span style={{ fontSize:11, color:"#556", lineHeight:1.5, fontFamily:"'DM Sans',sans-serif" }}>{isEs ? opt.con.es : opt.con.en}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ background:"rgba(255,255,255,0.03)", border:"1px solid #ffffff10", borderRadius:12, padding:"14px 16px", marginTop:14, display:"flex", gap:12, alignItems:"flex-start" }}>
+          <span style={{ fontSize:20, flexShrink:0 }}>💡</span>
+          <p style={{ fontSize:12, color:"#9ab", lineHeight:1.6, margin:0, fontFamily:"'DM Sans',sans-serif" }}>
+            {isEs
+              ? "Para niños pequeños, frecuentemente recomendamos un IUL — asegurabilidad garantizada de por vida, crecimiento libre de impuestos, y puede transferirse al niño cuando llegue a la adultez."
+              : "For young children, we often recommend a children's IUL — guaranteed lifetime insurability, tax-free growth, and can be transferred to the child when they reach adulthood."}
+          </p>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+
 // ─── IMPACT OPENING SCREEN ─────────────────────────────────────────────────────
 function ImpactScreen({ clientName, advisorName, onContinue }) {
   const [step, setStep] = useState(0);
@@ -1635,12 +2038,18 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
             {clientName && <div style={{ fontSize: 12, color: "#c8a050", fontWeight: 500 }}>👤 {clientName}</div>}
           </div>
 
-          <div style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(200,160,80,0.14)", borderRadius: 18, padding: "26px 28px", marginBottom: 24, backdropFilter: "blur(8px)" }}>
-            {intro.body.map((para, i) => (
-              <p key={i} className={`anim-fadeup delay-${i+2}`} style={{ fontSize: 14, color: i === 0 ? "#c8d8e8" : "#667788", lineHeight: 1.9, margin: i < intro.body.length - 1 ? "0 0 16px" : "0", fontStyle: i === 2 ? "italic" : "normal", fontWeight: i === 0 ? 400 : 300 }}>
-                {para}
-              </p>
-            ))}
+          {/* ── CONTEXT PARAGRAPH ── */}
+          <div style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(200,160,80,0.14)", borderRadius: 14, padding: "18px 22px", marginBottom: 20, backdropFilter: "blur(8px)" }}>
+            <p style={{ fontSize: 13, color: "#c8d8e8", lineHeight: 1.9, margin: 0, fontWeight: 400 }}>
+              {lang === "en"
+                ? "Beyond tax preparation, our mission is to make sure you understand where you stand today — not just with taxes, but with your overall financial protection. This short survey helps us identify gaps, opportunities, and strategies tailored specifically to your situation."
+                : "Más allá de la preparación de impuestos, nuestra misión es asegurarnos de que entiendas dónde estás hoy — no solo con tus taxes, sino con tu protección financiera en general. Esta breve encuesta nos ayuda a identificar brechas, oportunidades y estrategias adaptadas específicamente a tu situación."}
+            </p>
+          </div>
+
+          {/* ── VISUAL PROTECTION SECTIONS ── */}
+          <div style={{ marginBottom: 24 }}>
+            <IntroVisualSections lang={lang} />
           </div>
 
           {advisorName && (
@@ -1922,7 +2331,7 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
             — {advisorName}
         </div>  
         )}
-        <div style={{ fontSize: 8, color: "#1a2530", marginTop: 4, letterSpacing: 1, textAlign: "center" }}>v9</div>
+        <div style={{ fontSize: 8, color: "#1a2530", marginTop: 4, letterSpacing: 1, textAlign: "center" }}>v10</div>
         {/* SIMPLE OPPORTUNITY MENTION */}
         <div style={{ background: "rgba(200,160,80,0.05)", border: "1px solid rgba(200,160,80,0.18)", borderRadius: 12, padding: "18px 22px", marginBottom: 20, textAlign: "center" }}>
           <div style={{ fontSize: 22, marginBottom: 10 }}>🤝</div>
@@ -2319,7 +2728,7 @@ ${budgetRows}
 <p class="disclaimer">${isEN
   ? "This assessment is for informational purposes. " + aName + " will be in touch to provide personalized recommendations from our team of licensed professionals."
   : "Esta evaluación es con fines informativos. " + aName + " se pondrá en contacto contigo para brindarte recomendaciones personalizadas de nuestro equipo de profesionales con licencia."}</p>
-<p class="disclaimer" style="font-weight:bold; letter-spacing:1.5px">FINANCIAL PROTECTION ADVISOR — v9</p>
+<p class="disclaimer" style="font-weight:bold; letter-spacing:1.5px">FINANCIAL PROTECTION ADVISOR — v10</p>
 
 </body></html>`;
 
