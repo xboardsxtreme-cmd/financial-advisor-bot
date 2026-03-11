@@ -931,8 +931,8 @@ function ScoreBar({ label, score, index = 0 }) {
   return (
     <div className="anim-fadeup" style={{ marginBottom: 16, animationDelay: `${index * 0.06}s` }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
-        <span style={{ fontSize: 12, color: "#9ab", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>{label}</span>
-        <span style={{ fontSize: 13, color, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{score}<span style={{ fontSize: 10, color: "#aab0a8" }}>/10</span></span>
+        <span style={{ fontSize: 12, color: "#445060", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>{label}</span>
+        <span style={{ fontSize: 13, color, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{score}<span style={{ fontSize: 10, color: "#556070" }}>/10</span></span>
       </div>
       <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
         <div className="score-bar-fill" style={{ '--bar-w': `${score * 10}%`, width: `${score * 10}%`, background: `linear-gradient(90deg, ${color}66, ${color})` }} />
@@ -970,7 +970,7 @@ function InsightCard({ insight }) {
     <div style={{ background: "rgba(100,160,220,0.07)", border: "1px solid rgba(100,160,220,0.2)", borderRadius: 10, padding: "14px 18px", marginBottom: 9 }}>
       <div style={{ fontSize: 20, marginBottom: 6 }}>{insight.icon}</div>
       <div style={{ fontWeight: "bold", color: "#445060", fontSize: 13, marginBottom: 6 }}>{insight.title}</div>
-      <div style={{ fontSize: 12, color: "#889098", lineHeight: 1.7 }}>{insight.body}</div>
+      <div style={{ fontSize: 12, color: "#445060", lineHeight: 1.7 }}>{insight.body}</div>
     </div>
   );
 }
@@ -995,7 +995,7 @@ function MedicareEduCard({ edu, lang }) {
             {edu.whatIsMedicare.parts.map(p => (
               <div key={p.part} style={{ background: "rgba(74,144,217,0.08)", border: "1px solid rgba(74,144,217,0.2)", borderRadius: 9, padding: "12px 14px" }}>
                 <div style={{ color: accentGold, fontWeight: "bold", fontSize: 13, marginBottom: 3 }}>{p.part} — {p.name}</div>
-                <div style={{ fontSize: 11, color: "#889098", lineHeight: 1.6 }}>{p.detail}</div>
+                <div style={{ fontSize: 11, color: "#445060", lineHeight: 1.6 }}>{p.detail}</div>
               </div>
             ))}
           </div>
@@ -1056,7 +1056,7 @@ function BBEduCard({ edu, lang }) {
       <div style={{ background: "linear-gradient(135deg, rgba(42,82,152,0.12), rgba(42,82,152,0.04))", padding: "18px 20px", borderBottom: "1px solid rgba(42,82,152,0.12)" }}>
         <div style={{ fontSize: 16, fontWeight: 700, color: "#4a72b8", marginBottom: 4, fontFamily: "'Playfair Display', serif" }}>{edu.title}</div>
         <div style={{ fontSize: 11, color: "#2a5298", marginBottom: 10, letterSpacing: 0.5 }}>{edu.subtitle}</div>
-        <p style={{ fontSize: 13, color: "#889098", lineHeight: 1.75, margin: 0 }}>{edu.summary}</p>
+        <p style={{ fontSize: 13, color: "#445060", lineHeight: 1.75, margin: 0 }}>{edu.summary}</p>
       </div>
       {/* Sections */}
       {edu.sections.map((sec, i) => (
@@ -1070,7 +1070,7 @@ function BBEduCard({ edu, lang }) {
           </div>
           {openIdx === i && (
             <div style={{ padding: "4px 20px 16px 52px" }}>
-              <p style={{ fontSize: 13, color: "#889098", lineHeight: 1.8, margin: 0 }}>{sec.body}</p>
+              <p style={{ fontSize: 13, color: "#445060", lineHeight: 1.8, margin: 0 }}>{sec.body}</p>
             </div>
           )}
         </div>
@@ -1119,7 +1119,7 @@ function LTCEduCard({ edu, lang }) {
       <Section id="causes" title={edu.causes.title}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
           {edu.causes.items.map((item, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", background: "rgba(255,255,255,0.03)", borderRadius: 7, fontSize: 12, color: "#556070" }}>
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", background: "#f8f9f6", borderRadius: 7, fontSize: 12, color: "#556070" }}>
               <span style={{ color: accentRed, fontSize: 10 }}>●</span>{item}
             </div>
           ))}
@@ -1133,10 +1133,10 @@ function LTCEduCard({ edu, lang }) {
       <Section id="costs" title={edu.costs.title}>
         <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
           {edu.costs.items.map((item, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.03)", border: `1px solid ${item.color}33`, borderRadius: 9, padding: "12px 16px" }}>
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8f9f6", border: `1px solid ${item.color}33`, borderRadius: 9, padding: "12px 16px" }}>
               <div>
                 <div style={{ fontWeight: "bold", color: "#1a2030", fontSize: 12, marginBottom: 2 }}>{item.label}</div>
-                <div style={{ fontSize: 10, color: "#889098" }}>{item.note}</div>
+                <div style={{ fontSize: 10, color: "#445060" }}>{item.note}</div>
               </div>
               <div style={{ fontWeight: "bold", color: item.color, fontSize: 13, whiteSpace: "nowrap", marginLeft: 12 }}>{item.cost}</div>
             </div>
@@ -1153,7 +1153,7 @@ function LTCEduCard({ edu, lang }) {
           {edu.myths.items.map((item, i) => (
             <div key={i} style={{ background: "rgba(232,80,80,0.07)", border: "1px solid rgba(232,80,80,0.2)", borderRadius: 9, padding: "12px 14px" }}>
               <div style={{ fontWeight: "bold", color: "#e08080", fontSize: 12, marginBottom: 4 }}>❌ {item.label}</div>
-              <div style={{ fontSize: 11, color: "#889098", lineHeight: 1.6 }}>{item.reason}</div>
+              <div style={{ fontSize: 11, color: "#445060", lineHeight: 1.6 }}>{item.reason}</div>
             </div>
           ))}
         </div>
@@ -1371,7 +1371,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
           <h3 style={{ color: "#4a90d9", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>
             🏛️ {lang === "en" ? "Medicare & Social Security — Education Center" : "Medicare y Seguro Social — Centro Educativo"}
           </h3>
-          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 10px" }}>
+          <p style={{ fontSize: 11, color: "#445060", margin: "0 0 10px" }}>
             {lang === "en" ? "Tap each section to expand and learn." : "Toca cada sección para expandir y aprender."}
           </p>
           <MedicareEduCard edu={medicareEducation} lang={lang} />
@@ -1386,7 +1386,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
               {lang === "en" ? "📜 Tax Law Update — Beautiful Bill" : "📜 Actualización Fiscal — Beautiful Bill"}
             </h3>
           </div>
-          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 10px", fontStyle: "italic" }}>
+          <p style={{ fontSize: 11, color: "#445060", margin: "0 0 10px", fontStyle: "italic" }}>
             {lang === "en" ? "Based on your answers, here's what you should know about the 2025 tax changes." : "Basado en tus respuestas, esto es lo que debes saber sobre los cambios fiscales de 2025."}
           </p>
           <BBEduCard edu={bbEducation} lang={lang} />
@@ -1398,7 +1398,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
           <h3 style={{ color: "#e05050", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>
             🏥 {lang === "en" ? "Long-Term Care — Education Center" : "Cuidado a Largo Plazo — Centro Educativo"}
           </h3>
-          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 10px" }}>
+          <p style={{ fontSize: 11, color: "#445060", margin: "0 0 10px" }}>
             {lang === "en"
               ? "You don't have LTC coverage. Learn what it is, what it costs, and your options."
               : "No tienes cobertura de LTC. Aprende qué es, cuánto cuesta y cuáles son tus opciones."}
@@ -1413,12 +1413,12 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
           <div style={{ width: 3, height: 18, borderRadius: 2, background: "linear-gradient(180deg, #2a5298, #4a72b8)" }} />
           <h3 className="fa-header" style={{ color: "#4a72b8", margin: 0, fontSize: 14, fontWeight: 600 }}>{t.budgetTitle}</h3>
         </div>
-        <p style={{ color: "#aab0a8", fontSize: 11, margin: "0 0 18px", paddingLeft: 11 }}>{t.budgetSubtitle} <strong style={{ color: "#2a5298" }}>{budget}{t.perMonth}</strong></p>
+        <p style={{ color: "#556070", fontSize: 11, margin: "0 0 18px", paddingLeft: 11 }}>{t.budgetSubtitle} <strong style={{ color: "#2a5298" }}>{budget}{t.perMonth}</strong></p>
         {budgetPlan.map((item, i) => (
           <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 12px", borderRadius: 10, background: i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent", marginBottom: 4 }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 500, color: "#2a3040", fontSize: 12, marginBottom: 1 }}>{item.item}</div>
-              <div style={{ fontSize: 10, color: "#aab0a8" }}>{item.note}</div>
+              <div style={{ fontWeight: 500, color: "#1a2030", fontSize: 12, marginBottom: 1 }}>{item.item}</div>
+              <div style={{ fontSize: 10, color: "#556070" }}>{item.note}</div>
             </div>
             <div style={{ color: "#2a5298", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap", marginLeft: 12, background: "rgba(42,82,152,0.07)", borderRadius: 8, padding: "3px 10px" }}>{item.amount}</div>
           </div>
@@ -1435,7 +1435,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
           {t.facts.map(([stat, desc]) => (
             <div key={stat} style={{ background: "rgba(42,82,152,0.04)", border: "1px solid rgba(42,82,152,0.09)", borderRadius: 12, padding: "12px 14px" }}>
               <div className="fa-header" style={{ fontSize: 18, color: "#2a5298", fontWeight: 700, marginBottom: 4 }}>{stat}</div>
-              <div style={{ fontSize: 10, color: "#aab0a8", lineHeight: 1.5 }}>{desc}</div>
+              <div style={{ fontSize: 10, color: "#556070", lineHeight: 1.5 }}>{desc}</div>
             </div>
           ))}
         </div>
@@ -1447,7 +1447,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
         <div className="fa-header" style={{ fontSize: 17, fontWeight: 700, color: "#1a2030", marginBottom: 10, letterSpacing: 0.3 }}>
           {lang === "en" ? "We Will Reach Out to You" : "Nosotros Te Contactaremos"}
         </div>
-        <div style={{ fontSize: 13, color: "#889098", lineHeight: 1.85, marginBottom: 20, maxWidth: 420, margin: "0 auto 20px", fontWeight: 300 }}>
+        <div style={{ fontSize: 13, color: "#445060", lineHeight: 1.85, marginBottom: 20, maxWidth: 420, margin: "0 auto 20px", fontWeight: 300 }}>
           {lang === "en"
             ? `${clientName ? `${clientName}, your` : "Your"} assessment is complete. ${advisorName || "Your advisor"} will review your results and reach out to guide you and present personalized options and strategies for your situation.`
             : `${clientName ? `${clientName}, tu` : "Tu"} evaluación está completa. ${advisorName || "Tu asesor"} revisará tus resultados y se pondrá en contacto contigo para guiarte y presentarte opciones y estrategias personalizadas para tu situación.`}
@@ -1465,7 +1465,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
 
       {/* Legal */}
       <div style={{ textAlign: "center", padding: "10px 16px", marginBottom: 20 }}>
-        <div style={{ fontSize: 9, color: "#dde5d8", lineHeight: 1.7 }}>
+        <div style={{ fontSize: 9, color: "#889098", lineHeight: 1.7 }}>
           {lang === "en"
             ? `This assessment is for informational purposes. ${advisorName ? `${advisorName}` : "Your advisor"} will be in touch with you to provide personalized recommendations from our team of licensed professionals.`
             : `Esta evaluación es con fines informativos. ${advisorName ? `${advisorName}` : "Tu asesor"} se pondrá en contacto contigo para brindarte recomendaciones personalizadas de nuestro equipo de profesionales con licencia.`}
@@ -1675,8 +1675,8 @@ function IntroVisualSections({ lang }) {
   const sectionHead = (tag, title, sub) => (
     <div style={{ marginBottom: 20 }}>
       <p style={{ fontSize:10, letterSpacing:3, textTransform:"uppercase", color:"#FF8C42", marginBottom:6, fontFamily:"'DM Sans',sans-serif", margin:"0 0 6px" }}>{tag}</p>
-      <h3 style={{ fontSize:"clamp(15px,2.5vw,20px)", fontWeight:"normal", color:"#f0e8de", margin:"0 0 6px", lineHeight:1.3, fontFamily:"'Playfair Display',serif" }}>{title}</h3>
-      {sub && <p style={{ fontSize:12, color:"#4a5568", margin:0, fontFamily:"'DM Sans',sans-serif", lineHeight:1.6 }}>{sub}</p>}
+      <h3 style={{ fontSize:"clamp(15px,2.5vw,20px)", fontWeight:"normal", color:"#1a2030", margin:"0 0 6px", lineHeight:1.3, fontFamily:"'Playfair Display',serif" }}>{title}</h3>
+      {sub && <p style={{ fontSize:12, color:"#556070", margin:0, fontFamily:"'DM Sans',sans-serif", lineHeight:1.6 }}>{sub}</p>}
     </div>
   );
 
@@ -1684,7 +1684,7 @@ function IntroVisualSections({ lang }) {
     <div style={{ display:"flex", flexDirection:"column", gap:32 }}>
 
       {/* ── SECTION 1: LTC / ADLs ── */}
-      <div style={{ background:"linear-gradient(135deg,#0a0f18,#0d1320)", border:"1px solid #ffffff0e", borderRadius:16, padding:"24px 20px" }}>
+      <div style={{ background:"#ffffff", border:"1px solid #d0d8c8", borderRadius:16, padding:"24px 20px" }}>
         {sectionHead(
           isEs ? "Cuidado a Largo Plazo" : "Long-Term Care",
           isEs ? "Esto no es solo sobre envejecer." : "This isn't just about getting old.",
@@ -1700,7 +1700,7 @@ function IntroVisualSections({ lang }) {
               {isEs ? b.labelEs : b.label}
             </div>
           ))}
-          <span style={{ fontSize:10, color:"#3d4f63", fontFamily:"sans-serif" }}>
+          <span style={{ fontSize:10, color:"#889098", fontFamily:"sans-serif" }}>
             {isEs ? "→ edades reales" : "→ real ages affected"}
           </span>
         </div>
@@ -1712,8 +1712,8 @@ function IntroVisualSections({ lang }) {
             return (
               <div key={card.id} onClick={() => setActiveADL(isActive ? null : card.id)}
                 style={{
-                  background: isActive ? `linear-gradient(135deg,${card.color}22,${card.color}0a)` : "rgba(255,255,255,0.03)",
-                  border: isActive ? `1px solid ${card.color}70` : "1px solid #ffffff10",
+                  background: isActive ? `linear-gradient(135deg,${card.color}22,${card.color}0a)` : "#f8f9f6",
+                  border: isActive ? `1px solid ${card.color}70` : "1px solid #d0d8c8",
                   borderRadius:12, padding:"14px 12px", cursor:"pointer",
                   transition:"all 0.25s ease", position:"relative", overflow:"hidden"
                 }}>
@@ -1725,8 +1725,8 @@ function IntroVisualSections({ lang }) {
                   {isEs ? card.labelEs : card.label}
                 </div>
                 {isActive
-                  ? <p style={{ fontSize:11, lineHeight:1.6, color:"#9ab", margin:"6px 0 0", fontStyle:"italic", fontFamily:"'Playfair Display',serif" }}>{isEs ? card.sceneEs : card.scene}</p>
-                  : <p style={{ fontSize:10, color:"#3d4f63", margin:"2px 0 0", fontFamily:"sans-serif" }}>{isEs ? "Toca →" : "Tap →"}</p>
+                  ? <p style={{ fontSize:11, lineHeight:1.6, color:"#445060", margin:"6px 0 0", fontStyle:"italic", fontFamily:"'Playfair Display',serif" }}>{isEs ? card.sceneEs : card.scene}</p>
+                  : <p style={{ fontSize:10, color:"#889098", margin:"2px 0 0", fontFamily:"sans-serif" }}>{isEs ? "Toca →" : "Tap →"}</p>
                 }
               </div>
             );
@@ -1734,22 +1734,22 @@ function IntroVisualSections({ lang }) {
         </div>
 
         {/* Stats strip */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:1, background:"#ffffff08", borderRadius:12, overflow:"hidden", border:"1px solid #ffffff0e", marginTop:16 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:1, background:"#f0f2ee", borderRadius:12, overflow:"hidden", border:"1px solid #d0d8c8", marginTop:16 }}>
           {[
             { v:"70%", l:isEs?"necesitarán cuidado LTC":"will need long-term care", hot:false },
             { v:"40%", l:isEs?"menores de 65 años":"are under age 65", hot:true },
             { v:"$15K", l:isEs?"hogar de ancianos/mes":"nursing home per month", hot:false },
           ].map((s,i) => (
-            <div key={i} style={{ padding:"14px 10px", textAlign:"center", background:s.hot?"#FF8C4210":"transparent", borderRight:i<2?"1px solid #ffffff08":"none" }}>
+            <div key={i} style={{ padding:"14px 10px", textAlign:"center", background:s.hot?"#FF8C4210":"transparent", borderRight:i<2?"1px solid #e0e8d8":"none" }}>
               <div style={{ fontSize:"clamp(18px,3vw,26px)", fontWeight:"bold", color:s.hot?"#FF6B6B":"#FF8C42", fontFamily:"'Playfair Display',serif", marginBottom:4 }}>{s.v}</div>
-              <div style={{ fontSize:10, color:"#6b7a8d", lineHeight:1.4, fontFamily:"'DM Sans',sans-serif" }}>{s.l}</div>
+              <div style={{ fontSize:10, color:"#889098", lineHeight:1.4, fontFamily:"'DM Sans',sans-serif" }}>{s.l}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── SECTION 2: LIFE INSURANCE ── */}
-      <div style={{ background:"linear-gradient(135deg,#0d1117,#0f1820)", border:"1px solid #ffffff0e", borderRadius:16, padding:"24px 20px" }}>
+      <div style={{ background:"#ffffff", border:"1px solid #d0d8c8", borderRadius:16, padding:"24px 20px" }}>
         {sectionHead(
           isEs ? "Seguro de Vida" : "Life Insurance",
           isEs ? "Tu familia no debería tener que resolverlo sola." : "Your family shouldn't have to figure it out without you.",
@@ -1764,19 +1764,19 @@ function IntroVisualSections({ lang }) {
             return (
               <div key={card.id} onClick={() => setActiveLife(isActive ? null : card.id)}
                 style={{
-                  background: isActive ? `linear-gradient(135deg,${card.color}20,${card.color}08)` : "rgba(255,255,255,0.03)",
-                  border: isActive ? `1px solid ${card.color}60` : "1px solid #ffffff10",
+                  background: isActive ? `linear-gradient(135deg,${card.color}20,${card.color}08)` : "#f8f9f6",
+                  border: isActive ? `1px solid ${card.color}60` : "1px solid #d0d8c8",
                   borderRadius:12, padding:"16px 14px", cursor:"pointer", transition:"all 0.25s ease"
                 }}>
                 <div style={{ marginBottom:8 }}>{card.icon}</div>
                 <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, textTransform:"uppercase", color:card.color, marginBottom:5, fontFamily:"'DM Sans',sans-serif" }}>
                   {isEs ? card.labelEs : card.label}
                 </div>
-                <p style={{ fontSize:12, fontStyle:"italic", color:"#c8c0b4", margin:"0 0 4px", lineHeight:1.4, fontFamily:"'Playfair Display',serif" }}>
+                <p style={{ fontSize:12, fontStyle:"italic", color:"#2a3a4a", margin:"0 0 4px", lineHeight:1.4, fontFamily:"'Playfair Display',serif" }}>
                   {isEs ? card.headlineEs : card.headline}
                 </p>
-                {isActive && <p style={{ fontSize:11, lineHeight:1.6, color:"#8a95a8", margin:"8px 0 0", fontFamily:"'DM Sans',sans-serif" }}>{isEs ? card.sceneEs : card.scene}</p>}
-                {!isActive && <p style={{ fontSize:10, color:"#3d4f63", margin:"2px 0 0", fontFamily:"sans-serif" }}>{isEs ? "Toca para ver →" : "Tap for more →"}</p>}
+                {isActive && <p style={{ fontSize:11, lineHeight:1.6, color:"#445060", margin:"8px 0 0", fontFamily:"'DM Sans',sans-serif" }}>{isEs ? card.sceneEs : card.scene}</p>}
+                {!isActive && <p style={{ fontSize:10, color:"#889098", margin:"2px 0 0", fontFamily:"sans-serif" }}>{isEs ? "Toca para ver →" : "Tap for more →"}</p>}
               </div>
             );
           })}
@@ -1784,7 +1784,7 @@ function IntroVisualSections({ lang }) {
       </div>
 
       {/* ── SECTION 3: CASH VALUE / IUL ── */}
-      <div style={{ background:"linear-gradient(135deg,#0a0f14,#0c1a14)", border:"1px solid #27AE6015", borderRadius:16, padding:"24px 20px" }}>
+      <div style={{ background:"#f8fff8", border:"1px solid #c8e8c8", borderRadius:16, padding:"24px 20px" }}>
         {sectionHead(
           isEs ? "Seguro de Vida con Valor en Efectivo · IUL" : "Cash Value Life Insurance · IUL",
           isEs ? "Seguro de vida que construye riqueza mientras vives." : "Life insurance that builds wealth while you're alive.",
@@ -1806,7 +1806,7 @@ function IntroVisualSections({ lang }) {
             ].map((b,i) => (
               <div key={i} style={{ marginBottom:10 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", marginBottom:3 }}>
-                  <span style={{ fontSize:10, color:"#7a9a80", fontFamily:"sans-serif" }}>{b.label}</span>
+                  <span style={{ fontSize:10, color:"#556070", fontFamily:"sans-serif" }}>{b.label}</span>
                   <span style={{ fontSize:11, color:"#27AE60", fontWeight:600, fontFamily:"sans-serif" }}>{b.v}</span>
                 </div>
                 <div style={{ background:"#27AE6015", borderRadius:3, height:7 }}>
@@ -1814,7 +1814,7 @@ function IntroVisualSections({ lang }) {
                 </div>
               </div>
             ))}
-            <p style={{ fontSize:9, color:"#4a6650", margin:"8px 0 0", fontFamily:"sans-serif", fontStyle:"italic" }}>
+            <p style={{ fontSize:9, color:"#778090", margin:"8px 0 0", fontFamily:"sans-serif", fontStyle:"italic" }}>
               {isEs ? "*$500/mes de prima. Ilustrativo." : "*Based on $500/mo premium. Illustrative."}
             </p>
           </div>
@@ -1822,9 +1822,9 @@ function IntroVisualSections({ lang }) {
           {/* Benefits list */}
           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
             {IUL_POINTS_INTRO.map((pt,i) => (
-              <div key={i} style={{ background:"rgba(255,255,255,0.03)", border:"1px solid #ffffff0e", borderRadius:10, padding:"10px 12px", display:"flex", alignItems:"flex-start", gap:8 }}>
+              <div key={i} style={{ background:"#f8f9f6", border:"1px solid #dde5d8", borderRadius:10, padding:"10px 12px", display:"flex", alignItems:"flex-start", gap:8 }}>
                 <span style={{ fontSize:16, lineHeight:1, flexShrink:0 }}>{pt.icon}</span>
-                <span style={{ fontSize:11, color:"#9ab", lineHeight:1.5, fontFamily:"'DM Sans',sans-serif" }}>
+                <span style={{ fontSize:11, color:"#445060", lineHeight:1.5, fontFamily:"'DM Sans',sans-serif" }}>
                   {isEs ? pt.es : pt.en}
                 </span>
               </div>
@@ -1834,7 +1834,7 @@ function IntroVisualSections({ lang }) {
       </div>
 
       {/* ── SECTION 4: KIDS SAVINGS ── */}
-      <div style={{ background:"linear-gradient(135deg,#0d1117,#0f1420)", border:"1px solid #ffffff0e", borderRadius:16, padding:"24px 20px" }}>
+      <div style={{ background:"#ffffff", border:"1px solid #d0d8c8", borderRadius:16, padding:"24px 20px" }}>
         {sectionHead(
           isEs ? "Ahorro para Niños" : "Savings for Kids",
           isEs ? "El mejor momento fue al nacer. El segundo mejor es hoy." : "The best time to start was at birth. The second best time is today.",
@@ -1852,19 +1852,19 @@ function IntroVisualSections({ lang }) {
               </div>
               <div style={{ display:"flex", gap:6, marginBottom:6, alignItems:"flex-start" }}>
                 <span style={{ color:"#27AE60", fontSize:12, marginTop:1, flexShrink:0 }}>✓</span>
-                <span style={{ fontSize:11, color:"#9ab0a0", lineHeight:1.5, fontFamily:"'DM Sans',sans-serif" }}>{isEs ? opt.pro.es : opt.pro.en}</span>
+                <span style={{ fontSize:11, color:"#445060", lineHeight:1.5, fontFamily:"'DM Sans',sans-serif" }}>{isEs ? opt.pro.es : opt.pro.en}</span>
               </div>
               <div style={{ display:"flex", gap:6, alignItems:"flex-start" }}>
                 <span style={{ color:"#FF6B6B", fontSize:12, marginTop:1, flexShrink:0 }}>✗</span>
-                <span style={{ fontSize:11, color:"#556", lineHeight:1.5, fontFamily:"'DM Sans',sans-serif" }}>{isEs ? opt.con.es : opt.con.en}</span>
+                <span style={{ fontSize:11, color:"#889098", lineHeight:1.5, fontFamily:"'DM Sans',sans-serif" }}>{isEs ? opt.con.es : opt.con.en}</span>
               </div>
             </div>
           ))}
         </div>
 
-        <div style={{ background:"rgba(255,255,255,0.03)", border:"1px solid #ffffff10", borderRadius:12, padding:"14px 16px", marginTop:14, display:"flex", gap:12, alignItems:"flex-start" }}>
+        <div style={{ background:"#f8f9f6", border:"1px solid #d0d8c8", borderRadius:12, padding:"14px 16px", marginTop:14, display:"flex", gap:12, alignItems:"flex-start" }}>
           <span style={{ fontSize:20, flexShrink:0 }}>💡</span>
-          <p style={{ fontSize:12, color:"#9ab", lineHeight:1.6, margin:0, fontFamily:"'DM Sans',sans-serif" }}>
+          <p style={{ fontSize:12, color:"#445060", lineHeight:1.6, margin:0, fontFamily:"'DM Sans',sans-serif" }}>
             {isEs
               ? "Para niños pequeños, frecuentemente recomendamos un IUL — asegurabilidad garantizada de por vida, crecimiento libre de impuestos, y puede transferirse al niño cuando llegue a la adultez."
               : "For young children, we often recommend a children's IUL — guaranteed lifetime insurability, tax-free growth, and can be transferred to the child when they reach adulthood."}
@@ -1960,7 +1960,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
           <h1 className="fa-header gold-shimmer" style={{ fontSize: 30, margin: "0 0 8px", lineHeight: 1.15, letterSpacing: 0.3 }}>
             Financial Protection Advisor
           </h1>
-          <p style={{ fontSize: 14, color: "#889098", margin: "0 0 18px", fontWeight: 300, letterSpacing: 0.3 }}>
+          <p style={{ fontSize: 14, color: "#445060", margin: "0 0 18px", fontWeight: 300, letterSpacing: 0.3 }}>
             Asesor de Protección Financiera
           </p>
 
@@ -1981,13 +1981,13 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
             </div>
           )}
           {advisorName && (
-            <div className="anim-fadeup delay-3" style={{ fontSize: 10, color: "#aab0a8", marginBottom: 28, letterSpacing: 1 }}>
-              Presented by <span style={{ color: "#889098" }}>{advisorName}</span>
+            <div className="anim-fadeup delay-3" style={{ fontSize: 10, color: "#556070", marginBottom: 28, letterSpacing: 1 }}>
+              Presented by <span style={{ color: "#445060" }}>{advisorName}</span>
             </div>
           )}
 
           {/* Language label */}
-          <p style={{ color: "#c0c8b8", fontSize: 10, margin: "0 0 16px", letterSpacing: 2.5, textTransform: "uppercase" }}>
+          <p style={{ color: "#667080", fontSize: 10, margin: "0 0 16px", letterSpacing: 2.5, textTransform: "uppercase" }}>
             Select your language · Selecciona tu idioma
           </p>
 
@@ -2015,7 +2015,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
           {/* Trust badges */}
           <div className="anim-fadeup delay-4" style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 32, flexWrap: "wrap" }}>
             {["🔒 100% Confidential", "📋 Takes ~15 minutes", "🆓 Completely Free"].map(badge => (
-              <span key={badge} style={{ fontSize: 10, color: "#aab0a8", letterSpacing: 0.5 }}>{badge}</span>
+              <span key={badge} style={{ fontSize: 10, color: "#556070", letterSpacing: 0.5 }}>{badge}</span>
             ))}
           </div>
         </div>
@@ -2053,7 +2053,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
           </div>
 
           {advisorName && (
-            <div style={{ textAlign: "center", fontSize: 11, color: "#c0c8b8", marginBottom: 20, letterSpacing: 0.5 }}>
+            <div style={{ textAlign: "center", fontSize: 11, color: "#667080", marginBottom: 20, letterSpacing: 0.5 }}>
               — {advisorName}
             </div>
           )}
@@ -2115,12 +2115,12 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
 
       {/* Card */}
       <div className="anim-scalein" style={{ textAlign: "center", maxWidth: 520, width: "100%", position: "relative", zIndex: 1 }}>
-        <div style={{ background: `${slide.color}0a`, border: `1px solid ${slide.color}22`, borderRadius: 24, padding: "36px 32px 32px", backdropFilter: "blur(12px)", marginBottom: 28 }}>
+        <div style={{ background: `${slide.color}12`, border: `1px solid ${slide.color}22`, borderRadius: 24, padding: "36px 32px 32px", backdropFilter: "blur(12px)", marginBottom: 28 }}>
           <div style={{ fontSize: 52, marginBottom: 18, filter: `drop-shadow(0 0 20px ${slide.color}55)` }}>{slide.icon}</div>
           <div className="fa-header" style={{ fontSize: slide.isFinal ? 30 : 56, fontWeight: 700, color: slide.color, margin: "0 0 18px", lineHeight: 1.05, textShadow: `0 0 40px ${slide.color}33`, letterSpacing: slide.isFinal ? 0.5 : -1 }}>
             {slide.stat}
           </div>
-          <p style={{ fontSize: slide.isFinal ? 15 : 16, color: slide.isFinal ? "#c0d0e0" : "#8899aa", lineHeight: 1.95, margin: 0, fontStyle: slide.isFinal ? "italic" : "normal", fontWeight: 300 }}>
+          <p style={{ fontSize: slide.isFinal ? 15 : 16, color: slide.isFinal ? "#3a4a5a" : "#2a3a4a", lineHeight: 1.95, margin: 0, fontStyle: slide.isFinal ? "italic" : "normal", fontWeight: 400 }}>
             {slide.text}
           </p>
         </div>
@@ -2142,7 +2142,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
         </div>
 
         {!isLast && (
-          <button onClick={() => onContinue(lang)} style={{ marginTop: 14, background: "transparent", border: "none", color: "#d0d8c8", fontSize: 11, cursor: "pointer", textDecoration: "underline", fontFamily: "'DM Sans', sans-serif" }}>
+          <button onClick={() => onContinue(lang)} style={{ marginTop: 14, background: "transparent", border: "none", color: "#778090", fontSize: 11, cursor: "pointer", textDecoration: "underline", fontFamily: "'DM Sans', sans-serif" }}>
             {lang === "en" ? "Skip intro" : "Saltar intro"}
           </button>
         )}
@@ -2161,7 +2161,7 @@ function LanguageScreen({ onSelect }) {
         <div style={{ fontSize: 64, marginBottom: 20, filter: "drop-shadow(0 0 20px rgba(42,82,152,0.35))" }}>⚖️</div>
         <h1 style={{ fontSize: 24, color: "#4a72b8", margin: "0 0 6px", letterSpacing: 1 }}>Financial Protection Advisor</h1>
         <h2 style={{ fontSize: 18, color: "#c8b878", margin: "0 0 8px", fontWeight: "normal", letterSpacing: 1 }}>Asesor de Protección Financiera</h2>
-        <p style={{ color: "#889098", fontSize: 13, margin: "0 0 50px", letterSpacing: 1 }}>Select your language · Selecciona tu idioma</p>
+        <p style={{ color: "#445060", fontSize: 13, margin: "0 0 50px", letterSpacing: 1 }}>Select your language · Selecciona tu idioma</p>
         <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap" }}>
           {[["en","🇺🇸 English", hoverEn, setHoverEn], ["es","🇪🇸 Español", hoverEs, setHoverEs]].map(([code, label, hover, setHover]) => (
             <button key={code} onClick={() => onSelect(code)}
@@ -2201,11 +2201,11 @@ function LTCEducationScreen({ lang, onContinue }) {
             ].map((item, i) => (
               <div key={i} style={{ background: "rgba(224,80,80,0.1)", border: "1px solid rgba(224,80,80,0.3)", borderRadius: 12, padding: "16px 12px", textAlign: "center" }}>
                 <div style={{ fontSize: 26, fontWeight: "bold", color: "#e05050", marginBottom: 4 }}>{item.stat}</div>
-                <div style={{ fontSize: 11, color: "#889098", lineHeight: 1.5 }}>{item.desc}</div>
+                <div style={{ fontSize: 11, color: "#445060", lineHeight: 1.5 }}>{item.desc}</div>
               </div>
             ))}
           </div>
-          <p style={{ fontSize: 13, color: "#889098", lineHeight: 1.8, fontStyle: "italic" }}>
+          <p style={{ fontSize: 13, color: "#445060", lineHeight: 1.8, fontStyle: "italic" }}>
             {isEN
               ? "Most people think their health insurance, employer, or Medicare will cover them. The truth may surprise you."
               : "La mayoría cree que su seguro médico, empleador o Medicare los cubrirá. La verdad puede sorprenderte."}
@@ -2225,7 +2225,7 @@ function LTCEducationScreen({ lang, onContinue }) {
             <h2 style={{ fontSize: 19, color: "#4a72b8", margin: "0 0 8px" }}>
               {isEN ? "When Do Benefits Activate?" : "¿Cuándo Se Activan los Beneficios?"}
             </h2>
-            <p style={{ fontSize: 12, color: "#889098", lineHeight: 1.7, margin: 0 }}>
+            <p style={{ fontSize: 12, color: "#445060", lineHeight: 1.7, margin: 0 }}>
               {isEN
                 ? "Long-term care benefits activate when you can no longer independently perform 2 of the 6 Activities of Daily Living."
                 : "Los beneficios de cuidado a largo plazo se activan cuando ya no puedes realizar de forma independiente 2 de las 6 Actividades de la Vida Diaria."}
@@ -2252,7 +2252,7 @@ function LTCEducationScreen({ lang, onContinue }) {
             <div style={{ fontSize: 12, color: "#e8c050", fontWeight: "bold", marginBottom: 4 }}>
               ⚡ {isEN ? "2 out of 6 = Benefits Activate" : "2 de 6 = Los beneficios se activan"}
             </div>
-            <div style={{ fontSize: 11, color: "#889098" }}>
+            <div style={{ fontSize: 11, color: "#445060" }}>
               {isEN ? "This can happen at any age — not just when you're old." : "Esto puede ocurrir a cualquier edad — no solo cuando eres mayor."}
             </div>
           </div>
@@ -2314,13 +2314,13 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
         </div>
 
         {/* CONFIRMATION */}
-        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 14, padding: "22px 26px", marginBottom: 16, lineHeight: 1.8 }}>
+        <div style={{ background: "#f8f9f6", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 14, padding: "22px 26px", marginBottom: 16, lineHeight: 1.8 }}>
           <p style={{ fontSize: 14, color: "#445060", margin: "0 0 12px" }}>
             {isEN
               ? "Your responses have been recorded. We will carefully review your information and reach out to guide you and present personalized options and strategies for your situation."
               : "Tus respuestas han sido registradas. Revisaremos tu información con cuidado y nos pondremos en contacto contigo para guiarte y presentarte opciones y estrategias personalizadas para tu situación."}
           </p>
-          <p style={{ fontSize: 12, color: "#889098", margin: 0 }}>
+          <p style={{ fontSize: 12, color: "#445060", margin: 0 }}>
             {isEN ? "There is nothing more you need to do right now — we will take it from here."
               : "No necesitas hacer nada más por ahora — nosotros nos encargamos a partir de aquí."}
           </p>
@@ -2331,7 +2331,7 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
             — {advisorName}
         </div>  
         )}
-        <div style={{ fontSize: 8, color: "#e8eee4", marginTop: 4, letterSpacing: 1, textAlign: "center" }}>v10</div>
+        <div style={{ fontSize: 8, color: "#99a0a8", marginTop: 4, letterSpacing: 1, textAlign: "center" }}>v10</div>
         {/* SIMPLE OPPORTUNITY MENTION */}
         <div style={{ background: "rgba(42,82,152,0.04)", border: "1px solid rgba(42,82,152,0.15)", borderRadius: 12, padding: "18px 22px", marginBottom: 20, textAlign: "center" }}>
           <div style={{ fontSize: 22, marginBottom: 10 }}>🤝</div>
@@ -2347,12 +2347,12 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
           <button onClick={() => printReport({ answers: window._fa_answers, plan: window._fa_plan, clientName, advisorName, lang })} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
             🖨️ {isEN ? "Download Report" : "Desgargar Reporte"}
           </button>
-          <button onClick={onReset} style={{ padding: "11px 22px", background: "rgba(255,255,255,0.04)", border: "1px solid #c8d0c0", borderRadius: 9, color: "#889098", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
+          <button onClick={onReset} style={{ padding: "11px 22px", background: "rgba(255,255,255,0.04)", border: "1px solid #c8d0c0", borderRadius: 9, color: "#445060", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
             {isEN ? "Start New Assessment" : "Nueva Evaluación"}
           </button>
         </div>
 
-        <div style={{ textAlign: "center", fontSize: 10, color: "#d0d8c8", lineHeight: 1.7 }}>
+        <div style={{ textAlign: "center", fontSize: 10, color: "#778090", lineHeight: 1.7 }}>
           {isEN
             ? `This assessment is for informational purposes. ${advisorName ? `${advisorName}` : "Your advisor"} will be in touch to provide personalized recommendations from our licensed professionals.`
             : `Esta evaluación es con fines informativos. ${advisorName ? `${advisorName}` : "Tu asesor"} se pondrá en contacto para brindarte recomendaciones personalizadas de nuestros profesionales con licencia.`}
@@ -2375,15 +2375,15 @@ function ExpiredScreen({ reason }) {
         <h1 style={{ fontSize: 22, color: "#e05050", margin: "0 0 12px", fontFamily: "'Playfair Display', serif" }}>
           {reason === "used" ? "Link Already Used" : "Link Expired"}
         </h1>
-        <p style={{ fontSize: 14, color: "#889098", lineHeight: 1.8, margin: "0 0 8px" }}>
+        <p style={{ fontSize: 14, color: "#445060", lineHeight: 1.8, margin: "0 0 8px" }}>
           {reason === "used"
             ? "This survey link has already been completed and can only be used once."
             : "This survey link has expired. Links are valid for 48 hours."}
         </p>
-        <p style={{ fontSize: 13, color: "#aab0a8", lineHeight: 1.7, margin: "0 0 28px" }}>
+        <p style={{ fontSize: 13, color: "#556070", lineHeight: 1.7, margin: "0 0 28px" }}>
           Please contact your advisor to receive a new personalized link.
         </p>
-        <div style={{ background: "rgba(224,80,80,0.06)", border: "1px solid rgba(224,80,80,0.2)", borderRadius: 12, padding: "16px 20px", fontSize: 12, color: "#889098", lineHeight: 1.7 }}>
+        <div style={{ background: "rgba(224,80,80,0.06)", border: "1px solid rgba(224,80,80,0.2)", borderRadius: 12, padding: "16px 20px", fontSize: 12, color: "#445060", lineHeight: 1.7 }}>
           {reason === "used"
             ? "¿Español? Este enlace ya fue utilizado. Contacta a tu asesor para recibir uno nuevo."
             : "¿Español? Este enlace ha expirado. Contacta a tu asesor para recibir uno nuevo."}
@@ -2438,7 +2438,7 @@ function AdvisorScreen() {
     border: "1px solid rgba(42,82,152,0.25)", borderRadius: 8, color: "#1a2030",
     fontSize: 13, outline: "none", boxSizing: "border-box", marginTop: 6,
   };
-  const labelStyle = { fontSize: 12, color: "#889098", display: "block", marginTop: 14 };
+  const labelStyle = { fontSize: 12, color: "#445060", display: "block", marginTop: 14 };
 
   return (
     <div style={{ minHeight: "100vh", background: "#f4f6f2", fontFamily: "'Georgia', serif", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
@@ -2447,11 +2447,11 @@ function AdvisorScreen() {
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ fontSize: 44, marginBottom: 10, filter: "drop-shadow(0 0 20px rgba(42,82,152,0.35))" }}>🔑</div>
           <h1 style={{ fontSize: 20, color: "#4a72b8", margin: "0 0 4px", letterSpacing: 1 }}>Advisor Portal</h1>
-          <p style={{ color: "#889098", fontSize: 12, margin: 0 }}>Generate a personalized survey link for your client</p>
+          <p style={{ color: "#445060", fontSize: 12, margin: 0 }}>Generate a personalized survey link for your client</p>
         </div>
 
         {/* Form */}
-        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 14, padding: "24px 24px 28px" }}>
+        <div style={{ background: "#f8f9f6", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 14, padding: "24px 24px 28px" }}>
           <label style={labelStyle}>Your Name (Advisor) *</label>
           <input style={inputStyle} placeholder="e.g. Maria González" value={advisorName} onChange={e => setAdvisorName(e.target.value)} />
 
@@ -2485,7 +2485,7 @@ function AdvisorScreen() {
         {generatedLink && (
           <div style={{ marginTop: 18, background: "rgba(76,175,130,0.08)", border: "1px solid rgba(76,175,130,0.3)", borderRadius: 12, padding: "18px 20px" }}>
             <div style={{ fontSize: 11, color: "#4caf82", fontWeight: "bold", letterSpacing: 1, marginBottom: 10 }}>✅ LINK GENERATED — READY TO SEND</div>
-            <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 7, padding: "10px 12px", fontSize: 10, color: "#889098", wordBreak: "break-all", marginBottom: 12, lineHeight: 1.6 }}>
+            <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 7, padding: "10px 12px", fontSize: 10, color: "#445060", wordBreak: "break-all", marginBottom: 12, lineHeight: 1.6 }}>
               {generatedLink}
             </div>
             <div style={{ display: "flex", gap: 8 }}>
@@ -2499,7 +2499,7 @@ function AdvisorScreen() {
                 ✉️ Email
               </a>
             </div>
-            <div style={{ marginTop: 10, fontSize: 10, color: "#aab0a8", textAlign: "center" }}>
+            <div style={{ marginTop: 10, fontSize: 10, color: "#556070", textAlign: "center" }}>
               The client will see their name and your name throughout the survey
             </div>
           </div>
@@ -2508,7 +2508,7 @@ function AdvisorScreen() {
         {/* TEST SHEET CONNECTION */}
         <div style={{ marginTop: 16, background: "rgba(76,175,130,0.06)", border: "1px solid rgba(76,175,130,0.2)", borderRadius: 12, padding: "16px 20px", marginBottom: 10 }}>
           <div style={{ fontSize: 11, color: "#4caf82", fontWeight: "bold", letterSpacing: 1, marginBottom: 8 }}>🔗 TEST GOOGLE SHEET CONNECTION</div>
-          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 12px", lineHeight: 1.6 }}>
+          <p style={{ fontSize: 11, color: "#445060", margin: "0 0 12px", lineHeight: 1.6 }}>
             Send a test row to Google Sheets right now — no survey needed.
           </p>
           <button
@@ -2530,7 +2530,7 @@ function AdvisorScreen() {
         {/* TEST MODE */}
         <div style={{ marginTop: 16, background: "rgba(100,160,220,0.06)", border: "1px solid rgba(100,160,220,0.2)", borderRadius: 12, padding: "16px 20px" }}>
           <div style={{ fontSize: 11, color: "#4a90d9", fontWeight: "bold", letterSpacing: 1, marginBottom: 8 }}>🧪 TEST MODE — Skip Survey</div>
-          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 12px", lineHeight: 1.6 }}>
+          <p style={{ fontSize: 11, color: "#445060", margin: "0 0 12px", lineHeight: 1.6 }}>
             Jump straight to the final report & PDF without answering all questions.
           </p>
           <button
@@ -2567,7 +2567,7 @@ function AdvisorScreen() {
         </div>
 
         <div style={{ textAlign: "center", marginTop: 16, display: "flex", gap: 20, justifyContent: "center" }}>
-          <a href={window.location.pathname} style={{ fontSize: 10, color: "#aab0a8", textDecoration: "underline", cursor: "pointer" }}>
+          <a href={window.location.pathname} style={{ fontSize: 10, color: "#556070", textDecoration: "underline", cursor: "pointer" }}>
             ← Survey preview
           </a>
           <a href="?mode=dashboard" style={{ fontSize: 10, color: "#4caf82", textDecoration: "underline", cursor: "pointer" }}>
@@ -2872,9 +2872,9 @@ function DashboardScreen() {
           <div style={{ textAlign: "center", marginBottom: 28 }}>
             <div style={{ fontSize: 48, marginBottom: 12 }}>📊</div>
             <h1 style={{ fontSize: 22, color: "#4a72b8", margin: "0 0 8px", fontFamily: "'Playfair Display', serif" }}>Client Dashboard</h1>
-            <p style={{ color: "#889098", fontSize: 13, margin: 0 }}>Connect your Google Sheet to see all clients</p>
+            <p style={{ color: "#445060", fontSize: 13, margin: 0 }}>Connect your Google Sheet to see all clients</p>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 14, padding: "24px" }}>
+          <div style={{ background: "#f8f9f6", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 14, padding: "24px" }}>
             <div style={{ fontSize: 12, color: "#2a5298", fontWeight: "bold", letterSpacing: 1, marginBottom: 16 }}>GOOGLE SHEET PUBLISHED URL</div>
             <input
               style={{ ...inputStyle, width: "100%", boxSizing: "border-box", marginBottom: 12 }}
@@ -2890,12 +2890,12 @@ function DashboardScreen() {
             <div style={{ marginTop: 20, padding: "14px", background: "rgba(74,144,217,0.08)", border: "1px solid rgba(74,144,217,0.2)", borderRadius: 8 }}>
               <div style={{ fontSize: 11, color: "#4a90d9", fontWeight: "bold", marginBottom: 8 }}>📋 How to get the URL:</div>
               {["1. Open your Google Sheet", "2. File → Share → Publish to web", "3. Select 'Clients' sheet → 'Tab-separated values (.tsv)'", "4. Click Publish → Copy the URL", "5. Paste it above"].map((s,i) => (
-                <div key={i} style={{ fontSize: 11, color: "#889098", marginBottom: 4 }}>→ {s}</div>
+                <div key={i} style={{ fontSize: 11, color: "#445060", marginBottom: 4 }}>→ {s}</div>
               ))}
             </div>
           </div>
           <div style={{ textAlign: "center", marginTop: 16 }}>
-            <a href="?mode=advisor" style={{ fontSize: 11, color: "#aab0a8", textDecoration: "underline" }}>← Back to Advisor Portal</a>
+            <a href="?mode=advisor" style={{ fontSize: 11, color: "#556070", textDecoration: "underline" }}>← Back to Advisor Portal</a>
           </div>
         </div>
       </div>
@@ -2918,7 +2918,7 @@ function DashboardScreen() {
         <div style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(42,82,152,0.12)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14 }}>
           <button onClick={() => setSelectedClient(null)} style={{ background: "transparent", border: "1px solid #c8d0c0", borderRadius: 8, color: "#2a5298", padding: "7px 16px", cursor: "pointer", fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>← Back</button>
           <div style={{ fontSize: 14, color: "#4a72b8", fontWeight: 600 }}>{selectedClient["Client Name"]}</div>
-          <div style={{ fontSize: 11, color: "#aab0a8" }}>{selectedClient["Timestamp"]}</div>
+          <div style={{ fontSize: 11, color: "#556070" }}>{selectedClient["Timestamp"]}</div>
           <button
             onClick={() => printReport({ answers, plan: clientPlan, clientName: selectedClient["Client Name"], advisorName: selectedClient["Advisor"], lang })}
             style={{ marginLeft: "auto", padding: "8px 18px", background: "linear-gradient(135deg, #2a5298, #4a72b8)", border: "none", borderRadius: 8, color: "#ffffff", fontSize: 12, fontWeight: "bold", cursor: "pointer" }}>
@@ -2942,7 +2942,7 @@ function DashboardScreen() {
           <div style={{ fontSize: 24 }}>📊</div>
           <div>
             <div style={{ fontSize: 16, color: "#4a72b8", fontWeight: 700, fontFamily: "'Playfair Display', serif" }}>Client Dashboard</div>
-            <div style={{ fontSize: 10, color: "#aab0a8" }}>{clients.length} clients total</div>
+            <div style={{ fontSize: 10, color: "#556070" }}>{clients.length} clients total</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
@@ -2962,9 +2962,9 @@ function DashboardScreen() {
               { label: "Avg Score", value: (clients.reduce((s,c) => s + (parseInt(c["Overall Score"])||0), 0) / clients.length).toFixed(1) + "/10", color: "#2a5298" },
               { label: "This Month", value: clients.filter(c => { try { return new Date(c["Timestamp"]).getMonth() === new Date().getMonth(); } catch(e){ return false; }}).length, color: "#4caf82" },
             ].map((stat, i) => (
-              <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid #d0d8c8", borderRadius: 12, padding: "16px 20px" }}>
+              <div key={i} style={{ background: "#f8f9f6", border: "1px solid #d0d8c8", borderRadius: 12, padding: "16px 20px" }}>
                 <div style={{ fontSize: 22, fontWeight: 700, color: stat.color, fontFamily: "'Playfair Display', serif" }}>{stat.value}</div>
-                <div style={{ fontSize: 11, color: "#aab0a8", marginTop: 3 }}>{stat.label}</div>
+                <div style={{ fontSize: 11, color: "#556070", marginTop: 3 }}>{stat.label}</div>
               </div>
             ))}
           </div>
@@ -2996,7 +2996,7 @@ function DashboardScreen() {
           </div>
         )}
 
-        {loading && <div style={{ textAlign: "center", padding: "40px", color: "#aab0a8", fontSize: 14 }}>Loading clients...</div>}
+        {loading && <div style={{ textAlign: "center", padding: "40px", color: "#556070", fontSize: 14 }}>Loading clients...</div>}
         {error && <div style={{ textAlign: "center", padding: "24px", color: "#e05050", fontSize: 13 }}>{error}</div>}
 
         {/* Client cards */}
@@ -3020,7 +3020,7 @@ function DashboardScreen() {
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: "#1a2030", marginBottom: 3 }}>{client["Client Name"] || "Anonymous"}</div>
-                    <div style={{ fontSize: 11, color: "#aab0a8", display: "flex", gap: 12, flexWrap: "wrap" }}>
+                    <div style={{ fontSize: 11, color: "#556070", display: "flex", gap: 12, flexWrap: "wrap" }}>
                       {client["Client Phone"] && <span>📞 {client["Client Phone"]}</span>}
                       {client["Client Email"] && <span>✉️ {client["Client Email"]}</span>}
                       {client["Advisor"] && <span>👤 {client["Advisor"]}</span>}
@@ -3031,7 +3031,7 @@ function DashboardScreen() {
                   <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
                     {critGaps > 0 && <span style={{ fontSize: 10, color: "#e05050", background: "rgba(224,80,80,0.12)", border: "1px solid rgba(224,80,80,0.25)", borderRadius: 6, padding: "3px 8px" }}>🔴 {critGaps} Critical</span>}
                     {client["Budget"] && <span style={{ fontSize: 10, color: "#2a5298", background: "rgba(42,82,152,0.09)", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 6, padding: "3px 8px" }}>{client["Budget"]}/mo</span>}
-                    {client["Language"] && <span style={{ fontSize: 10, color: "#889098", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>{client["Language"] === "Español" ? "🇪🇸" : "🇺🇸"}</span>}
+                    {client["Language"] && <span style={{ fontSize: 10, color: "#445060", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>{client["Language"] === "Español" ? "🇪🇸" : "🇺🇸"}</span>}
                     <span style={{ fontSize: 10, color: "#4a90d9", padding: "3px 8px" }}>View →</span>
                   </div>
                 </div>
@@ -3041,7 +3041,7 @@ function DashboardScreen() {
         )}
 
         {filtered.length === 0 && clients.length > 0 && (
-          <div style={{ textAlign: "center", padding: "40px", color: "#aab0a8" }}>No clients match your search.</div>
+          <div style={{ textAlign: "center", padding: "40px", color: "#556070" }}>No clients match your search.</div>
         )}
       </div>
     </div>
@@ -3194,14 +3194,14 @@ export default function FinancialBot() {
               <div style={{ fontSize: 13, fontWeight: 600, color: "#4a72b8", fontFamily: "'Playfair Display', serif", letterSpacing: 0.5 }}>{t.appTitle}</div>
               {clientName
                 ? <div style={{ fontSize: 10, color: "#2a529899", fontWeight: 500 }}>👤 {clientName}</div>
-                : <div style={{ fontSize: 9, color: "#aab0a8", letterSpacing: 2, textTransform: "uppercase" }}>{t.appSubtitle}</div>}
+                : <div style={{ fontSize: 9, color: "#556070", letterSpacing: 2, textTransform: "uppercase" }}>{t.appSubtitle}</div>}
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {!showPlan && (
-              <div style={{ fontSize: 11, color: "#aab0a8" }}>
+              <div style={{ fontSize: 11, color: "#556070" }}>
                 <span style={{ color: "#2a5298", fontWeight: 600, fontFamily: "'Playfair Display', serif", fontSize: 13 }}>{currentModule + 1}</span>
-                <span style={{ color: "#c0c8b8", margin: "0 3px" }}>/</span>
+                <span style={{ color: "#667080", margin: "0 3px" }}>/</span>
                 <span>{MODULES.length}</span>
               </div>
             )}
@@ -3238,7 +3238,7 @@ export default function FinancialBot() {
 
               <div style={{ fontSize: 10, color: "#2a5298", letterSpacing: 3, textTransform: "uppercase", fontWeight: 600, marginBottom: 6 }}>{t.moduleLabel} {module.id}</div>
               <h2 className="fa-header" style={{ fontSize: 22, fontWeight: 700, color: "#1a2030", margin: "0 0 8px", letterSpacing: 0.3, lineHeight: 1.2 }}>{module.title}</h2>
-              <p style={{ color: "#aab0a8", fontSize: 11, margin: 0, fontStyle: "italic" }}>{t.answerHonestly}</p>
+              <p style={{ color: "#556070", fontSize: 11, margin: 0, fontStyle: "italic" }}>{t.answerHonestly}</p>
             </div>
 
             {/* Questions */}
@@ -3280,7 +3280,7 @@ export default function FinancialBot() {
 
             {/* Completion hint */}
             {!isModuleComplete() && (
-              <p style={{ textAlign: "center", marginTop: 12, fontSize: 10, color: "#c0c8b8", fontStyle: "italic" }}>
+              <p style={{ textAlign: "center", marginTop: 12, fontSize: 10, color: "#667080", fontStyle: "italic" }}>
                 {lang === "en" ? "Answer all questions above to continue" : "Responde todas las preguntas para continuar"}
               </p>
             )}
