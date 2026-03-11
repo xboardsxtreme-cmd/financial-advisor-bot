@@ -10,7 +10,7 @@
 //   ✅ Updated disclaimers — positions YOUR team as licensed professionals
 //   ✅ NEW: IntroVisualSections — LTC/ADLs, Life Insurance, IUL, Kids Savings
 //   ✅ Includes all previous V9 fixes (onFinish, notifyOpened, CSV, async)
-console.log("🟢 Financial Advisor Bot VERSION 10 loaded");
+console.log("🟢 Financial Advisor Bot VERSION 10 (Navy & Sage) loaded");
 
 import { useState, useRef, useEffect } from "react";
 
@@ -68,11 +68,11 @@ const GLOBAL_STYLE = `
   }
   .hover-lift:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(200,160,80,0.22);
+    box-shadow: 0 8px 28px rgba(42,82,152,0.15);
   }
 
   .gold-shimmer {
-    background: linear-gradient(90deg, #c8a050, #f0d888, #c8a050);
+    background: linear-gradient(90deg, #2a5298, #f0d888, #2a5298);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -84,8 +84,8 @@ const GLOBAL_STYLE = `
     width: 100%;
     text-align: left;
     padding: 13px 16px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(200,160,80,0.18);
+    background: #ffffff;
+    border: 1px solid rgba(42,82,152,0.15);
     border-radius: 10px;
     color: #c8d8e8;
     font-size: 13px;
@@ -98,20 +98,20 @@ const GLOBAL_STYLE = `
     gap: 10px;
   }
   .option-btn:hover {
-    background: rgba(200,160,80,0.09);
+    background: rgba(42,82,152,0.08);
     border-color: rgba(200,160,80,0.45);
-    color: #e8dcc8;
+    color: #1a2030;
     transform: translateX(3px);
   }
   .option-btn.selected {
-    background: rgba(200,160,80,0.14);
-    border-color: rgba(200,160,80,0.7);
-    color: #e8c878;
+    background: rgba(42,82,152,0.12);
+    border-color: rgba(42,82,152,0.4);
+    color: #4a72b8;
     font-weight: 500;
   }
   .option-btn.selected::before {
     content: '✓';
-    color: #c8a050;
+    color: #2a5298;
     font-weight: 700;
     font-size: 12px;
     flex-shrink: 0;
@@ -120,10 +120,10 @@ const GLOBAL_STYLE = `
   select.fa-select {
     width: 100%;
     padding: 13px 16px;
-    background: rgba(10,20,40,0.8);
-    border: 1px solid rgba(200,160,80,0.3);
+    background: #ffffff;
+    border: 1px solid rgba(42,82,152,0.25);
     border-radius: 10px;
-    color: #e8dcc8;
+    color: #1a2030;
     font-size: 13px;
     font-family: 'DM Sans', sans-serif;
     outline: none;
@@ -135,31 +135,31 @@ const GLOBAL_STYLE = `
     transition: border-color 0.2s ease;
   }
   select.fa-select:focus {
-    border-color: rgba(200,160,80,0.7);
-    box-shadow: 0 0 0 3px rgba(200,160,80,0.1);
+    border-color: rgba(42,82,152,0.4);
+    box-shadow: 0 0 0 3px rgba(42,82,152,0.09);
   }
   select.fa-select option {
-    background: #0d1b2a;
-    color: #e8dcc8;
+    background: #f4f6f2;
+    color: #1a2030;
   }
 
   input.fa-input {
     width: 100%;
     padding: 13px 16px;
-    background: rgba(10,20,40,0.8);
-    border: 1px solid rgba(200,160,80,0.3);
+    background: #ffffff;
+    border: 1px solid rgba(42,82,152,0.25);
     border-radius: 10px;
-    color: #e8dcc8;
+    color: #1a2030;
     font-size: 13px;
     font-family: 'DM Sans', sans-serif;
     outline: none;
     transition: border-color 0.2s ease;
   }
   input.fa-input:focus {
-    border-color: rgba(200,160,80,0.7);
-    box-shadow: 0 0 0 3px rgba(200,160,80,0.1);
+    border-color: rgba(42,82,152,0.4);
+    box-shadow: 0 0 0 3px rgba(42,82,152,0.09);
   }
-  input.fa-input::placeholder { color: #445566; }
+  input.fa-input::placeholder { color: #aab8a8; }
 
   .module-dot {
     width: 8px; height: 8px; border-radius: 50%;
@@ -167,20 +167,20 @@ const GLOBAL_STYLE = `
     flex-shrink: 0;
   }
   .module-dot.done     { background: #4caf82; }
-  .module-dot.current  { background: #c8a050; width: 24px; border-radius: 4px; }
-  .module-dot.upcoming { background: rgba(255,255,255,0.12); }
+  .module-dot.current  { background: #2a5298; width: 24px; border-radius: 4px; }
+  .module-dot.upcoming { background: #c8d0c0; }
 
   .card-glass {
-    background: rgba(255,255,255,0.03);
+    background: #ffffff;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.07);
+    border: 1px solid #d0d8c8;
     border-radius: 16px;
   }
 
   .btn-primary {
     padding: 14px 36px;
-    background: linear-gradient(135deg, #c8a050, #e8c878);
+    background: linear-gradient(135deg, #2a5298, #3a8a60);
     border: none;
     border-radius: 12px;
     color: #050a12;
@@ -189,16 +189,16 @@ const GLOBAL_STYLE = `
     font-family: 'DM Sans', sans-serif;
     cursor: pointer;
     letter-spacing: 0.5px;
-    box-shadow: 0 4px 20px rgba(200,160,80,0.35);
+    box-shadow: 0 4px 20px rgba(42,82,152,0.25);
     transition: all 0.2s ease;
   }
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(200,160,80,0.5);
+    box-shadow: 0 8px 32px rgba(42,82,152,0.35);
   }
   .btn-primary:disabled {
-    background: rgba(255,255,255,0.06);
-    color: #445566;
+    background: #f0f2ee;
+    color: #aab8a8;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -207,7 +207,7 @@ const GLOBAL_STYLE = `
   .btn-ghost {
     padding: 12px 24px;
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid #c8d0c0;
     border-radius: 10px;
     color: #667788;
     font-size: 13px;
@@ -216,8 +216,8 @@ const GLOBAL_STYLE = `
     transition: all 0.18s ease;
   }
   .btn-ghost:hover {
-    border-color: rgba(200,160,80,0.3);
-    color: #c8a050;
+    border-color: rgba(42,82,152,0.25);
+    color: #2a5298;
   }
 
   .score-bar-fill {
@@ -229,7 +229,7 @@ const GLOBAL_STYLE = `
 
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(200,160,80,0.3); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb { background: rgba(42,82,152,0.25); border-radius: 2px; }
 `;
 
 function GlobalStyles() {
@@ -932,7 +932,7 @@ function ScoreBar({ label, score, index = 0 }) {
     <div className="anim-fadeup" style={{ marginBottom: 16, animationDelay: `${index * 0.06}s` }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
         <span style={{ fontSize: 12, color: "#9ab", fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>{label}</span>
-        <span style={{ fontSize: 13, color, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{score}<span style={{ fontSize: 10, color: "#445566" }}>/10</span></span>
+        <span style={{ fontSize: 13, color, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{score}<span style={{ fontSize: 10, color: "#aab0a8" }}>/10</span></span>
       </div>
       <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
         <div className="score-bar-fill" style={{ '--bar-w': `${score * 10}%`, width: `${score * 10}%`, background: `linear-gradient(90deg, ${color}66, ${color})` }} />
@@ -957,10 +957,10 @@ function GapCard({ gap }) {
   return (
     <div style={{ background: s.bg, border: `1px solid ${s.border}`, borderRadius: 10, padding: "14px 18px", marginBottom: 9 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
-        <div style={{ fontWeight: "bold", color: "#e8dcc8", fontSize: 13 }}>{gap.area}</div>
+        <div style={{ fontWeight: "bold", color: "#1a2030", fontSize: 13 }}>{gap.area}</div>
         <span style={{ fontSize: 9, fontWeight: "bold", letterSpacing: 1, color: s.text, background: s.border, padding: "3px 7px", borderRadius: 4, whiteSpace: "nowrap", marginLeft: 10 }}>{gap.tag}</span>
       </div>
-      <div style={{ fontSize: 12, color: "#aabbcc", lineHeight: 1.7 }}>{gap.reason}</div>
+      <div style={{ fontSize: 12, color: "#556070", lineHeight: 1.7 }}>{gap.reason}</div>
     </div>
   );
 }
@@ -969,8 +969,8 @@ function InsightCard({ insight }) {
   return (
     <div style={{ background: "rgba(100,160,220,0.07)", border: "1px solid rgba(100,160,220,0.2)", borderRadius: 10, padding: "14px 18px", marginBottom: 9 }}>
       <div style={{ fontSize: 20, marginBottom: 6 }}>{insight.icon}</div>
-      <div style={{ fontWeight: "bold", color: "#c8d8e8", fontSize: 13, marginBottom: 6 }}>{insight.title}</div>
-      <div style={{ fontSize: 12, color: "#8899aa", lineHeight: 1.7 }}>{insight.body}</div>
+      <div style={{ fontWeight: "bold", color: "#445060", fontSize: 13, marginBottom: 6 }}>{insight.title}</div>
+      <div style={{ fontSize: 12, color: "#889098", lineHeight: 1.7 }}>{insight.body}</div>
     </div>
   );
 }
@@ -979,7 +979,7 @@ function MedicareEduCard({ edu, lang }) {
   const [openSection, setOpenSection] = useState(null);
   const toggle = (s) => setOpenSection(prev => prev === s ? null : s);
   const accentBlue = "#4a90d9";
-  const accentGold = "#c8a050";
+  const accentGold = "#2a5298";
 
   return (
     <div style={{ background: "rgba(74,144,217,0.07)", border: "1px solid rgba(74,144,217,0.3)", borderRadius: 14, marginBottom: 20, overflow: "hidden" }}>
@@ -990,12 +990,12 @@ function MedicareEduCard({ edu, lang }) {
       </div>
       {openSection === "medicare" && (
         <div style={{ padding: "16px 20px" }}>
-          <p style={{ fontSize: 12, color: "#aabbcc", lineHeight: 1.8, margin: "0 0 16px" }}>{edu.whatIsMedicare.body}</p>
+          <p style={{ fontSize: 12, color: "#556070", lineHeight: 1.8, margin: "0 0 16px" }}>{edu.whatIsMedicare.body}</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
             {edu.whatIsMedicare.parts.map(p => (
               <div key={p.part} style={{ background: "rgba(74,144,217,0.08)", border: "1px solid rgba(74,144,217,0.2)", borderRadius: 9, padding: "12px 14px" }}>
                 <div style={{ color: accentGold, fontWeight: "bold", fontSize: 13, marginBottom: 3 }}>{p.part} — {p.name}</div>
-                <div style={{ fontSize: 11, color: "#8899aa", lineHeight: 1.6 }}>{p.detail}</div>
+                <div style={{ fontSize: 11, color: "#889098", lineHeight: 1.6 }}>{p.detail}</div>
               </div>
             ))}
           </div>
@@ -1015,25 +1015,25 @@ function MedicareEduCard({ edu, lang }) {
       </div>
       {openSection === "ss" && (
         <div style={{ padding: "0 20px 18px" }}>
-          <p style={{ fontSize: 12, color: "#aabbcc", lineHeight: 1.8, margin: "0 0 14px" }}>{edu.whatIsSS.body}</p>
+          <p style={{ fontSize: 12, color: "#556070", lineHeight: 1.8, margin: "0 0 14px" }}>{edu.whatIsSS.body}</p>
 
           {/* Claiming Strategy Table */}
           <div style={{ marginBottom: 16 }}>
             {edu.whatIsSS.claimingStrategy.map((row, i) => (
               <div key={i} style={{ display: "flex", gap: 14, padding: "10px 14px", background: i % 2 === 0 ? "rgba(74,144,217,0.06)" : "rgba(74,144,217,0.03)", borderRadius: 7, marginBottom: 5 }}>
                 <div style={{ minWidth: 120, fontWeight: "bold", color: accentGold, fontSize: 12 }}>{row.age}</div>
-                <div style={{ fontSize: 12, color: "#aabbcc" }}>{row.result}</div>
+                <div style={{ fontSize: 12, color: "#556070" }}>{row.result}</div>
               </div>
             ))}
           </div>
 
           {/* Step by Step */}
-          <div style={{ background: "rgba(200,160,80,0.07)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 9, padding: "12px 16px" }}>
+          <div style={{ background: "rgba(42,82,152,0.06)", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 9, padding: "12px 16px" }}>
             <div style={{ fontWeight: "bold", color: accentGold, fontSize: 12, marginBottom: 10 }}>{edu.whatIsSS.howToAccess.title}</div>
             {edu.whatIsSS.howToAccess.steps.map((step, i) => (
               <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
-                <div style={{ minWidth: 22, height: 22, borderRadius: "50%", background: accentGold, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: "bold", color: "#0a1628", flexShrink: 0 }}>{i + 1}</div>
-                <div style={{ fontSize: 12, color: "#aabbcc", lineHeight: 1.6 }}>{step}</div>
+                <div style={{ minWidth: 22, height: 22, borderRadius: "50%", background: accentGold, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: "bold", color: "#ffffff", flexShrink: 0 }}>{i + 1}</div>
+                <div style={{ fontSize: 12, color: "#556070", lineHeight: 1.6 }}>{step}</div>
               </div>
             ))}
             <div style={{ marginTop: 10, padding: "8px 12px", background: "rgba(74,144,217,0.1)", borderRadius: 6, fontSize: 11, color: "#64a0dc" }}>
@@ -1051,26 +1051,26 @@ function BBEduCard({ edu, lang }) {
   const [openIdx, setOpenIdx] = useState(null);
   const toggle = (i) => setOpenIdx(prev => prev === i ? null : i);
   return (
-    <div style={{ background: "rgba(200,160,80,0.05)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 14, overflow: "hidden", marginBottom: 20 }}>
+    <div style={{ background: "rgba(42,82,152,0.04)", border: "1px solid rgba(42,82,152,0.2)", borderRadius: 14, overflow: "hidden", marginBottom: 20 }}>
       {/* Header */}
-      <div style={{ background: "linear-gradient(135deg, rgba(200,160,80,0.15), rgba(200,160,80,0.05))", padding: "18px 20px", borderBottom: "1px solid rgba(200,160,80,0.15)" }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#e8c878", marginBottom: 4, fontFamily: "'Playfair Display', serif" }}>{edu.title}</div>
-        <div style={{ fontSize: 11, color: "#c8a050", marginBottom: 10, letterSpacing: 0.5 }}>{edu.subtitle}</div>
-        <p style={{ fontSize: 13, color: "#8899aa", lineHeight: 1.75, margin: 0 }}>{edu.summary}</p>
+      <div style={{ background: "linear-gradient(135deg, rgba(42,82,152,0.12), rgba(42,82,152,0.04))", padding: "18px 20px", borderBottom: "1px solid rgba(42,82,152,0.12)" }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: "#4a72b8", marginBottom: 4, fontFamily: "'Playfair Display', serif" }}>{edu.title}</div>
+        <div style={{ fontSize: 11, color: "#2a5298", marginBottom: 10, letterSpacing: 0.5 }}>{edu.subtitle}</div>
+        <p style={{ fontSize: 13, color: "#889098", lineHeight: 1.75, margin: 0 }}>{edu.summary}</p>
       </div>
       {/* Sections */}
       {edu.sections.map((sec, i) => (
-        <div key={i} style={{ borderBottom: i < edu.sections.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+        <div key={i} style={{ borderBottom: i < edu.sections.length - 1 ? "1px solid #d0d8c8" : "none" }}>
           <div onClick={() => toggle(i)} style={{ padding: "14px 20px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "background 0.2s" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 18 }}>{sec.icon}</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: "#c8d8e8" }}>{sec.title}</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#445060" }}>{sec.title}</span>
             </div>
-            <span style={{ color: "#c8a050", fontSize: 12 }}>{openIdx === i ? "▲" : "▼"}</span>
+            <span style={{ color: "#2a5298", fontSize: 12 }}>{openIdx === i ? "▲" : "▼"}</span>
           </div>
           {openIdx === i && (
             <div style={{ padding: "4px 20px 16px 52px" }}>
-              <p style={{ fontSize: 13, color: "#8899aa", lineHeight: 1.8, margin: 0 }}>{sec.body}</p>
+              <p style={{ fontSize: 13, color: "#889098", lineHeight: 1.8, margin: 0 }}>{sec.body}</p>
             </div>
           )}
         </div>
@@ -1084,12 +1084,12 @@ function LTCEduCard({ edu, lang }) {
   const toggle = (s) => setOpenSection(prev => prev === s ? null : s);
   const accentRed = "#e05050";
   const accentGreen = "#4caf82";
-  const accentGold = "#c8a050";
+  const accentGold = "#2a5298";
 
   const Section = ({ id, title, children }) => (
-    <div style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+    <div style={{ borderBottom: "1px solid #dde5d8" }}>
       <div onClick={() => toggle(id)} style={{ padding: "15px 20px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ fontWeight: "bold", color: "#e8c878", fontSize: 13 }}>{title}</div>
+        <div style={{ fontWeight: "bold", color: "#4a72b8", fontSize: 13 }}>{title}</div>
         <div style={{ color: accentGold, fontSize: 14 }}>{openSection === id ? "▲" : "▼"}</div>
       </div>
       {openSection === id && <div style={{ padding: "4px 20px 18px" }}>{children}</div>}
@@ -1101,12 +1101,12 @@ function LTCEduCard({ edu, lang }) {
 
       {/* ADLs */}
       <Section id="adls" title={edu.adls.title}>
-        <p style={{ fontSize: 12, color: "#aabbcc", lineHeight: 1.7, margin: "0 0 14px" }}>{edu.adls.subtitle}</p>
+        <p style={{ fontSize: 12, color: "#556070", lineHeight: 1.7, margin: "0 0 14px" }}>{edu.adls.subtitle}</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 10 }}>
           {edu.adls.items.map((item, i) => (
             <div key={i} style={{ background: "rgba(232,160,80,0.08)", border: "1px solid rgba(232,160,80,0.2)", borderRadius: 9, padding: "12px 8px", textAlign: "center" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }}>{item.icon}</div>
-              <div style={{ fontSize: 11, color: "#c8d8e8", fontWeight: "bold" }}>{item.label}</div>
+              <div style={{ fontSize: 11, color: "#445060", fontWeight: "bold" }}>{item.label}</div>
             </div>
           ))}
         </div>
@@ -1119,7 +1119,7 @@ function LTCEduCard({ edu, lang }) {
       <Section id="causes" title={edu.causes.title}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
           {edu.causes.items.map((item, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", background: "rgba(255,255,255,0.03)", borderRadius: 7, fontSize: 12, color: "#aabbcc" }}>
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", background: "rgba(255,255,255,0.03)", borderRadius: 7, fontSize: 12, color: "#556070" }}>
               <span style={{ color: accentRed, fontSize: 10 }}>●</span>{item}
             </div>
           ))}
@@ -1135,8 +1135,8 @@ function LTCEduCard({ edu, lang }) {
           {edu.costs.items.map((item, i) => (
             <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.03)", border: `1px solid ${item.color}33`, borderRadius: 9, padding: "12px 16px" }}>
               <div>
-                <div style={{ fontWeight: "bold", color: "#e8dcc8", fontSize: 12, marginBottom: 2 }}>{item.label}</div>
-                <div style={{ fontSize: 10, color: "#667788" }}>{item.note}</div>
+                <div style={{ fontWeight: "bold", color: "#1a2030", fontSize: 12, marginBottom: 2 }}>{item.label}</div>
+                <div style={{ fontSize: 10, color: "#889098" }}>{item.note}</div>
               </div>
               <div style={{ fontWeight: "bold", color: item.color, fontSize: 13, whiteSpace: "nowrap", marginLeft: 12 }}>{item.cost}</div>
             </div>
@@ -1153,7 +1153,7 @@ function LTCEduCard({ edu, lang }) {
           {edu.myths.items.map((item, i) => (
             <div key={i} style={{ background: "rgba(232,80,80,0.07)", border: "1px solid rgba(232,80,80,0.2)", borderRadius: 9, padding: "12px 14px" }}>
               <div style={{ fontWeight: "bold", color: "#e08080", fontSize: 12, marginBottom: 4 }}>❌ {item.label}</div>
-              <div style={{ fontSize: 11, color: "#8899aa", lineHeight: 1.6 }}>{item.reason}</div>
+              <div style={{ fontSize: 11, color: "#889098", lineHeight: 1.6 }}>{item.reason}</div>
             </div>
           ))}
         </div>
@@ -1301,11 +1301,11 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
       
 {/* ── PROTECTION GAUGE ── */}
       <div style={{ textAlign: "center", marginBottom: 28 }}>
-        <div style={{ fontSize: 10, letterSpacing: 3, color: "#c8a050", textTransform: "uppercase", marginBottom: 6 }}>
+        <div style={{ fontSize: 10, letterSpacing: 3, color: "#2a5298", textTransform: "uppercase", marginBottom: 6 }}>
           {lang === "en" ? "YOUR FINANCIAL PROTECTION ASSESSMENT" : "TU EVALUACIÓN DE PROTECCIÓN FINANCIERA"}
         </div>
         {clientName && (
-          <div style={{ fontSize: 15, color: "#c8a050", marginBottom: 4 }}>👤 {clientName}</div>
+          <div style={{ fontSize: 15, color: "#2a5298", marginBottom: 4 }}>👤 {clientName}</div>
         )}
       </div>
 
@@ -1371,7 +1371,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
           <h3 style={{ color: "#4a90d9", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>
             🏛️ {lang === "en" ? "Medicare & Social Security — Education Center" : "Medicare y Seguro Social — Centro Educativo"}
           </h3>
-          <p style={{ fontSize: 11, color: "#8899aa", margin: "0 0 10px" }}>
+          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 10px" }}>
             {lang === "en" ? "Tap each section to expand and learn." : "Toca cada sección para expandir y aprender."}
           </p>
           <MedicareEduCard edu={medicareEducation} lang={lang} />
@@ -1381,12 +1381,12 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
       {showBBEdu && bbEducation && (
         <div style={{ marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-            <div style={{ width: 3, height: 16, borderRadius: 2, background: "#c8a050" }} />
-            <h3 style={{ color: "#c8a050", margin: 0, fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>
+            <div style={{ width: 3, height: 16, borderRadius: 2, background: "#2a5298" }} />
+            <h3 style={{ color: "#2a5298", margin: 0, fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>
               {lang === "en" ? "📜 Tax Law Update — Beautiful Bill" : "📜 Actualización Fiscal — Beautiful Bill"}
             </h3>
           </div>
-          <p style={{ fontSize: 11, color: "#667788", margin: "0 0 10px", fontStyle: "italic" }}>
+          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 10px", fontStyle: "italic" }}>
             {lang === "en" ? "Based on your answers, here's what you should know about the 2025 tax changes." : "Basado en tus respuestas, esto es lo que debes saber sobre los cambios fiscales de 2025."}
           </p>
           <BBEduCard edu={bbEducation} lang={lang} />
@@ -1398,7 +1398,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
           <h3 style={{ color: "#e05050", margin: "0 0 8px", fontSize: 12, letterSpacing: 1 }}>
             🏥 {lang === "en" ? "Long-Term Care — Education Center" : "Cuidado a Largo Plazo — Centro Educativo"}
           </h3>
-          <p style={{ fontSize: 11, color: "#8899aa", margin: "0 0 10px" }}>
+          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 10px" }}>
             {lang === "en"
               ? "You don't have LTC coverage. Learn what it is, what it costs, and your options."
               : "No tienes cobertura de LTC. Aprende qué es, cuánto cuesta y cuáles son tus opciones."}
@@ -1408,46 +1408,46 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
       )}
 
       {/* ── BUDGET PLAN ── */}
-      <div style={{ background: "linear-gradient(135deg, rgba(200,160,80,0.07), rgba(200,160,80,0.02))", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 18, padding: "24px 24px", marginBottom: 18 }}>
+      <div style={{ background: "linear-gradient(135deg, rgba(42,82,152,0.06), rgba(200,160,80,0.02))", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 18, padding: "24px 24px", marginBottom: 18 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-          <div style={{ width: 3, height: 18, borderRadius: 2, background: "linear-gradient(180deg, #c8a050, #e8c878)" }} />
-          <h3 className="fa-header" style={{ color: "#e8c878", margin: 0, fontSize: 14, fontWeight: 600 }}>{t.budgetTitle}</h3>
+          <div style={{ width: 3, height: 18, borderRadius: 2, background: "linear-gradient(180deg, #2a5298, #4a72b8)" }} />
+          <h3 className="fa-header" style={{ color: "#4a72b8", margin: 0, fontSize: 14, fontWeight: 600 }}>{t.budgetTitle}</h3>
         </div>
-        <p style={{ color: "#445566", fontSize: 11, margin: "0 0 18px", paddingLeft: 11 }}>{t.budgetSubtitle} <strong style={{ color: "#c8a050" }}>{budget}{t.perMonth}</strong></p>
+        <p style={{ color: "#aab0a8", fontSize: 11, margin: "0 0 18px", paddingLeft: 11 }}>{t.budgetSubtitle} <strong style={{ color: "#2a5298" }}>{budget}{t.perMonth}</strong></p>
         {budgetPlan.map((item, i) => (
           <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 12px", borderRadius: 10, background: i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent", marginBottom: 4 }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 500, color: "#d0c8b8", fontSize: 12, marginBottom: 1 }}>{item.item}</div>
-              <div style={{ fontSize: 10, color: "#445566" }}>{item.note}</div>
+              <div style={{ fontWeight: 500, color: "#2a3040", fontSize: 12, marginBottom: 1 }}>{item.item}</div>
+              <div style={{ fontSize: 10, color: "#aab0a8" }}>{item.note}</div>
             </div>
-            <div style={{ color: "#c8a050", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap", marginLeft: 12, background: "rgba(200,160,80,0.08)", borderRadius: 8, padding: "3px 10px" }}>{item.amount}</div>
+            <div style={{ color: "#2a5298", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap", marginLeft: 12, background: "rgba(42,82,152,0.07)", borderRadius: 8, padding: "3px 10px" }}>{item.amount}</div>
           </div>
         ))}
       </div>
 
       {/* ── KEY FACTS ── */}
-      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 18, padding: "20px 24px", marginBottom: 28 }}>
+      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #d0d8c8", borderRadius: 18, padding: "20px 24px", marginBottom: 28 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
           <div style={{ width: 3, height: 16, borderRadius: 2, background: "#4a90d9" }} />
           <h3 style={{ color: "#4a90d9", margin: 0, fontSize: 11, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>{t.factsTitle}</h3>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
           {t.facts.map(([stat, desc]) => (
-            <div key={stat} style={{ background: "rgba(200,160,80,0.05)", border: "1px solid rgba(200,160,80,0.1)", borderRadius: 12, padding: "12px 14px" }}>
-              <div className="fa-header" style={{ fontSize: 18, color: "#c8a050", fontWeight: 700, marginBottom: 4 }}>{stat}</div>
-              <div style={{ fontSize: 10, color: "#445566", lineHeight: 1.5 }}>{desc}</div>
+            <div key={stat} style={{ background: "rgba(42,82,152,0.04)", border: "1px solid rgba(42,82,152,0.09)", borderRadius: 12, padding: "12px 14px" }}>
+              <div className="fa-header" style={{ fontSize: 18, color: "#2a5298", fontWeight: 700, marginBottom: 4 }}>{stat}</div>
+              <div style={{ fontSize: 10, color: "#aab0a8", lineHeight: 1.5 }}>{desc}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── CTA BLOCK ── */}
-      <div style={{ background: "linear-gradient(135deg, rgba(200,160,80,0.09), rgba(200,160,80,0.03))", border: "1px solid rgba(200,160,80,0.3)", borderRadius: 20, padding: "28px 24px", marginBottom: 16, textAlign: "center" }}>
-        <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(200,160,80,0.12)", border: "1px solid rgba(200,160,80,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, margin: "0 auto 14px" }}>📞</div>
-        <div className="fa-header" style={{ fontSize: 17, fontWeight: 700, color: "#f0e4c8", marginBottom: 10, letterSpacing: 0.3 }}>
+      <div style={{ background: "linear-gradient(135deg, rgba(42,82,152,0.08), rgba(200,160,80,0.03))", border: "1px solid rgba(42,82,152,0.25)", borderRadius: 20, padding: "28px 24px", marginBottom: 16, textAlign: "center" }}>
+        <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(42,82,152,0.1)", border: "1px solid rgba(42,82,152,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, margin: "0 auto 14px" }}>📞</div>
+        <div className="fa-header" style={{ fontSize: 17, fontWeight: 700, color: "#1a2030", marginBottom: 10, letterSpacing: 0.3 }}>
           {lang === "en" ? "We Will Reach Out to You" : "Nosotros Te Contactaremos"}
         </div>
-        <div style={{ fontSize: 13, color: "#667788", lineHeight: 1.85, marginBottom: 20, maxWidth: 420, margin: "0 auto 20px", fontWeight: 300 }}>
+        <div style={{ fontSize: 13, color: "#889098", lineHeight: 1.85, marginBottom: 20, maxWidth: 420, margin: "0 auto 20px", fontWeight: 300 }}>
           {lang === "en"
             ? `${clientName ? `${clientName}, your` : "Your"} assessment is complete. ${advisorName || "Your advisor"} will review your results and reach out to guide you and present personalized options and strategies for your situation.`
             : `${clientName ? `${clientName}, tu` : "Tu"} evaluación está completa. ${advisorName || "Tu asesor"} revisará tus resultados y se pondrá en contacto contigo para guiarte y presentarte opciones y estrategias personalizadas para tu situación.`}
@@ -1465,7 +1465,7 @@ function PlanDisplay({ plan, lang, clientName, advisorName, onBack, onReset, onF
 
       {/* Legal */}
       <div style={{ textAlign: "center", padding: "10px 16px", marginBottom: 20 }}>
-        <div style={{ fontSize: 9, color: "#1e2c3a", lineHeight: 1.7 }}>
+        <div style={{ fontSize: 9, color: "#dde5d8", lineHeight: 1.7 }}>
           {lang === "en"
             ? `This assessment is for informational purposes. ${advisorName ? `${advisorName}` : "Your advisor"} will be in touch with you to provide personalized recommendations from our team of licensed professionals.`
             : `Esta evaluación es con fines informativos. ${advisorName ? `${advisorName}` : "Tu asesor"} se pondrá en contacto contigo para brindarte recomendaciones personalizadas de nuestro equipo de profesionales con licencia.`}
@@ -1911,7 +1911,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
       { icon: "⚰️", stat: "$12,000", text: "is the average funeral cost. 68% of families have no plan — the bill goes straight to grieving relatives.", color: "#9988cc" },
       { icon: "💸", stat: "47%", text: "of Americans can't cover a $500 emergency. One unexpected event away from financial collapse.", color: "#e05050" },
       { icon: "📉", stat: "30%", text: "of people over 50 have zero retirement savings. Social Security alone averages only $1,976/month.", color: "#e8a050" },
-      { icon: "⏰", stat: "The truth?", text: "Most people don't think about financial protection until life happens. And when life happens — it's not too late, but the road becomes much harder. The best time to protect your family was yesterday. The second best time is right now.", color: "#c8a050", isFinal: true },
+      { icon: "⏰", stat: "The truth?", text: "Most people don't think about financial protection until life happens. And when life happens — it's not too late, but the road becomes much harder. The best time to protect your family was yesterday. The second best time is right now.", color: "#2a5298", isFinal: true },
     ],
     es: [
       { icon: "👨‍👩‍👧", stat: "1 de cada 4", text: "adultos que trabajan quedará discapacitado antes de retirarse — la mayoría no tiene protección de ingresos.", color: "#e05050" },
@@ -1919,7 +1919,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
       { icon: "⚰️", stat: "$12,000", text: "es el costo promedio de un funeral. El 68% de las familias no tienen plan — la factura llega en el peor momento.", color: "#9988cc" },
       { icon: "💸", stat: "47%", text: "de los estadounidenses no puede cubrir una emergencia de $500. Un evento inesperado los separa del colapso financiero.", color: "#e05050" },
       { icon: "📉", stat: "30%", text: "de las personas mayores de 50 no tienen ahorros para el retiro. El Seguro Social promedia solo $1,976/mes.", color: "#e8a050" },
-      { icon: "⏰", stat: "La verdad", text: "La mayoría de las personas no piensa en la protección financiera hasta que la vida ocurre. Y cuando ocurre — no es demasiado tarde, pero el camino se vuelve mucho más difícil. El mejor momento para proteger a tu familia fue ayer. El segundo mejor momento es ahora mismo.", color: "#c8a050", isFinal: true },
+      { icon: "⏰", stat: "La verdad", text: "La mayoría de las personas no piensa en la protección financiera hasta que la vida ocurre. Y cuando ocurre — no es demasiado tarde, pero el camino se vuelve mucho más difícil. El mejor momento para proteger a tu familia fue ayer. El segundo mejor momento es ahora mismo.", color: "#2a5298", isFinal: true },
     ],
   };
 
@@ -1941,7 +1941,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
         <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(160deg, rgba(5,10,18,0.7) 0%, rgba(8,14,26,0.85) 50%, rgba(5,10,18,0.95) 100%)" }} />
 
         {/* Gold ambient glow center */}
-        <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,160,80,0.08) 0%, transparent 65%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 1, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(42,82,152,0.07) 0%, transparent 65%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 1, pointerEvents: "none" }} />
 
         {/* CONTENT */}
         <div className="anim-scalein" style={{ textAlign: "center", maxWidth: 520, position: "relative", zIndex: 2 }}>
@@ -1949,45 +1949,45 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
           {/* 2. BIGGER LOGO — with glow ring */}
           <div style={{
             width: 100, height: 100, borderRadius: 28,
-            background: "linear-gradient(135deg, rgba(200,160,80,0.18), rgba(200,160,80,0.06))",
-            border: "1px solid rgba(200,160,80,0.4)",
+            background: "linear-gradient(135deg, rgba(42,82,152,0.15), rgba(42,82,152,0.05))",
+            border: "1px solid rgba(42,82,152,0.3)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 48, margin: "0 auto 28px",
-            boxShadow: "0 0 60px rgba(200,160,80,0.25), 0 0 120px rgba(200,160,80,0.1)"
+            boxShadow: "0 0 60px rgba(42,82,152,0.2), 0 0 120px rgba(42,82,152,0.09)"
           }}>⚖️</div>
 
           {/* Title */}
           <h1 className="fa-header gold-shimmer" style={{ fontSize: 30, margin: "0 0 8px", lineHeight: 1.15, letterSpacing: 0.3 }}>
             Financial Protection Advisor
           </h1>
-          <p style={{ fontSize: 14, color: "#667788", margin: "0 0 18px", fontWeight: 300, letterSpacing: 0.3 }}>
+          <p style={{ fontSize: 14, color: "#889098", margin: "0 0 18px", fontWeight: 300, letterSpacing: 0.3 }}>
             Asesor de Protección Financiera
           </p>
 
           {/* 4. TAGLINE — powerful, emotional */}
           <div className="anim-fadeup delay-1" style={{ marginBottom: 28 }}>
-            <p style={{ fontSize: 17, color: "#c8d8e8", fontWeight: 300, lineHeight: 1.75, margin: "0 auto", maxWidth: 400, fontStyle: "italic" }}>
+            <p style={{ fontSize: 17, color: "#445060", fontWeight: 300, lineHeight: 1.75, margin: "0 auto", maxWidth: 400, fontStyle: "italic" }}>
               "Helping families protect what matters most —<br/>
-              <span style={{ color: "#e8c878", fontWeight: 500, fontStyle: "normal" }}>your income, your future, your legacy.</span>"
+              <span style={{ color: "#4a72b8", fontWeight: 500, fontStyle: "normal" }}>your income, your future, your legacy.</span>"
             </p>
           </div>
 
           {/* Client/advisor badge */}
           {clientName && (
-            <div className="anim-fadeup delay-2" style={{ margin: "0 auto 20px", padding: "9px 24px", background: "rgba(200,160,80,0.08)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 24, display: "inline-block" }}>
-              <span style={{ fontSize: 12, color: "#c8a050", fontWeight: 500 }}>
-                Prepared for <strong style={{ color: "#e8c878" }}>{clientName}</strong>
+            <div className="anim-fadeup delay-2" style={{ margin: "0 auto 20px", padding: "9px 24px", background: "rgba(42,82,152,0.07)", border: "1px solid rgba(42,82,152,0.2)", borderRadius: 24, display: "inline-block" }}>
+              <span style={{ fontSize: 12, color: "#2a5298", fontWeight: 500 }}>
+                Prepared for <strong style={{ color: "#4a72b8" }}>{clientName}</strong>
               </span>
             </div>
           )}
           {advisorName && (
-            <div className="anim-fadeup delay-3" style={{ fontSize: 10, color: "#445566", marginBottom: 28, letterSpacing: 1 }}>
-              Presented by <span style={{ color: "#667788" }}>{advisorName}</span>
+            <div className="anim-fadeup delay-3" style={{ fontSize: 10, color: "#aab0a8", marginBottom: 28, letterSpacing: 1 }}>
+              Presented by <span style={{ color: "#889098" }}>{advisorName}</span>
             </div>
           )}
 
           {/* Language label */}
-          <p style={{ color: "#334455", fontSize: 10, margin: "0 0 16px", letterSpacing: 2.5, textTransform: "uppercase" }}>
+          <p style={{ color: "#c0c8b8", fontSize: 10, margin: "0 0 16px", letterSpacing: 2.5, textTransform: "uppercase" }}>
             Select your language · Selecciona tu idioma
           </p>
 
@@ -1997,16 +1997,16 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
               <button key={code} onClick={() => setLang(code)}
                 style={{
                   padding: "22px 36px", cursor: "pointer", border: "none", borderRadius: 18,
-                  background: "linear-gradient(135deg, #c8a050 0%, #e8c878 50%, #d4a84b 100%)",
-                  boxShadow: "0 6px 32px rgba(200,160,80,0.4), 0 2px 8px rgba(0,0,0,0.4)",
+                  background: "linear-gradient(135deg, #2a5298 0%, #4a72b8 50%, #d4a84b 100%)",
+                  boxShadow: "0 6px 32px rgba(42,82,152,0.3), 0 2px 8px rgba(0,0,0,0.4)",
                   transition: "all 0.22s ease", fontFamily: "'DM Sans', sans-serif",
                   minWidth: 160
                 }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(200,160,80,0.6), 0 4px 12px rgba(0,0,0,0.4)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 6px 32px rgba(200,160,80,0.4), 0 2px 8px rgba(0,0,0,0.4)"; }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(42,82,152,0.3), 0 4px 12px rgba(0,0,0,0.4)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 6px 32px rgba(42,82,152,0.3), 0 2px 8px rgba(0,0,0,0.4)"; }}
               >
                 <div style={{ fontSize: 28, marginBottom: 6 }}>{flag}</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#050a12", letterSpacing: 0.3 }}>{label}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#ffffff", letterSpacing: 0.3 }}>{label}</div>
                 <div style={{ fontSize: 10, color: "rgba(5,10,18,0.55)", marginTop: 3, letterSpacing: 0.5 }}>{sub}</div>
               </button>
             ))}
@@ -2015,7 +2015,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
           {/* Trust badges */}
           <div className="anim-fadeup delay-4" style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 32, flexWrap: "wrap" }}>
             {["🔒 100% Confidential", "📋 Takes ~15 minutes", "🆓 Completely Free"].map(badge => (
-              <span key={badge} style={{ fontSize: 10, color: "#445566", letterSpacing: 0.5 }}>{badge}</span>
+              <span key={badge} style={{ fontSize: 10, color: "#aab0a8", letterSpacing: 0.5 }}>{badge}</span>
             ))}
           </div>
         </div>
@@ -2027,20 +2027,20 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
   if (!seenIntroMsg) {
     const intro = introContent[lang];
     return (
-      <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 60%, #080e1a 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "28px 20px", position: "relative", overflow: "hidden" }}>
+      <div style={{ minHeight: "100vh", background: "#f4f6f2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "28px 20px", position: "relative", overflow: "hidden" }}>
         <GlobalStyles />
-        <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,160,80,0.04) 0%, transparent 65%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(42,82,152,0.03) 0%, transparent 65%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)", pointerEvents: "none" }} />
 
         <div className="anim-fadeup" style={{ maxWidth: 560, width: "100%", position: "relative", zIndex: 1 }}>
           <div style={{ textAlign: "center", marginBottom: 30 }}>
-            <div style={{ width: 60, height: 60, borderRadius: 18, background: "linear-gradient(135deg, rgba(200,160,80,0.15), rgba(200,160,80,0.05))", border: "1px solid rgba(200,160,80,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, margin: "0 auto 18px", boxShadow: "0 0 30px rgba(200,160,80,0.12)" }}>🤝</div>
-            <h1 className="fa-header" style={{ fontSize: 21, color: "#f0e4c8", margin: "0 0 8px", lineHeight: 1.3, fontWeight: 700 }}>{intro.title}</h1>
-            {clientName && <div style={{ fontSize: 12, color: "#c8a050", fontWeight: 500 }}>👤 {clientName}</div>}
+            <div style={{ width: 60, height: 60, borderRadius: 18, background: "linear-gradient(135deg, rgba(42,82,152,0.12), rgba(42,82,152,0.04))", border: "1px solid rgba(42,82,152,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, margin: "0 auto 18px", boxShadow: "0 0 30px rgba(42,82,152,0.1)" }}>🤝</div>
+            <h1 className="fa-header" style={{ fontSize: 21, color: "#1a2030", margin: "0 0 8px", lineHeight: 1.3, fontWeight: 700 }}>{intro.title}</h1>
+            {clientName && <div style={{ fontSize: 12, color: "#2a5298", fontWeight: 500 }}>👤 {clientName}</div>}
           </div>
 
           {/* ── CONTEXT PARAGRAPH ── */}
-          <div style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(200,160,80,0.14)", borderRadius: 14, padding: "18px 22px", marginBottom: 20, backdropFilter: "blur(8px)" }}>
-            <p style={{ fontSize: 13, color: "#c8d8e8", lineHeight: 1.9, margin: 0, fontWeight: 400 }}>
+          <div style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(42,82,152,0.12)", borderRadius: 14, padding: "18px 22px", marginBottom: 20, backdropFilter: "blur(8px)" }}>
+            <p style={{ fontSize: 13, color: "#445060", lineHeight: 1.9, margin: 0, fontWeight: 400 }}>
               {lang === "en"
                 ? "Beyond tax preparation, our mission is to make sure you understand where you stand today — not just with taxes, but with your overall financial protection. This short survey helps us identify gaps, opportunities, and strategies tailored specifically to your situation."
                 : "Más allá de la preparación de impuestos, nuestra misión es asegurarnos de que entiendas dónde estás hoy — no solo con tus taxes, sino con tu protección financiera en general. Esta breve encuesta nos ayuda a identificar brechas, oportunidades y estrategias adaptadas específicamente a tu situación."}
@@ -2053,33 +2053,33 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
           </div>
 
           {advisorName && (
-            <div style={{ textAlign: "center", fontSize: 11, color: "#334455", marginBottom: 20, letterSpacing: 0.5 }}>
+            <div style={{ textAlign: "center", fontSize: 11, color: "#c0c8b8", marginBottom: 20, letterSpacing: 0.5 }}>
               — {advisorName}
             </div>
           )}
 {/* ── BEFORE YOU BEGIN ── */}
           <div style={{
-            background: "rgba(200,160,80,0.06)",
-            border: "1px solid rgba(200,160,80,0.2)",
+            background: "rgba(42,82,152,0.05)",
+            border: "1px solid rgba(42,82,152,0.18)",
             borderRadius: 14,
             padding: "18px 22px",
             marginBottom: 24,
             textAlign: "left",
           }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#e8c878", marginBottom: 10, textAlign: "center" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#4a72b8", marginBottom: 10, textAlign: "center" }}>
               {lang === "en" ? "⏱️ Before You Begin" : "⏱️ Antes de Comenzar"}
             </div>
-            <div style={{ fontSize: 11, color: "#c8d8e8", lineHeight: 1.8, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, color: "#445060", lineHeight: 1.8, marginBottom: 10 }}>
               {lang === "en"
                 ? "This assessment takes about 10–15 minutes. Please set aside uninterrupted time — once you start, your answers are not saved, and you will need to complete it in one sitting."
                 : "Esta evaluación toma aproximadamente 10–15 minutos. Por favor aparta un momento sin interrupciones — una vez que comiences, tus respuestas no se guardan, y necesitarás completarla de una sola vez."}
             </div>
-            <div style={{ fontSize: 11, color: "#c8d8e8", lineHeight: 1.8, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, color: "#445060", lineHeight: 1.8, marginBottom: 10 }}>
               {lang === "en"
                 ? "What you're about to answer matters more than you think. Every question is designed to reveal the real gaps in your financial protection. The accuracy of your results depends entirely on your honesty."
                 : "Lo que vas a contestar importa más de lo que crees. Cada pregunta está diseñada para revelar las brechas reales en tu protección financiera. La precisión de tus resultados depende completamente de tu honestidad."}
             </div>
-            <div style={{ fontSize: 11, color: "#e8c878", lineHeight: 1.8, fontWeight: 500, fontStyle: "italic", textAlign: "center" }}>
+            <div style={{ fontSize: 11, color: "#4a72b8", lineHeight: 1.8, fontWeight: 500, fontStyle: "italic", textAlign: "center" }}>
               {lang === "en"
                 ? "No one else can do this for you. Your family's financial security — and your plans and goals for the future or for the unexpected — starts with the truth about where you stand today. Take this seriously — your future self will thank you."
                 : "Nadie más puede hacer esto por ti. La seguridad financiera de tu familia — y tus planes y metas para el futuro o para lo inesperado — comienza con la verdad sobre dónde estás hoy. Tómate esto en serio — tu yo del futuro te lo agradecerá."}
@@ -2100,7 +2100,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
   const isLast = step === slides.length - 1;
 
   return (
-    <div key={step} style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 60%, #080e1a 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "24px 20px", position: "relative", overflow: "hidden" }}>
+    <div key={step} style={{ minHeight: "100vh", background: "#f4f6f2", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "24px 20px", position: "relative", overflow: "hidden" }}>
       <GlobalStyles />
       {/* Ambient color glow that changes with slide */}
       <div style={{ position: "absolute", width: 560, height: 560, borderRadius: "50%", background: `radial-gradient(circle, ${slide.color}0d 0%, transparent 65%)`, top: "50%", left: "50%", transform: "translate(-50%,-50%)", transition: "background 0.7s ease", pointerEvents: "none" }} />
@@ -2131,7 +2131,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
           )}
           {!isLast ? (
             <button onClick={() => setStep(p => p + 1)} className="hover-lift"
-              style={{ padding: "14px 38px", background: `linear-gradient(135deg, ${slide.color}dd, ${slide.color})`, border: "none", borderRadius: 12, color: "#050a12", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: `0 4px 22px ${slide.color}44`, letterSpacing: 0.5, fontFamily: "'DM Sans', sans-serif" }}>
+              style={{ padding: "14px 38px", background: `linear-gradient(135deg, ${slide.color}dd, ${slide.color})`, border: "none", borderRadius: 12, color: "#ffffff", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: `0 4px 22px ${slide.color}44`, letterSpacing: 0.5, fontFamily: "'DM Sans', sans-serif" }}>
               {lang === "en" ? "Next →" : "Siguiente →"}
             </button>
           ) : (
@@ -2142,7 +2142,7 @@ function ImpactScreen({ clientName, advisorName, onContinue }) {
         </div>
 
         {!isLast && (
-          <button onClick={() => onContinue(lang)} style={{ marginTop: 14, background: "transparent", border: "none", color: "#2a3a4a", fontSize: 11, cursor: "pointer", textDecoration: "underline", fontFamily: "'DM Sans', sans-serif" }}>
+          <button onClick={() => onContinue(lang)} style={{ marginTop: 14, background: "transparent", border: "none", color: "#d0d8c8", fontSize: 11, cursor: "pointer", textDecoration: "underline", fontFamily: "'DM Sans', sans-serif" }}>
             {lang === "en" ? "Skip intro" : "Saltar intro"}
           </button>
         )}
@@ -2156,17 +2156,17 @@ function LanguageScreen({ onSelect }) {
   const [hoverEn, setHoverEn] = useState(false);
   const [hoverEs, setHoverEs] = useState(false);
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 50%, #0a1628 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Georgia', serif" }}>
+    <div style={{ minHeight: "100vh", background: "#f4f6f2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Georgia', serif" }}>
       <div style={{ textAlign: "center", padding: "40px 24px" }}>
-        <div style={{ fontSize: 64, marginBottom: 20, filter: "drop-shadow(0 0 20px rgba(200,160,80,0.5))" }}>⚖️</div>
-        <h1 style={{ fontSize: 24, color: "#e8c878", margin: "0 0 6px", letterSpacing: 1 }}>Financial Protection Advisor</h1>
+        <div style={{ fontSize: 64, marginBottom: 20, filter: "drop-shadow(0 0 20px rgba(42,82,152,0.35))" }}>⚖️</div>
+        <h1 style={{ fontSize: 24, color: "#4a72b8", margin: "0 0 6px", letterSpacing: 1 }}>Financial Protection Advisor</h1>
         <h2 style={{ fontSize: 18, color: "#c8b878", margin: "0 0 8px", fontWeight: "normal", letterSpacing: 1 }}>Asesor de Protección Financiera</h2>
-        <p style={{ color: "#8899aa", fontSize: 13, margin: "0 0 50px", letterSpacing: 1 }}>Select your language · Selecciona tu idioma</p>
+        <p style={{ color: "#889098", fontSize: 13, margin: "0 0 50px", letterSpacing: 1 }}>Select your language · Selecciona tu idioma</p>
         <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap" }}>
           {[["en","🇺🇸 English", hoverEn, setHoverEn], ["es","🇪🇸 Español", hoverEs, setHoverEs]].map(([code, label, hover, setHover]) => (
             <button key={code} onClick={() => onSelect(code)}
               onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-              style={{ padding: "22px 48px", fontSize: 18, fontWeight: "bold", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 14, color: "#0a1628", cursor: "pointer", boxShadow: hover ? "0 8px 32px rgba(200,160,80,0.6)" : "0 4px 20px rgba(200,160,80,0.3)", letterSpacing: 1, transform: hover ? "scale(1.06) translateY(-2px)" : "scale(1)", transition: "all 0.25s ease" }}>
+              style={{ padding: "22px 48px", fontSize: 18, fontWeight: "bold", background: "linear-gradient(135deg, #2a5298, #4a72b8)", border: "none", borderRadius: 14, color: "#ffffff", cursor: "pointer", boxShadow: hover ? "0 8px 32px rgba(42,82,152,0.3)" : "0 4px 20px rgba(42,82,152,0.25)", letterSpacing: 1, transform: hover ? "scale(1.06) translateY(-2px)" : "scale(1)", transition: "all 0.25s ease" }}>
               {label}
             </button>
           ))}
@@ -2179,7 +2179,6 @@ function LanguageScreen({ onSelect }) {
 // ─── LTC EDUCATION SCREEN ──────────────────────────────────────────────────────
 function LTCEducationScreen({ lang, onContinue }) {
   const [slide, setSlide] = useState(0);
-  useEffect(() => { const handleKey = (e) => { if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") { if (slide < slides.length - 1) { setSlide(s => s + 1); } else { onContinue(); } } }; window.addEventListener("keydown", handleKey); return () => window.removeEventListener("keydown", handleKey); }, [slide]);
   const isEN = lang === "en";
 
   const slides = [
@@ -2202,11 +2201,11 @@ function LTCEducationScreen({ lang, onContinue }) {
             ].map((item, i) => (
               <div key={i} style={{ background: "rgba(224,80,80,0.1)", border: "1px solid rgba(224,80,80,0.3)", borderRadius: 12, padding: "16px 12px", textAlign: "center" }}>
                 <div style={{ fontSize: 26, fontWeight: "bold", color: "#e05050", marginBottom: 4 }}>{item.stat}</div>
-                <div style={{ fontSize: 11, color: "#8899aa", lineHeight: 1.5 }}>{item.desc}</div>
+                <div style={{ fontSize: 11, color: "#889098", lineHeight: 1.5 }}>{item.desc}</div>
               </div>
             ))}
           </div>
-          <p style={{ fontSize: 13, color: "#8899aa", lineHeight: 1.8, fontStyle: "italic" }}>
+          <p style={{ fontSize: 13, color: "#889098", lineHeight: 1.8, fontStyle: "italic" }}>
             {isEN
               ? "Most people think their health insurance, employer, or Medicare will cover them. The truth may surprise you."
               : "La mayoría cree que su seguro médico, empleador o Medicare los cubrirá. La verdad puede sorprenderte."}
@@ -2223,10 +2222,10 @@ function LTCEducationScreen({ lang, onContinue }) {
         <div>
           <div style={{ textAlign: "center", marginBottom: 20 }}>
             <div style={{ fontSize: 44, marginBottom: 10 }}>🔑</div>
-            <h2 style={{ fontSize: 19, color: "#e8c878", margin: "0 0 8px" }}>
+            <h2 style={{ fontSize: 19, color: "#4a72b8", margin: "0 0 8px" }}>
               {isEN ? "When Do Benefits Activate?" : "¿Cuándo Se Activan los Beneficios?"}
             </h2>
-            <p style={{ fontSize: 12, color: "#8899aa", lineHeight: 1.7, margin: 0 }}>
+            <p style={{ fontSize: 12, color: "#889098", lineHeight: 1.7, margin: 0 }}>
               {isEN
                 ? "Long-term care benefits activate when you can no longer independently perform 2 of the 6 Activities of Daily Living."
                 : "Los beneficios de cuidado a largo plazo se activan cuando ya no puedes realizar de forma independiente 2 de las 6 Actividades de la Vida Diaria."}
@@ -2240,7 +2239,7 @@ function LTCEducationScreen({ lang, onContinue }) {
               { icon: "🍽️", en: "Eating", es: "Comer", color: "#4caf82" },
               { icon: "🚽", en: "Toileting", es: "Usar el baño", color: "#e8a050" },
               { icon: "🔄", en: "Continence", es: "Continencia", color: "#e05050" },
-              { icon: "🚶", en: "Transferring", es: "Moverse", color: "#c8a050" },
+              { icon: "🚶", en: "Transferring", es: "Moverse", color: "#2a5298" },
             ].map((adl, i) => (
               <div key={i} style={{ background: `${adl.color}14`, border: `1px solid ${adl.color}44`, borderRadius: 11, padding: "14px 8px", textAlign: "center" }}>
                 <div style={{ fontSize: 28, marginBottom: 6 }}>{adl.icon}</div>
@@ -2253,7 +2252,7 @@ function LTCEducationScreen({ lang, onContinue }) {
             <div style={{ fontSize: 12, color: "#e8c050", fontWeight: "bold", marginBottom: 4 }}>
               ⚡ {isEN ? "2 out of 6 = Benefits Activate" : "2 de 6 = Los beneficios se activan"}
             </div>
-            <div style={{ fontSize: 11, color: "#8899aa" }}>
+            <div style={{ fontSize: 11, color: "#889098" }}>
               {isEN ? "This can happen at any age — not just when you're old." : "Esto puede ocurrir a cualquier edad — no solo cuando eres mayor."}
             </div>
           </div>
@@ -2290,12 +2289,6 @@ function LTCEducationScreen({ lang, onContinue }) {
         <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${current.accent}33`, borderRadius: 16, padding: "24px 22px", marginBottom: 20 }}>
           {current.content()}
         </div>
-        {/* Navigation Button */}
-        <div style={{ textAlign: "center", marginTop: 8 }}>
-          <button onClick={() => isLast ? onContinue() : setSlide(slide + 1)} style={{ background: `linear-gradient(135deg, ${current.accent}, ${current.accent}cc)`, border: "none", borderRadius: 30, padding: "14px 48px", fontSize: 15, fontWeight: "bold", color: "#0a0e1a", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 0.5, boxShadow: `0 4px 20px ${current.accent}44`, transition: "transform 0.15s ease, box-shadow 0.15s ease" }} onMouseOver={e => { e.target.style.transform="scale(1.04)"; e.target.style.boxShadow=`0 6px 28px ${current.accent}66`; }} onMouseOut={e => { e.target.style.transform="scale(1)"; e.target.style.boxShadow=`0 4px 20px ${current.accent}44`; }}>
-            {isLast ? (isEN ? "I Understand — Let's Continue →" : "Entiendo — Continuemos →") : (isEN ? "Next →" : "Siguiente →")}
-          </button>
-        </div>
       </div>
    </div>
   );
@@ -2304,45 +2297,45 @@ function LTCEducationScreen({ lang, onContinue }) {
 function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
   const isEN = lang === "en";
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", fontFamily: "'Georgia', serif", padding: "32px 20px" }}>
+    <div style={{ minHeight: "100vh", background: "#f4f6f2", fontFamily: "'Georgia', serif", padding: "32px 20px" }}>
       <div style={{ width: "100%", maxWidth: 540, margin: "0 auto" }}>
 
         {/* THANK YOU HEADER */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{ fontSize: 60, marginBottom: 14, filter: "drop-shadow(0 0 24px rgba(200,160,80,0.5))" }}>🙏</div>
-          <h1 style={{ fontSize: 26, color: "#e8c878", margin: "0 0 10px", letterSpacing: 1 }}>
+          <div style={{ fontSize: 60, marginBottom: 14, filter: "drop-shadow(0 0 24px rgba(42,82,152,0.35))" }}>🙏</div>
+          <h1 style={{ fontSize: 26, color: "#4a72b8", margin: "0 0 10px", letterSpacing: 1 }}>
             {isEN ? "Thank You!" : "¡Gracias!"}
           </h1>
           {clientName && (
-            <div style={{ fontSize: 16, color: "#c8a050", marginBottom: 10 }}>
+            <div style={{ fontSize: 16, color: "#2a5298", marginBottom: 10 }}>
               {isEN ? `${clientName}, we received your information.` : `${clientName}, recibimos tu información.`}
             </div>
           )}
         </div>
 
         {/* CONFIRMATION */}
-        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 14, padding: "22px 26px", marginBottom: 16, lineHeight: 1.8 }}>
-          <p style={{ fontSize: 14, color: "#c8d8e8", margin: "0 0 12px" }}>
+        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 14, padding: "22px 26px", marginBottom: 16, lineHeight: 1.8 }}>
+          <p style={{ fontSize: 14, color: "#445060", margin: "0 0 12px" }}>
             {isEN
               ? "Your responses have been recorded. We will carefully review your information and reach out to guide you and present personalized options and strategies for your situation."
               : "Tus respuestas han sido registradas. Revisaremos tu información con cuidado y nos pondremos en contacto contigo para guiarte y presentarte opciones y estrategias personalizadas para tu situación."}
           </p>
-          <p style={{ fontSize: 12, color: "#8899aa", margin: 0 }}>
+          <p style={{ fontSize: 12, color: "#889098", margin: 0 }}>
             {isEN ? "There is nothing more you need to do right now — we will take it from here."
               : "No necesitas hacer nada más por ahora — nosotros nos encargamos a partir de aquí."}
           </p>
         </div>
 
         {advisorName && (
-          <div style={{ textAlign: "center", fontSize: 14, color: "#c8a050", fontStyle: "italic", marginBottom: 28 }}>
+          <div style={{ textAlign: "center", fontSize: 14, color: "#2a5298", fontStyle: "italic", marginBottom: 28 }}>
             — {advisorName}
         </div>  
         )}
-        <div style={{ fontSize: 8, color: "#1a2530", marginTop: 4, letterSpacing: 1, textAlign: "center" }}>v10</div>
+        <div style={{ fontSize: 8, color: "#e8eee4", marginTop: 4, letterSpacing: 1, textAlign: "center" }}>v10</div>
         {/* SIMPLE OPPORTUNITY MENTION */}
-        <div style={{ background: "rgba(200,160,80,0.05)", border: "1px solid rgba(200,160,80,0.18)", borderRadius: 12, padding: "18px 22px", marginBottom: 20, textAlign: "center" }}>
+        <div style={{ background: "rgba(42,82,152,0.04)", border: "1px solid rgba(42,82,152,0.15)", borderRadius: 12, padding: "18px 22px", marginBottom: 20, textAlign: "center" }}>
           <div style={{ fontSize: 22, marginBottom: 10 }}>🤝</div>
-          <p style={{ fontSize: 13, color: "#aabbcc", lineHeight: 1.9, margin: 0 }}>
+          <p style={{ fontSize: 13, color: "#556070", lineHeight: 1.9, margin: 0 }}>
             {isEN
               ? "If at any point you're curious about opportunities to generate extra income and be part of our team, feel free to ask us — we'd love to tell you more."
               : "Si en algún momento tienes curiosidad sobre oportunidades para generar ingresos extras y ser parte de nuestro equipo, no dudes en preguntarnos — con gusto te contamos más."}
@@ -2354,12 +2347,12 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
           <button onClick={() => printReport({ answers: window._fa_answers, plan: window._fa_plan, clientName, advisorName, lang })} style={{ padding: "11px 22px", background: "rgba(100,160,220,0.12)", border: "1px solid rgba(100,160,220,0.3)", borderRadius: 9, color: "#64a0dc", fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
             🖨️ {isEN ? "Download Report" : "Desgargar Reporte"}
           </button>
-          <button onClick={onReset} style={{ padding: "11px 22px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, color: "#8899aa", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
+          <button onClick={onReset} style={{ padding: "11px 22px", background: "rgba(255,255,255,0.04)", border: "1px solid #c8d0c0", borderRadius: 9, color: "#889098", fontSize: 13, cursor: "pointer", fontFamily: "'Georgia', serif" }}>
             {isEN ? "Start New Assessment" : "Nueva Evaluación"}
           </button>
         </div>
 
-        <div style={{ textAlign: "center", fontSize: 10, color: "#2a3a4a", lineHeight: 1.7 }}>
+        <div style={{ textAlign: "center", fontSize: 10, color: "#d0d8c8", lineHeight: 1.7 }}>
           {isEN
             ? `This assessment is for informational purposes. ${advisorName ? `${advisorName}` : "Your advisor"} will be in touch to provide personalized recommendations from our licensed professionals.`
             : `Esta evaluación es con fines informativos. ${advisorName ? `${advisorName}` : "Tu asesor"} se pondrá en contacto para brindarte recomendaciones personalizadas de nuestros profesionales con licencia.`}
@@ -2373,7 +2366,7 @@ function ThanksScreen({ lang, clientName, advisorName, plan, onReset }) {
 // ─── EXPIRED LINK SCREEN ──────────────────────────────────────────────────────
 function ExpiredScreen({ reason }) {
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "20px" }}>
+    <div style={{ minHeight: "100vh", background: "#f4f6f2", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: "20px" }}>
       <GlobalStyles />
       <div style={{ textAlign: "center", maxWidth: 440 }}>
         <div style={{ fontSize: 64, marginBottom: 20, filter: "drop-shadow(0 0 20px rgba(224,80,80,0.4))" }}>
@@ -2382,15 +2375,15 @@ function ExpiredScreen({ reason }) {
         <h1 style={{ fontSize: 22, color: "#e05050", margin: "0 0 12px", fontFamily: "'Playfair Display', serif" }}>
           {reason === "used" ? "Link Already Used" : "Link Expired"}
         </h1>
-        <p style={{ fontSize: 14, color: "#667788", lineHeight: 1.8, margin: "0 0 8px" }}>
+        <p style={{ fontSize: 14, color: "#889098", lineHeight: 1.8, margin: "0 0 8px" }}>
           {reason === "used"
             ? "This survey link has already been completed and can only be used once."
             : "This survey link has expired. Links are valid for 48 hours."}
         </p>
-        <p style={{ fontSize: 13, color: "#445566", lineHeight: 1.7, margin: "0 0 28px" }}>
+        <p style={{ fontSize: 13, color: "#aab0a8", lineHeight: 1.7, margin: "0 0 28px" }}>
           Please contact your advisor to receive a new personalized link.
         </p>
-        <div style={{ background: "rgba(224,80,80,0.06)", border: "1px solid rgba(224,80,80,0.2)", borderRadius: 12, padding: "16px 20px", fontSize: 12, color: "#8899aa", lineHeight: 1.7 }}>
+        <div style={{ background: "rgba(224,80,80,0.06)", border: "1px solid rgba(224,80,80,0.2)", borderRadius: 12, padding: "16px 20px", fontSize: 12, color: "#889098", lineHeight: 1.7 }}>
           {reason === "used"
             ? "¿Español? Este enlace ya fue utilizado. Contacta a tu asesor para recibir uno nuevo."
             : "¿Español? Este enlace ha expirado. Contacta a tu asesor para recibir uno nuevo."}
@@ -2442,28 +2435,28 @@ function AdvisorScreen() {
 
   const inputStyle = {
     width: "100%", padding: "11px 14px", background: "rgba(10,20,40,0.8)",
-    border: "1px solid rgba(200,160,80,0.3)", borderRadius: 8, color: "#e8dcc8",
+    border: "1px solid rgba(42,82,152,0.25)", borderRadius: 8, color: "#1a2030",
     fontSize: 13, outline: "none", boxSizing: "border-box", marginTop: 6,
   };
-  const labelStyle = { fontSize: 12, color: "#8899aa", display: "block", marginTop: 14 };
+  const labelStyle = { fontSize: 12, color: "#889098", display: "block", marginTop: 14 };
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", fontFamily: "'Georgia', serif", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+    <div style={{ minHeight: "100vh", background: "#f4f6f2", fontFamily: "'Georgia', serif", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
       <div style={{ width: "100%", maxWidth: 480 }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 44, marginBottom: 10, filter: "drop-shadow(0 0 20px rgba(200,160,80,0.5))" }}>🔑</div>
-          <h1 style={{ fontSize: 20, color: "#e8c878", margin: "0 0 4px", letterSpacing: 1 }}>Advisor Portal</h1>
-          <p style={{ color: "#667788", fontSize: 12, margin: 0 }}>Generate a personalized survey link for your client</p>
+          <div style={{ fontSize: 44, marginBottom: 10, filter: "drop-shadow(0 0 20px rgba(42,82,152,0.35))" }}>🔑</div>
+          <h1 style={{ fontSize: 20, color: "#4a72b8", margin: "0 0 4px", letterSpacing: 1 }}>Advisor Portal</h1>
+          <p style={{ color: "#889098", fontSize: 12, margin: 0 }}>Generate a personalized survey link for your client</p>
         </div>
 
         {/* Form */}
-        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 14, padding: "24px 24px 28px" }}>
+        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 14, padding: "24px 24px 28px" }}>
           <label style={labelStyle}>Your Name (Advisor) *</label>
           <input style={inputStyle} placeholder="e.g. Maria González" value={advisorName} onChange={e => setAdvisorName(e.target.value)} />
 
           <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "18px 0 4px" }} />
-          <div style={{ fontSize: 11, color: "#c8a050", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Client Info</div>
+          <div style={{ fontSize: 11, color: "#2a5298", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Client Info</div>
 
           <label style={labelStyle}>Client Full Name *</label>
           <input style={inputStyle} placeholder="e.g. Juan Pérez" value={clientName} onChange={e => setClientName(e.target.value)} />
@@ -2479,7 +2472,7 @@ function AdvisorScreen() {
             disabled={!clientName.trim() || !advisorName.trim()}
             style={{
               width: "100%", marginTop: 22, padding: "13px",
-              background: (clientName.trim() && advisorName.trim()) ? "linear-gradient(135deg, #c8a050, #e8c878)" : "rgba(255,255,255,0.06)",
+              background: (clientName.trim() && advisorName.trim()) ? "linear-gradient(135deg, #2a5298, #4a72b8)" : "rgba(255,255,255,0.06)",
               border: "none", borderRadius: 9, color: (clientName.trim() && advisorName.trim()) ? "#0a1628" : "#445566",
               fontSize: 14, fontWeight: "bold", cursor: (clientName.trim() && advisorName.trim()) ? "pointer" : "not-allowed",
               letterSpacing: 1, transition: "all 0.3s",
@@ -2492,11 +2485,11 @@ function AdvisorScreen() {
         {generatedLink && (
           <div style={{ marginTop: 18, background: "rgba(76,175,130,0.08)", border: "1px solid rgba(76,175,130,0.3)", borderRadius: 12, padding: "18px 20px" }}>
             <div style={{ fontSize: 11, color: "#4caf82", fontWeight: "bold", letterSpacing: 1, marginBottom: 10 }}>✅ LINK GENERATED — READY TO SEND</div>
-            <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 7, padding: "10px 12px", fontSize: 10, color: "#8899aa", wordBreak: "break-all", marginBottom: 12, lineHeight: 1.6 }}>
+            <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 7, padding: "10px 12px", fontSize: 10, color: "#889098", wordBreak: "break-all", marginBottom: 12, lineHeight: 1.6 }}>
               {generatedLink}
             </div>
             <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={copyLink} style={{ flex: 1, padding: "10px", background: copied ? "rgba(76,175,130,0.3)" : "rgba(200,160,80,0.15)", border: `1px solid ${copied ? "rgba(76,175,130,0.5)" : "rgba(200,160,80,0.3)"}`, borderRadius: 7, color: copied ? "#4caf82" : "#c8a050", fontSize: 12, fontWeight: "bold", cursor: "pointer", transition: "all 0.3s" }}>
+              <button onClick={copyLink} style={{ flex: 1, padding: "10px", background: copied ? "rgba(76,175,130,0.3)" : "rgba(42,82,152,0.12)", border: `1px solid ${copied ? "rgba(76,175,130,0.5)" : "rgba(42,82,152,0.25)"}`, borderRadius: 7, color: copied ? "#4caf82" : "#2a5298", fontSize: 12, fontWeight: "bold", cursor: "pointer", transition: "all 0.3s" }}>
                 {copied ? "✅ Copied!" : "📋 Copy Link"}
               </button>
               <a href={`https://wa.me/?text=${encodeURIComponent(`Hola ${clientName}, te comparto tu evaluación financiera personalizada: ${generatedLink}`)}`} target="_blank" rel="noreferrer" style={{ flex: 1, padding: "10px", background: "rgba(37,211,102,0.12)", border: "1px solid rgba(37,211,102,0.3)", borderRadius: 7, color: "#25d366", fontSize: 12, fontWeight: "bold", cursor: "pointer", textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
@@ -2506,7 +2499,7 @@ function AdvisorScreen() {
                 ✉️ Email
               </a>
             </div>
-            <div style={{ marginTop: 10, fontSize: 10, color: "#445566", textAlign: "center" }}>
+            <div style={{ marginTop: 10, fontSize: 10, color: "#aab0a8", textAlign: "center" }}>
               The client will see their name and your name throughout the survey
             </div>
           </div>
@@ -2515,7 +2508,7 @@ function AdvisorScreen() {
         {/* TEST SHEET CONNECTION */}
         <div style={{ marginTop: 16, background: "rgba(76,175,130,0.06)", border: "1px solid rgba(76,175,130,0.2)", borderRadius: 12, padding: "16px 20px", marginBottom: 10 }}>
           <div style={{ fontSize: 11, color: "#4caf82", fontWeight: "bold", letterSpacing: 1, marginBottom: 8 }}>🔗 TEST GOOGLE SHEET CONNECTION</div>
-          <p style={{ fontSize: 11, color: "#667788", margin: "0 0 12px", lineHeight: 1.6 }}>
+          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 12px", lineHeight: 1.6 }}>
             Send a test row to Google Sheets right now — no survey needed.
           </p>
           <button
@@ -2537,7 +2530,7 @@ function AdvisorScreen() {
         {/* TEST MODE */}
         <div style={{ marginTop: 16, background: "rgba(100,160,220,0.06)", border: "1px solid rgba(100,160,220,0.2)", borderRadius: 12, padding: "16px 20px" }}>
           <div style={{ fontSize: 11, color: "#4a90d9", fontWeight: "bold", letterSpacing: 1, marginBottom: 8 }}>🧪 TEST MODE — Skip Survey</div>
-          <p style={{ fontSize: 11, color: "#667788", margin: "0 0 12px", lineHeight: 1.6 }}>
+          <p style={{ fontSize: 11, color: "#889098", margin: "0 0 12px", lineHeight: 1.6 }}>
             Jump straight to the final report & PDF without answering all questions.
           </p>
           <button
@@ -2574,7 +2567,7 @@ function AdvisorScreen() {
         </div>
 
         <div style={{ textAlign: "center", marginTop: 16, display: "flex", gap: 20, justifyContent: "center" }}>
-          <a href={window.location.pathname} style={{ fontSize: 10, color: "#445566", textDecoration: "underline", cursor: "pointer" }}>
+          <a href={window.location.pathname} style={{ fontSize: 10, color: "#aab0a8", textDecoration: "underline", cursor: "pointer" }}>
             ← Survey preview
           </a>
           <a href="?mode=dashboard" style={{ fontSize: 10, color: "#4caf82", textDecoration: "underline", cursor: "pointer" }}>
@@ -2867,22 +2860,22 @@ function DashboardScreen() {
 
   const inputStyle = {
     padding: "10px 14px", background: "rgba(10,20,40,0.8)",
-    border: "1px solid rgba(200,160,80,0.3)", borderRadius: 8,
-    color: "#e8dcc8", fontSize: 13, outline: "none", fontFamily: "'DM Sans', sans-serif",
+    border: "1px solid rgba(42,82,152,0.25)", borderRadius: 8,
+    color: "#1a2030", fontSize: 13, outline: "none", fontFamily: "'DM Sans', sans-serif",
   };
 
   // If no URL configured — show setup screen
   if (!sheetUrl) {
     return (
-      <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ minHeight: "100vh", background: "#f4f6f2", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", fontFamily: "'DM Sans', sans-serif" }}>
         <div style={{ maxWidth: 520, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: 28 }}>
             <div style={{ fontSize: 48, marginBottom: 12 }}>📊</div>
-            <h1 style={{ fontSize: 22, color: "#e8c878", margin: "0 0 8px", fontFamily: "'Playfair Display', serif" }}>Client Dashboard</h1>
-            <p style={{ color: "#667788", fontSize: 13, margin: 0 }}>Connect your Google Sheet to see all clients</p>
+            <h1 style={{ fontSize: 22, color: "#4a72b8", margin: "0 0 8px", fontFamily: "'Playfair Display', serif" }}>Client Dashboard</h1>
+            <p style={{ color: "#889098", fontSize: 13, margin: 0 }}>Connect your Google Sheet to see all clients</p>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 14, padding: "24px" }}>
-            <div style={{ fontSize: 12, color: "#c8a050", fontWeight: "bold", letterSpacing: 1, marginBottom: 16 }}>GOOGLE SHEET PUBLISHED URL</div>
+          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 14, padding: "24px" }}>
+            <div style={{ fontSize: 12, color: "#2a5298", fontWeight: "bold", letterSpacing: 1, marginBottom: 16 }}>GOOGLE SHEET PUBLISHED URL</div>
             <input
               style={{ ...inputStyle, width: "100%", boxSizing: "border-box", marginBottom: 12 }}
               placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=tsv"
@@ -2891,18 +2884,18 @@ function DashboardScreen() {
             />
             <button
               onClick={() => { if (urlInput.trim()) { setSheetUrl(urlInput.trim()); loadClients(urlInput.trim()); }}}
-              style={{ width: "100%", padding: "12px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 8, color: "#0a1628", fontSize: 14, fontWeight: "bold", cursor: "pointer" }}>
+              style={{ width: "100%", padding: "12px", background: "linear-gradient(135deg, #2a5298, #4a72b8)", border: "none", borderRadius: 8, color: "#ffffff", fontSize: 14, fontWeight: "bold", cursor: "pointer" }}>
               Connect Sheet →
             </button>
             <div style={{ marginTop: 20, padding: "14px", background: "rgba(74,144,217,0.08)", border: "1px solid rgba(74,144,217,0.2)", borderRadius: 8 }}>
               <div style={{ fontSize: 11, color: "#4a90d9", fontWeight: "bold", marginBottom: 8 }}>📋 How to get the URL:</div>
               {["1. Open your Google Sheet", "2. File → Share → Publish to web", "3. Select 'Clients' sheet → 'Tab-separated values (.tsv)'", "4. Click Publish → Copy the URL", "5. Paste it above"].map((s,i) => (
-                <div key={i} style={{ fontSize: 11, color: "#8899aa", marginBottom: 4 }}>→ {s}</div>
+                <div key={i} style={{ fontSize: 11, color: "#889098", marginBottom: 4 }}>→ {s}</div>
               ))}
             </div>
           </div>
           <div style={{ textAlign: "center", marginTop: 16 }}>
-            <a href="?mode=advisor" style={{ fontSize: 11, color: "#445566", textDecoration: "underline" }}>← Back to Advisor Portal</a>
+            <a href="?mode=advisor" style={{ fontSize: 11, color: "#aab0a8", textDecoration: "underline" }}>← Back to Advisor Portal</a>
           </div>
         </div>
       </div>
@@ -2920,15 +2913,15 @@ function DashboardScreen() {
     const clientPlan = { scores, gaps, plan: budgetPlan, budget: selectedClient["Budget"] || "", insights: [], medicareEducation: null, showMedicareEdu: false, ltcEducation: null, showLTCEdu: false, bbEducation: null, showBBEdu: false };
 
     return (
-      <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 50%, #080e1a 100%)", fontFamily: "'DM Sans', sans-serif", color: "#e8dcc8" }}>
+      <div style={{ minHeight: "100vh", background: "#f4f6f2", fontFamily: "'DM Sans', sans-serif", color: "#1a2030" }}>
         <GlobalStyles />
-        <div style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(7,9,15,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(200,160,80,0.15)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14 }}>
-          <button onClick={() => setSelectedClient(null)} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, color: "#c8a050", padding: "7px 16px", cursor: "pointer", fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>← Back</button>
-          <div style={{ fontSize: 14, color: "#e8c878", fontWeight: 600 }}>{selectedClient["Client Name"]}</div>
-          <div style={{ fontSize: 11, color: "#445566" }}>{selectedClient["Timestamp"]}</div>
+        <div style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(42,82,152,0.12)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14 }}>
+          <button onClick={() => setSelectedClient(null)} style={{ background: "transparent", border: "1px solid #c8d0c0", borderRadius: 8, color: "#2a5298", padding: "7px 16px", cursor: "pointer", fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>← Back</button>
+          <div style={{ fontSize: 14, color: "#4a72b8", fontWeight: 600 }}>{selectedClient["Client Name"]}</div>
+          <div style={{ fontSize: 11, color: "#aab0a8" }}>{selectedClient["Timestamp"]}</div>
           <button
             onClick={() => printReport({ answers, plan: clientPlan, clientName: selectedClient["Client Name"], advisorName: selectedClient["Advisor"], lang })}
-            style={{ marginLeft: "auto", padding: "8px 18px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 8, color: "#0a1628", fontSize: 12, fontWeight: "bold", cursor: "pointer" }}>
+            style={{ marginLeft: "auto", padding: "8px 18px", background: "linear-gradient(135deg, #2a5298, #4a72b8)", border: "none", borderRadius: 8, color: "#ffffff", fontSize: 12, fontWeight: "bold", cursor: "pointer" }}>
             🖨️ Generate Report
           </button>
         </div>
@@ -2940,21 +2933,21 @@ function DashboardScreen() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0e1a 0%, #0d1b2a 100%)", fontFamily: "'DM Sans', sans-serif", color: "#e8dcc8" }}>
+    <div style={{ minHeight: "100vh", background: "#f4f6f2", fontFamily: "'DM Sans', sans-serif", color: "#1a2030" }}>
       <GlobalStyles />
 
       {/* Header */}
-      <div style={{ background: "rgba(7,9,15,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(200,160,80,0.15)", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ background: "rgba(255,255,255,0.97)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(42,82,152,0.12)", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ fontSize: 24 }}>📊</div>
           <div>
-            <div style={{ fontSize: 16, color: "#e8c878", fontWeight: 700, fontFamily: "'Playfair Display', serif" }}>Client Dashboard</div>
-            <div style={{ fontSize: 10, color: "#445566" }}>{clients.length} clients total</div>
+            <div style={{ fontSize: 16, color: "#4a72b8", fontWeight: 700, fontFamily: "'Playfair Display', serif" }}>Client Dashboard</div>
+            <div style={{ fontSize: 10, color: "#aab0a8" }}>{clients.length} clients total</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <button onClick={() => loadClients(sheetUrl)} style={{ padding: "8px 16px", background: "rgba(76,175,130,0.15)", border: "1px solid rgba(76,175,130,0.3)", borderRadius: 8, color: "#4caf82", fontSize: 12, cursor: "pointer" }}>🔄 Refresh</button>
-          <a href="?mode=advisor" style={{ padding: "8px 16px", background: "rgba(200,160,80,0.1)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 8, color: "#c8a050", fontSize: 12, textDecoration: "none", display: "flex", alignItems: "center" }}>⚙️ Portal</a>
+          <a href="?mode=advisor" style={{ padding: "8px 16px", background: "rgba(42,82,152,0.09)", border: "1px solid rgba(42,82,152,0.2)", borderRadius: 8, color: "#2a5298", fontSize: 12, textDecoration: "none", display: "flex", alignItems: "center" }}>⚙️ Portal</a>
         </div>
       </div>
 
@@ -2966,12 +2959,12 @@ function DashboardScreen() {
             {[
               { label: "Total Clients", value: clients.length, color: "#4a90d9" },
               { label: "Critical Gaps", value: clients.filter(c => parseInt(c["Critical Gaps"]) > 0).length, color: "#e05050" },
-              { label: "Avg Score", value: (clients.reduce((s,c) => s + (parseInt(c["Overall Score"])||0), 0) / clients.length).toFixed(1) + "/10", color: "#c8a050" },
+              { label: "Avg Score", value: (clients.reduce((s,c) => s + (parseInt(c["Overall Score"])||0), 0) / clients.length).toFixed(1) + "/10", color: "#2a5298" },
               { label: "This Month", value: clients.filter(c => { try { return new Date(c["Timestamp"]).getMonth() === new Date().getMonth(); } catch(e){ return false; }}).length, color: "#4caf82" },
             ].map((stat, i) => (
-              <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "16px 20px" }}>
+              <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid #d0d8c8", borderRadius: 12, padding: "16px 20px" }}>
                 <div style={{ fontSize: 22, fontWeight: 700, color: stat.color, fontFamily: "'Playfair Display', serif" }}>{stat.value}</div>
-                <div style={{ fontSize: 11, color: "#445566", marginTop: 3 }}>{stat.label}</div>
+                <div style={{ fontSize: 11, color: "#aab0a8", marginTop: 3 }}>{stat.label}</div>
               </div>
             ))}
           </div>
@@ -2980,13 +2973,13 @@ function DashboardScreen() {
         {/* Search + Filter */}
         <div style={{ display: "flex", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
           <input
-            style={{ flex: 1, minWidth: 200, padding: "10px 14px", background: "rgba(10,20,40,0.8)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 8, color: "#e8dcc8", fontSize: 13, outline: "none" }}
+            style={{ flex: 1, minWidth: 200, padding: "10px 14px", background: "rgba(10,20,40,0.8)", border: "1px solid rgba(42,82,152,0.2)", borderRadius: 8, color: "#1a2030", fontSize: 13, outline: "none" }}
             placeholder="🔍 Search by name, email, advisor..."
             value={search} onChange={e => setSearch(e.target.value)}
           />
           <select
             value={filterScore} onChange={e => setFilterScore(e.target.value)}
-            style={{ padding: "10px 14px", background: "rgba(10,20,40,0.8)", border: "1px solid rgba(200,160,80,0.25)", borderRadius: 8, color: "#e8dcc8", fontSize: 13, outline: "none", cursor: "pointer" }}>
+            style={{ padding: "10px 14px", background: "rgba(10,20,40,0.8)", border: "1px solid rgba(42,82,152,0.2)", borderRadius: 8, color: "#1a2030", fontSize: 13, outline: "none", cursor: "pointer" }}>
             <option value="all">All Scores</option>
             <option value="critical">🔴 Critical (&lt;4)</option>
             <option value="partial">🟡 Partial (4–6)</option>
@@ -2997,13 +2990,13 @@ function DashboardScreen() {
         {/* Load button if not loaded */}
         {clients.length === 0 && !loading && !error && (
           <div style={{ textAlign: "center", padding: "40px" }}>
-            <button onClick={() => loadClients(sheetUrl)} style={{ padding: "14px 36px", background: "linear-gradient(135deg, #c8a050, #e8c878)", border: "none", borderRadius: 10, color: "#0a1628", fontSize: 14, fontWeight: "bold", cursor: "pointer" }}>
+            <button onClick={() => loadClients(sheetUrl)} style={{ padding: "14px 36px", background: "linear-gradient(135deg, #2a5298, #4a72b8)", border: "none", borderRadius: 10, color: "#ffffff", fontSize: 14, fontWeight: "bold", cursor: "pointer" }}>
               📊 Load Clients
             </button>
           </div>
         )}
 
-        {loading && <div style={{ textAlign: "center", padding: "40px", color: "#445566", fontSize: 14 }}>Loading clients...</div>}
+        {loading && <div style={{ textAlign: "center", padding: "40px", color: "#aab0a8", fontSize: 14 }}>Loading clients...</div>}
         {error && <div style={{ textAlign: "center", padding: "24px", color: "#e05050", fontSize: 13 }}>{error}</div>}
 
         {/* Client cards */}
@@ -3016,8 +3009,8 @@ function DashboardScreen() {
               return (
                 <div key={i}
                   onClick={() => setSelectedClient(client)}
-                  style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "16px 20px", cursor: "pointer", display: "flex", alignItems: "center", gap: 16, transition: "all 0.2s ease" }}
-                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(200,160,80,0.06)"; e.currentTarget.style.borderColor = "rgba(200,160,80,0.3)"; }}
+                  style={{ background: "rgba(255,255,255,0.025)", border: "1px solid #d0d8c8", borderRadius: 12, padding: "16px 20px", cursor: "pointer", display: "flex", alignItems: "center", gap: 16, transition: "all 0.2s ease" }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(42,82,152,0.05)"; e.currentTarget.style.borderColor = "rgba(42,82,152,0.25)"; }}
                   onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.025)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
                 >
                   {/* Score circle */}
@@ -3026,8 +3019,8 @@ function DashboardScreen() {
                   </div>
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: "#e8dcc8", marginBottom: 3 }}>{client["Client Name"] || "Anonymous"}</div>
-                    <div style={{ fontSize: 11, color: "#445566", display: "flex", gap: 12, flexWrap: "wrap" }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: "#1a2030", marginBottom: 3 }}>{client["Client Name"] || "Anonymous"}</div>
+                    <div style={{ fontSize: 11, color: "#aab0a8", display: "flex", gap: 12, flexWrap: "wrap" }}>
                       {client["Client Phone"] && <span>📞 {client["Client Phone"]}</span>}
                       {client["Client Email"] && <span>✉️ {client["Client Email"]}</span>}
                       {client["Advisor"] && <span>👤 {client["Advisor"]}</span>}
@@ -3037,8 +3030,8 @@ function DashboardScreen() {
                   {/* Badges */}
                   <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
                     {critGaps > 0 && <span style={{ fontSize: 10, color: "#e05050", background: "rgba(224,80,80,0.12)", border: "1px solid rgba(224,80,80,0.25)", borderRadius: 6, padding: "3px 8px" }}>🔴 {critGaps} Critical</span>}
-                    {client["Budget"] && <span style={{ fontSize: 10, color: "#c8a050", background: "rgba(200,160,80,0.1)", border: "1px solid rgba(200,160,80,0.2)", borderRadius: 6, padding: "3px 8px" }}>{client["Budget"]}/mo</span>}
-                    {client["Language"] && <span style={{ fontSize: 10, color: "#667788", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>{client["Language"] === "Español" ? "🇪🇸" : "🇺🇸"}</span>}
+                    {client["Budget"] && <span style={{ fontSize: 10, color: "#2a5298", background: "rgba(42,82,152,0.09)", border: "1px solid rgba(42,82,152,0.18)", borderRadius: 6, padding: "3px 8px" }}>{client["Budget"]}/mo</span>}
+                    {client["Language"] && <span style={{ fontSize: 10, color: "#889098", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>{client["Language"] === "Español" ? "🇪🇸" : "🇺🇸"}</span>}
                     <span style={{ fontSize: 10, color: "#4a90d9", padding: "3px 8px" }}>View →</span>
                   </div>
                 </div>
@@ -3048,7 +3041,7 @@ function DashboardScreen() {
         )}
 
         {filtered.length === 0 && clients.length > 0 && (
-          <div style={{ textAlign: "center", padding: "40px", color: "#445566" }}>No clients match your search.</div>
+          <div style={{ textAlign: "center", padding: "40px", color: "#aab0a8" }}>No clients match your search.</div>
         )}
       </div>
     </div>
@@ -3185,30 +3178,30 @@ export default function FinancialBot() {
     : `Esta evaluación es con fines informativos. ${advisorName ? `${advisorName}` : "Tu asesor"} se pondrá en contacto para brindarte recomendaciones personalizadas de nuestros profesionales con licencia.`;
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #07090f 0%, #0b1120 50%, #080e1a 100%)", fontFamily: "'DM Sans', sans-serif", color: "#e8dcc8", position: "relative", overflow: "hidden" }}>
+    <div style={{ minHeight: "100vh", background: "#f4f6f2", fontFamily: "'DM Sans', sans-serif", color: "#1a2030", position: "relative", overflow: "hidden" }}>
       <GlobalStyles />
 
       {/* Ambient background orbs */}
-      <div style={{ position: "fixed", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(200,160,80,0.04) 0%, transparent 70%)", top: "-100px", right: "-150px", pointerEvents: "none", zIndex: 0 }} />
-      <div style={{ position: "fixed", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(74,144,217,0.04) 0%, transparent 70%)", bottom: "10%", left: "-100px", pointerEvents: "none", zIndex: 0 }} />
+      <div style={{ position: "fixed", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(42,82,152,0.03) 0%, transparent 70%)", top: "-100px", right: "-150px", pointerEvents: "none", zIndex: 0 }} />
+      <div style={{ position: "fixed", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(58,138,96,0.04) 0%, transparent 70%)", bottom: "10%", left: "-100px", pointerEvents: "none", zIndex: 0 }} />
 
       {/* ── HEADER ── */}
-      <div ref={topRef} style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(7,9,15,0.85)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(200,160,80,0.15)", padding: "0 20px" }}>
+      <div ref={topRef} style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(42,82,152,0.12)", padding: "0 20px" }}>
         <div style={{ maxWidth: 720, margin: "0 auto", height: 58, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, #c8a050, #e8c878)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, boxShadow: "0 0 16px rgba(200,160,80,0.35)", flexShrink: 0 }}>⚖️</div>
+            <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, #2a5298, #4a72b8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, boxShadow: "0 0 16px rgba(42,82,152,0.25)", flexShrink: 0 }}>⚖️</div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#e8c878", fontFamily: "'Playfair Display', serif", letterSpacing: 0.5 }}>{t.appTitle}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#4a72b8", fontFamily: "'Playfair Display', serif", letterSpacing: 0.5 }}>{t.appTitle}</div>
               {clientName
-                ? <div style={{ fontSize: 10, color: "#c8a05099", fontWeight: 500 }}>👤 {clientName}</div>
-                : <div style={{ fontSize: 9, color: "#445566", letterSpacing: 2, textTransform: "uppercase" }}>{t.appSubtitle}</div>}
+                ? <div style={{ fontSize: 10, color: "#2a529899", fontWeight: 500 }}>👤 {clientName}</div>
+                : <div style={{ fontSize: 9, color: "#aab0a8", letterSpacing: 2, textTransform: "uppercase" }}>{t.appSubtitle}</div>}
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {!showPlan && (
-              <div style={{ fontSize: 11, color: "#445566" }}>
-                <span style={{ color: "#c8a050", fontWeight: 600, fontFamily: "'Playfair Display', serif", fontSize: 13 }}>{currentModule + 1}</span>
-                <span style={{ color: "#334455", margin: "0 3px" }}>/</span>
+              <div style={{ fontSize: 11, color: "#aab0a8" }}>
+                <span style={{ color: "#2a5298", fontWeight: 600, fontFamily: "'Playfair Display', serif", fontSize: 13 }}>{currentModule + 1}</span>
+                <span style={{ color: "#c0c8b8", margin: "0 3px" }}>/</span>
                 <span>{MODULES.length}</span>
               </div>
             )}
@@ -3217,7 +3210,7 @@ export default function FinancialBot() {
         </div>
         {/* Progress bar */}
         <div style={{ height: 2, background: "rgba(255,255,255,0.04)", position: "relative" }}>
-          <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${progress}%`, background: "linear-gradient(90deg, #c8a050, #e8c878, #c8a050)", backgroundSize: "200% 100%", transition: "width 0.7s cubic-bezier(0.4,0,0.2,1)", boxShadow: "0 0 8px rgba(200,160,80,0.6)", animation: "shimmer 2s linear infinite" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${progress}%`, background: "linear-gradient(90deg, #2a5298, #4a72b8, #2a5298)", backgroundSize: "200% 100%", transition: "width 0.7s cubic-bezier(0.4,0,0.2,1)", boxShadow: "0 0 8px rgba(42,82,152,0.3)", animation: "shimmer 2s linear infinite" }} />
         </div>
       </div>
 
@@ -3234,18 +3227,18 @@ export default function FinancialBot() {
                   <div key={m.id} style={{
                     height: 4, borderRadius: 3,
                     width: i === currentModule ? 28 : (i < currentModule ? 14 : 8),
-                    background: i < currentModule ? "rgba(200,160,80,0.6)" : i === currentModule ? "#e8c878" : "rgba(255,255,255,0.08)",
+                    background: i < currentModule ? "rgba(42,82,152,0.3)" : i === currentModule ? "#4a72b8" : "rgba(255,255,255,0.08)",
                     transition: "all 0.4s cubic-bezier(0.4,0,0.2,1)",
                     boxShadow: i === currentModule ? "0 0 8px rgba(232,200,120,0.7)" : "none"
                   }} />
                 ))}
               </div>
 
-              <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, rgba(200,160,80,0.15), rgba(200,160,80,0.06))", border: "1px solid rgba(200,160,80,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, margin: "0 auto 14px", boxShadow: "0 4px 20px rgba(200,160,80,0.12)" }}>{module.icon}</div>
+              <div style={{ width: 52, height: 52, borderRadius: 16, background: "linear-gradient(135deg, rgba(42,82,152,0.12), rgba(42,82,152,0.05))", border: "1px solid rgba(42,82,152,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, margin: "0 auto 14px", boxShadow: "0 4px 20px rgba(42,82,152,0.1)" }}>{module.icon}</div>
 
-              <div style={{ fontSize: 10, color: "#c8a050", letterSpacing: 3, textTransform: "uppercase", fontWeight: 600, marginBottom: 6 }}>{t.moduleLabel} {module.id}</div>
-              <h2 className="fa-header" style={{ fontSize: 22, fontWeight: 700, color: "#f0e4c8", margin: "0 0 8px", letterSpacing: 0.3, lineHeight: 1.2 }}>{module.title}</h2>
-              <p style={{ color: "#445566", fontSize: 11, margin: 0, fontStyle: "italic" }}>{t.answerHonestly}</p>
+              <div style={{ fontSize: 10, color: "#2a5298", letterSpacing: 3, textTransform: "uppercase", fontWeight: 600, marginBottom: 6 }}>{t.moduleLabel} {module.id}</div>
+              <h2 className="fa-header" style={{ fontSize: 22, fontWeight: 700, color: "#1a2030", margin: "0 0 8px", letterSpacing: 0.3, lineHeight: 1.2 }}>{module.title}</h2>
+              <p style={{ color: "#aab0a8", fontSize: 11, margin: 0, fontStyle: "italic" }}>{t.answerHonestly}</p>
             </div>
 
             {/* Questions */}
@@ -3253,14 +3246,14 @@ export default function FinancialBot() {
               {module.questions.map((q, qi) => (
                 <div key={q.id} className="anim-fadeup" style={{
                   animationDelay: `${qi * 0.07}s`,
-                  background: answers[q.id] ? "rgba(200,160,80,0.05)" : "rgba(255,255,255,0.025)",
-                  border: `1px solid ${answers[q.id] ? "rgba(200,160,80,0.4)" : "rgba(255,255,255,0.07)"}`,
+                  background: answers[q.id] ? "rgba(42,82,152,0.04)" : "rgba(255,255,255,0.025)",
+                  border: `1px solid ${answers[q.id] ? "rgba(42,82,152,0.3)" : "rgba(255,255,255,0.07)"}`,
                   borderRadius: 14, padding: "16px 18px",
                   transition: "border-color 0.25s, background 0.25s",
-                  boxShadow: answers[q.id] ? "0 2px 16px rgba(200,160,80,0.07)" : "none"
+                  boxShadow: answers[q.id] ? "0 2px 16px rgba(42,82,152,0.06)" : "none"
                 }}>
                   <label style={{ display: "block", fontSize: 12, color: "#9ab0c4", marginBottom: 10, fontWeight: 500, lineHeight: 1.5 }}>
-                    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: "50%", background: "rgba(200,160,80,0.12)", border: "1px solid rgba(200,160,80,0.25)", color: "#c8a050", fontSize: 9, fontWeight: 700, marginRight: 8, flexShrink: 0, verticalAlign: "middle" }}>{qi + 1}</span>
+                    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: "50%", background: "rgba(42,82,152,0.1)", border: "1px solid rgba(42,82,152,0.2)", color: "#2a5298", fontSize: 9, fontWeight: 700, marginRight: 8, flexShrink: 0, verticalAlign: "middle" }}>{qi + 1}</span>
                     {q.label}
                   </label>
                   {q.type === "select" ? (
@@ -3287,7 +3280,7 @@ export default function FinancialBot() {
 
             {/* Completion hint */}
             {!isModuleComplete() && (
-              <p style={{ textAlign: "center", marginTop: 12, fontSize: 10, color: "#334455", fontStyle: "italic" }}>
+              <p style={{ textAlign: "center", marginTop: 12, fontSize: 10, color: "#c0c8b8", fontStyle: "italic" }}>
                 {lang === "en" ? "Answer all questions above to continue" : "Responde todas las preguntas para continuar"}
               </p>
             )}
