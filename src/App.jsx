@@ -2289,6 +2289,28 @@ function LTCEducationScreen({ lang, onContinue }) {
         <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${current.accent}33`, borderRadius: 16, padding: "24px 22px", marginBottom: 20 }}>
           {current.content()}
         </div>
+
+        {/* Navigation buttons */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+          {slide > 0 ? (
+            <button onClick={() => setSlide(s => s - 1)}
+              style={{ padding: "11px 22px", background: "transparent", border: `1px solid ${current.accent}44`, borderRadius: 10, color: current.accent, fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+              ← {isEN ? "Back" : "Atrás"}
+            </button>
+          ) : <div />}
+
+          {isLast ? (
+            <button onClick={onContinue}
+              style={{ padding: "13px 36px", background: `linear-gradient(135deg, ${current.accent}, ${current.accent}bb)`, border: "none", borderRadius: 10, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", boxShadow: `0 4px 18px ${current.accent}44` }}>
+              {isEN ? "Start My Assessment →" : "Comenzar Mi Evaluación →"}
+            </button>
+          ) : (
+            <button onClick={() => setSlide(s => s + 1)}
+              style={{ padding: "13px 36px", background: `linear-gradient(135deg, ${current.accent}, ${current.accent}bb)`, border: "none", borderRadius: 10, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", boxShadow: `0 4px 18px ${current.accent}44` }}>
+              {isEN ? "Next →" : "Siguiente →"}
+            </button>
+          )}
+        </div>
       </div>
    </div>
   );
